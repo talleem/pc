@@ -26,7 +26,7 @@ document.getElementById('oauthButton').addEventListener('click', function() {
 
            function fetchToken(code) {
                const tokenUrl = 'https://oauth2.googleapis.com/token';
-               const clientId = 'YOUR_CLIENT_ID'; // Replace with your Google OAuth client ID
+               const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your Google OAuth client ID
                const clientSecret = 'YOUR_CLIENT_SECRET'; // Replace with your Google OAuth client secret
                const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your redirect URI
 
