@@ -7,17 +7,6 @@
    </head>
    <body>
        <script>
-           // JavaScript code to handle OAuth flow
-           document.getElementById('oauthButton').addEventListener('click', function() {
-               const clientId = 'YOUR_CLIENT_ID'; // Replace with your Google OAuth client ID
-               const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your redirect URI
-               
-               const authUrl = `https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=https://www.googleapis.com/auth/gmail.compose`;
-
-               // Redirect user to Google OAuth consent page
-               window.location.href = authUrl;
-           });
-
            // Check for OAuth callback and handle it
            if (window.location.pathname === '/hello-world-page/callback') {
                const urlParams = new URLSearchParams(window.location.search);
@@ -30,8 +19,8 @@
 
            function fetchToken(code) {
                const tokenUrl = 'https://oauth2.googleapis.com/token';
-               const clientId = 'YOUR_CLIENT_ID'; // Replace with your Google OAuth client ID
-               const clientSecret = 'YOUR_CLIENT_SECRET'; // Replace with your Google OAuth client secret
+               const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your Google OAuth client ID
+               const clientSecret = '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'; // Replace with your Google OAuth client secret
                const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your redirect URI
 
                const requestBody = {
