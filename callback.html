@@ -51,8 +51,9 @@ const requestBody = {
                .then(response => response.json())
                .then(data => {
 // Handle response (data.access_token) - this access token can be used to make Gmail API calls
-console.log('Access token:', data.access_token);
-localStorage.setItem('accessToken', data.access_token); // Store in localStorage
+const accessToken = data.access_token;
+       console.log('Access token:', accessToken);
+       localStorage.setItem('accessToken', accessToken); 
 //Redirect or perform further actions as needed
 })
 .catch(error => {
