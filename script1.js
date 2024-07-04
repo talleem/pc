@@ -3,7 +3,7 @@ document.getElementById('sendEmailButton').addEventListener('click', function() 
     const messageBody = document.getElementById('messageBody').value;
 
     // Replace with your actual OAuth flow logic to obtain and use the access token
-    const accessToken = 'ya29.a0AXooCgsLbYLVK6i8vi3fW3XWxizPENSfF665CxFdGis9ShLZt5PAAs3U6Itx2nvte1cnyBeqCUKs1oRt5ps-3wekBBJJR-hX6pP-oBhBiOq0iTNLhkaCUcId4MDuQpXP9WCoTQ5ee9sGungKPapCI_08gd-bQMHR3OhqrAaO2dP_EgZeaCgYKAZYSARESFQHGX2Mis_HYmzufYKC6p3QnC_w4Kw0183'; // You need to retrieve this from your OAuth flow
+    const accessToken = localStorage.getItem('accessToken'); // You need to retrieve this from your OAuth flow
 
     const email = {
         to: receiverEmail,
