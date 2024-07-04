@@ -4,6 +4,11 @@ document.getElementById('sendEmailButton').addEventListener('click', function() 
 
     // Replace with your actual OAuth flow logic to obtain and use the access token
     const accessToken = localStorage.getItem('accessToken'); // You need to retrieve this from your OAuth flow
+       if (!accessToken) {
+       console.error('Access token not found.');
+       // Handle the case where access token is not found
+       return;
+   }
 
     const email = {
         to: receiverEmail,
