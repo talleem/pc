@@ -13,8 +13,8 @@ function isAccessTokenValid() {
 function refreshToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     const tokenUrl = 'https://oauth2.googleapis.com/token';
-    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
-    const clientSecret = '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';
+    const clientId = 'YOUR_CLIENT_ID';
+    const clientSecret = 'YOUR_CLIENT_SECRET';
     const requestBody = {
         refresh_token: refreshToken,
         client_id: clientId,
@@ -33,9 +33,6 @@ function refreshToken() {
     .then(data => {
         const newAccessToken = data.access_token;
         const expiresIn = data.expires_in; // Typically in seconds
-
-        //First one
-        console.log('Access token:', newAccessToken);
 
         // Calculate new expiration timestamp
         const expiration = Date.now() + expiresIn * 1000;
@@ -69,8 +66,6 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
                 // Attempt to refresh token and retry
                 return refreshToken()
                     .then(newAccessToken => sendMessageWithRetry(newAccessToken, email, retries - 1));
-                 // second message 
-                console.log('Token is refreshed:', accessToken);
             } else {
                 throw new Error(`Failed to send email: ${response.status}`);
             }
@@ -87,9 +82,12 @@ document.getElementById('sendEmailButton').addEventListener('click', function() 
     const receiverEmail = document.getElementById('receiverEmail').value;
     const messageBody = document.getElementById('messageBody').value;
     const accessToken = localStorage.getItem('accessToken');
-    //third message
-     console.log('Access token final:', accessToken);
 
+    if (!accessToken) {
+        console.error('Access token not found.');
+        // Handle the case where access token is not found
+        return;
+    }
 
     const email = {
         to: receiverEmail,
