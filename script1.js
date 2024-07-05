@@ -19,7 +19,7 @@ function refreshToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     const tokenUrl = 'https://oauth2.googleapis.com/token';
     const clientId = 'YOUR_CLIENT_ID';
-    const clientSecret = 'YOUR_CLIENT_SECRET';
+    const clientSecret = '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';
     const requestBody = {
         refresh_token: refreshToken,
         client_id: clientId,
