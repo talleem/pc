@@ -83,11 +83,6 @@ document.getElementById('sendEmailButton').addEventListener('click', function() 
     const messageBody = document.getElementById('messageBody').value;
     const accessToken = localStorage.getItem('accessToken');
 
-    if (!accessToken) {
-        console.error('Access token not found.');
-        // Handle the case where access token is not found
-        return;
-    }
 
     const email = {
         to: receiverEmail,
