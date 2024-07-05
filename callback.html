@@ -53,6 +53,15 @@ const requestBody = {
 // Handle response (data.access_token) - this access token can be used to make Gmail API calls
 const accessToken = data.access_token;
 
+                  
+// Function to check if access token is valid
+function isAccessTokenValid() {
+    const accessToken = localStorage.getItem('accessToken');
+    const expiration = localStorage.getItem('tokenExpiration');
+
+    // Check if access token exists and if it's still valid
+    return accessToken && expiration && Date.now() < parseInt(expiration);
+}
 
 // Function to refresh access token using refresh token
 function refreshToken() {
