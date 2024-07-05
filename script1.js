@@ -14,6 +14,26 @@ function makeEmail(email) {
     };
 }
 
+// Create a function to display a message on the screen
+function showMessage(message) {
+    // Create a new <div> element
+    var div = document.createElement('div');
+    
+    // Set the text content of the <div> to the message
+    div.textContent = message;
+    
+    // Optionally, you can style the <div> to make it more noticeable
+    div.style.backgroundColor = '#cce5ff';
+    div.style.color = '#004085';
+    div.style.border = '1px solid #b8daff';
+    div.style.padding = '10px';
+    div.style.margin = '10px';
+    
+    // Append the <div> to the document body or another element where you want to display the message
+    document.body.appendChild(div);
+}
+
+
 // Function to check if access token is valid
 function isAccessTokenValid() {
     const accessToken = localStorage.getItem('accessToken');
@@ -85,6 +105,8 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
             }
         }
         console.log('Email sent successfully!');
+        showMessage('Email sent successfully!'); // This will display on the screen
+
     })
     .catch(error => {
         console.error('Error sending email:', error);
