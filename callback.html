@@ -52,7 +52,14 @@ const requestBody = {
                .then(data => {
 // Handle response (data.access_token) - this access token can be used to make Gmail API calls
 const accessToken = data.access_token;
- localStorage.setItem('accessToken', accessToken);
+        const expiresIn = data.expires_in; // Typically in seconds
+
+        // Calculate new expiration timestamp
+        const expiration = Date.now() + expiresIn * 1000;
+
+        // Update localStorage with new token and expiration
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('tokenExpiration', expiration);
                   
 // Function to check if access token is valid
 function isAccessTokenValid() {
