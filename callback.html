@@ -1,123 +1,60 @@
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>OAuth Consent Workflow</title>
-   </head>
-   <body>
-       <h1>Send Email</h1>
-    <label for="receiverEmail">Receiver's Email:</label>
-    <input type="email" id="receiverEmail" name="receiverEmail" required>
-    <br>
-      <br>
-    <label for="messageBody">Message Body:</label>
-    <textarea id="messageBody" name="messageBody" rows="20" cols="20" required></textarea>
-    <br>
-      <br>
-      <br>
-    <button id="sendEmailButton">Send Email</button>
-      
-     <script> 
-   // Check for OAuth callback and handle it
- if (window.location.pathname === '/hello-world-page/callback') {
-const urlParams = new URLSearchParams(window.location.search);
-const code = urlParams.get('code');
-// Handle the OAuth code here (exchange for token, etc.)
-// Example:
-fetchToken(code); // Function to exchange code for access token
-}
-function fetchToken(code) {
-const tokenUrl = 'https://oauth2.googleapis.com/token';
-const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; 
-// Replace with your Google OAuth client I
-const clientSecret = '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'; // Replace with your Google OAuth client secret
-const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your redirect URI
-const requestBody = {
-                   code: code,
-                   client_id: clientId,
-                   client_secret: clientSecret,
-                   redirect_uri: redirectUri,
-                   grant_type: 'authorization_code'
-               };
-// Make a POST request to exchange code for access token
-               fetch(tokenUrl, {
-               method: 'POST',
-               headers: {
-               'Content-Type': 'application/json'
-          },
-         body: JSON.stringify(requestBody)
-              })
-               .then(response => response.json())
-               .then(data => {
-// Handle response (data.access_token) - this access token can be used to make Gmail API calls
-const accessToken = data.access_token;
-        const expiresIn = data.expires_in; // Typically in seconds
+<!-- callback.html -->
 
-        // Calculate new expiration timestamp
-        const expiration = Date.now() + expiresIn * 1000;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Callback</title>
+</head>
+<body>
+    <script>
+        function fetchToken(code) {
+            const tokenUrl = 'https://oauth2.googleapis.com/token';
+            const clientId = 'YOUR_CLIENT_ID'; 
+            const clientSecret = 'YOUR_CLIENT_SECRET'; 
+            const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback';
 
-        // Update localStorage with new token and expiration
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('tokenExpiration', expiration);
-                  
-// Function to check if access token is valid
-function isAccessTokenValid() {
-    const accessToken = localStorage.getItem('accessToken');
-    const expiration = localStorage.getItem('tokenExpiration');
+            const requestBody = {
+                code: code,
+                client_id: clientId,
+                client_secret: clientSecret,
+                redirect_uri: redirectUri,
+                grant_type: 'authorization_code'
+            };
 
-    // Check if access token exists and if it's still valid
-    return accessToken && expiration && Date.now() < parseInt(expiration);
-}
+            fetch(tokenUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const accessToken = data.access_token;
+                console.log('Access token:', accessToken);
+                localStorage.setItem('accessToken', accessToken);
 
-// Function to refresh access token using refresh token
-function refreshToken() {
-    const refreshToken = localStorage.getItem('refreshToken');
-    const tokenUrl = 'https://oauth2.googleapis.com/token';
-    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
-    const clientSecret = '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';
-    const requestBody = {
-        refresh_token: refreshToken,
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'refresh_token'
-    };
+                // Optional: Store refresh token if provided
+                const refreshToken = data.refresh_token;
+                if (refreshToken) {
+                    localStorage.setItem('refreshToken', refreshToken);
+                }
 
-    return fetch(tokenUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-    })
-    .then(response => response.json())
-    .then(data => {
-        const newAccessToken = data.access_token;
-        const expiresIn = data.expires_in; // Typically in seconds
+                // Optionally redirect or perform further actions as needed
+            })
+            .catch(error => {
+                console.error('Error exchanging code for token:', error);
+            });
+        }
 
-        // Calculate new expiration timestamp
-        const expiration = Date.now() + expiresIn * 1000;
-
-        // Update localStorage with new token and expiration
-        localStorage.setItem('accessToken', newAccessToken);
-        localStorage.setItem('tokenExpiration', expiration);
-
-        return newAccessToken;
-    });
-}
-
-
-                  
-       console.log('Access token:', newAccessToken);
-       localStorage.setItem('accessToken', newAccessToken); 
-//Redirect or perform further actions as needed
-})
-.catch(error => {
-console.error('Error exchanging code for 
-token:', error);
-});
-}
-     </script>
-          <script src="script1.js"></script>
-   </body>
-   </html>
+        // Check for OAuth callback and handle it
+        if (window.location.pathname === '/hello-world-page/callback') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            fetchToken(code); // Function to exchange code for access token
+        }
+    </script>
+</body>
+</html>
