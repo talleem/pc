@@ -1,4 +1,18 @@
-// script1.js
+// Function to construct email message
+function makeEmail(email) {
+    const message = [
+        'Content-Type: text/plain; charset="UTF-8"\n',
+        `To: ${email.to}\n`,
+        'MIME-Version: 1.0\n',
+        'Subject: =?utf-8?B?' + btoa(email.subject) + '?=\n',
+        'Content-Transfer-Encoding: 7bit\n\n',
+        email.message
+    ].join('');
+
+    return {
+        raw: btoa(message).replace(/\+/g, '-').replace(/\//g, '_')
+    };
+}
 
 // Function to check if access token is valid
 function isAccessTokenValid() {
@@ -45,7 +59,7 @@ function refreshToken() {
     });
 }
 
-// Modified sendMessage function to handle token refresh
+// Modified sendMessageWithRetry function to handle token refresh
 function sendMessageWithRetry(accessToken, email, retries = 1) {
     const apiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
     const headers = new Headers({
@@ -53,7 +67,7 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
         'Content-Type': 'application/json'
     });
 
-    const raw = makeEmail(email);
+    const raw = makeEmail(email); // Call to makeEmail function
 
     return fetch(apiUrl, {
         method: 'POST',
