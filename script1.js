@@ -34,7 +34,8 @@ function refreshToken() {
         const newAccessToken = data.access_token;
         const expiresIn = data.expires_in; // Typically in seconds
 
-         console.log('Access token:', newAccessToken);
+        //First one
+        console.log('Access token:', newAccessToken);
 
         // Calculate new expiration timestamp
         const expiration = Date.now() + expiresIn * 1000;
@@ -68,6 +69,8 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
                 // Attempt to refresh token and retry
                 return refreshToken()
                     .then(newAccessToken => sendMessageWithRetry(newAccessToken, email, retries - 1));
+                 // second message 
+                console.log('Token is refreshed:', accessToken);
             } else {
                 throw new Error(`Failed to send email: ${response.status}`);
             }
@@ -84,6 +87,8 @@ document.getElementById('sendEmailButton').addEventListener('click', function() 
     const receiverEmail = document.getElementById('receiverEmail').value;
     const messageBody = document.getElementById('messageBody').value;
     const accessToken = localStorage.getItem('accessToken');
+    //third message
+     console.log('Access token final:', accessToken);
 
 
     const email = {
