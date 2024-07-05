@@ -1,10 +1,5 @@
-document.getElementById('sendEmailButton').addEventListener('click', function() {
-    const receiverEmail = document.getElementById('receiverEmail').value;
-    const messageBody = document.getElementById('messageBody').value;
+// script1.js
 
-    // Replace with your actual OAuth flow logic to obtain and use the access token
-    const accessToken = localStorage.getItem('accessToken'); // You need to retrieve this from your OAuth flow 
-    
 // Function to check if access token is valid
 function isAccessTokenValid() {
     const accessToken = localStorage.getItem('accessToken');
@@ -18,8 +13,8 @@ function isAccessTokenValid() {
 function refreshToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     const tokenUrl = 'https://oauth2.googleapis.com/token';
-    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
-    const clientSecret = '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';
+    const clientId = 'YOUR_CLIENT_ID';
+    const clientSecret = 'YOUR_CLIENT_SECRET';
     const requestBody = {
         refresh_token: refreshToken,
         client_id: clientId,
@@ -50,19 +45,9 @@ function refreshToken() {
     });
 }
 
-     
-    const email = {
-        to: receiverEmail,
-        subject: 'Test Email',
-        message: messageBody
-    };
-
-    sendMessage(accessToken, email);
-});
-
-function sendMessage(accessToken, email) {
+// Modified sendMessage function to handle token refresh
+function sendMessageWithRetry(accessToken, email, retries = 1) {
     const apiUrl = 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send';
-
     const headers = new Headers({
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
@@ -70,14 +55,20 @@ function sendMessage(accessToken, email) {
 
     const raw = makeEmail(email);
 
-    fetch(apiUrl, {
+    return fetch(apiUrl, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(raw)
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error(`Failed to send email: ${response.status}`);
+            if (response.status === 401 && retries > 0) {
+                // Attempt to refresh token and retry
+                return refreshToken()
+                    .then(newAccessToken => sendMessageWithRetry(newAccessToken, email, retries - 1));
+            } else {
+                throw new Error(`Failed to send email: ${response.status}`);
+            }
         }
         console.log('Email sent successfully!');
     })
@@ -86,17 +77,23 @@ function sendMessage(accessToken, email) {
     });
 }
 
-function makeEmail(email) {
-    const message = [
-        'Content-Type: text/plain; charset="UTF-8"\n',
-        `To: ${email.to}\n`,
-        'MIME-Version: 1.0\n',
-        'Subject: =?utf-8?B?' + btoa(email.subject) + '?=\n',
-        'Content-Transfer-Encoding: 7bit\n\n',
-        email.message
-    ].join('');
+// Usage in sendEmailButton click event
+document.getElementById('sendEmailButton').addEventListener('click', function() {
+    const receiverEmail = document.getElementById('receiverEmail').value;
+    const messageBody = document.getElementById('messageBody').value;
+    const accessToken = localStorage.getItem('accessToken');
 
-    return {
-        raw: btoa(message).replace(/\+/g, '-').replace(/\//g, '_')
+    if (!accessToken) {
+        console.error('Access token not found.');
+        // Handle the case where access token is not found
+        return;
+    }
+
+    const email = {
+        to: receiverEmail,
+        subject: 'Test Email',
+        message: messageBody
     };
-}
+
+    sendMessageWithRetry(accessToken, email);
+});
