@@ -34,6 +34,8 @@ function refreshToken() {
         const newAccessToken = data.access_token;
         const expiresIn = data.expires_in; // Typically in seconds
 
+         console.log('Access token:', newAccessToken);
+
         // Calculate new expiration timestamp
         const expiration = Date.now() + expiresIn * 1000;
 
