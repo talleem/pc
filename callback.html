@@ -6,12 +6,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Callback</title>
-    <style>
+
+    
+   <style>
+  /* Styling for the email list container */
   .email-list {
-    margin-top: 10px;
-       margin-left: 800px;
+    position: fixed; /* Fixes the position relative to the viewport */
+    top: 10px; /* Distance from the top of the viewport */
+    right: 10px; /* Distance from the right edge of the viewport */
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    max-width: 300px; /* Limiting the width of the list */
+    overflow-y: auto; /* Adding scrollbars if content exceeds max-height */
+    max-height: 80vh; /* Limiting the height to 80% of viewport height */
+  }
+
+  /* Styling for the list items inside email list */
+  .email-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .email-list ul li {
+    margin-bottom: 5px;
+  }
+
+  /* Additional styling for the textarea and main content area */
+  .main-content {
+    margin-top: 50px; /* Ensuring content is below email list */
+    margin-left: 10px; /* Margin from the left edge */
   }
 </style>
+
+    
 </head>
 <body>
       <script>
