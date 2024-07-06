@@ -35,7 +35,7 @@ function showMessage(message) {
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
         div.remove(); // Remove the div from the DOM
-    }, 4000); // 4000 milliseconds = 4 seconds
+    }, 6000); // 4000 milliseconds = 4 seconds
 }
 
 
