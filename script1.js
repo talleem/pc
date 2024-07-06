@@ -31,6 +31,11 @@ function showMessage(message) {
     
     // Append the <div> to the document body or another element where you want to display the message
     document.body.appendChild(div);
+
+     // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
+    setTimeout(function() {
+        div.remove(); // Remove the div from the DOM
+    }, 4000); // 4000 milliseconds = 4 seconds
 }
 
 
