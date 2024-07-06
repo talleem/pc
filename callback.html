@@ -65,17 +65,21 @@
       <h1>Send Email</h1>
     <label for="receiverEmail">Receiver's Email:</label>
     <input type="email" id="receiverEmail" name="receiverEmail" placeholder="Enter Receiver's email here.." required>
-    <div class="email-list">
-  <p><strong>Valid Contacts:</strong></p>
-  <ul id="validEmailList"></ul>
-</div>
 
-<script src="validateandlistaddress.js"></script>
+
     
     <br>
     <label for="messageBody">Message Body:</label>
     <textarea id="messageBody" name="messageBody" rows="4" cols="40" placeholder="Enter you message here.." required></textarea>
     <br>
+
+    //valid email addresses list
+     <div class="email-list">
+  <p><strong>Valid Contacts:</strong></p>
+  <ul id="validEmailList"></ul>
+</div>
+<script src="validateandlistaddress.js"></script>
+    
     <button id="sendEmailButton">Send Email</button>
      <script src="script1.js">
     </script>
