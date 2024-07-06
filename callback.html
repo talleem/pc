@@ -43,6 +43,13 @@
     
 </head>
 <body>
+    
+     <div class="email-list">
+  <p><strong><h2>Valid Contacts:</h2></strong></p>
+  <ul id="validEmailList"></ul>
+</div>
+<script src="validateandlistaddress.js"></script>
+    
       <script>
         function fetchToken(code) {
             const tokenUrl = 'https://oauth2.googleapis.com/token';
@@ -113,10 +120,6 @@
               clearFields();
         });
           </script>
-     <div class="email-list">
-  <p><strong><h2>Valid Contacts:</h2></strong></p>
-  <ul id="validEmailList"></ul>
-</div>
-<script src="validateandlistaddress.js"></script>
+    
 </body>
 </html>
