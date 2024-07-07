@@ -1,4 +1,4 @@
- <script>
+
          //Function to load the inbox messages
         var API_KEY = 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28';
         var CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
@@ -39,4 +39,3 @@
         document.addEventListener('DOMContentLoaded', function() {
             handleClientLoad();
         });
-    </script>
