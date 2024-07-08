@@ -1,41 +1,58 @@
+    const CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your actual client ID
 
-         //Function to load the inbox messages
-        var API_KEY = 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28';
-        var CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
-        var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
-        var SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+    function handleClientLoad() {
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleAuthorization
+      });
+    }
 
-        function handleClientLoad() {
-            gapi.load('client:auth2', initClient);
+    function handleAuthorization(response) {
+      if (response.error) {
+        console.error('Authentication error:', response.error);
+        return;
+      }
+      if (response.credential) {
+        // Initialize Gmail API client
+        gapi.load('client', initGmailClient);
+      }
+    }
+
+    function initGmailClient() {
+      gapi.client.init({
+        apiKey: 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28', // Replace with your actual API key
+        clientId: CLIENT_ID,
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
+        scope: 'https://www.googleapis.com/auth/gmail.readonly'
+      }).then(function () {
+        // Gmail API is initialized, fetch inbox emails
+        listLabels();
+      }).catch(function (error) {
+        console.error('Error initializing Gmail API:', error);
+      });
+    }
+
+    function listLabels() {
+      gapi.client.gmail.users.messages.list({
+        'userId': 'me',
+        'labelIds': 'INBOX',
+        'maxResults': 10 // Change this number as per your requirement
+      }).then(function(response) {
+        let messages = response.result.messages;
+        if (messages && messages.length > 0) {
+          messages.forEach(function(message) {
+            // Display message details on your page as needed
+            console.log(message);
+            // Example: Append subject line to a list
+            let subject = message.payload.headers.find(header => header.name === 'Subject').value;
+            let listItem = document.createElement('li');
+            listItem.textContent = subject;
+            document.getElementById('inbox-list').appendChild(listItem);
+          });
+        } else {
+          console.log('No messages found.');
         }
-
-        function initClient() {
-            gapi.client.init({
-                apiKey: API_KEY,
-                clientId: CLIENT_ID,
-                discoveryDocs: DISCOVERY_DOCS,
-                scope: SCOPES
-            }).then(function () {
-                // GoogleAuth is ready
-                // You can now make API calls
-                gapi.auth2.getAuthInstance().signIn().then(function() {
-                    fetchGmailInbox();
-                });
-            });
-        }
-
-        function fetchGmailInbox() {
-            gapi.client.gmail.users.messages.list({
-                'userId': 'me',
-                'labelIds': 'INBOX'
-            }).then(function(response) {
-                var messages = response.result.messages;
-                // Process messages array and display them on your HTML page
-                console.log(messages);
-            });
-        }
-
-        // Automatically start the process when the page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            handleClientLoad();
-        });
+      }).catch(function(error) {
+        console.error('Error fetching emails:', error);
+      });
+    }
