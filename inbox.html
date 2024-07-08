@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Inbox</title>
+  <!-- Include Google API Client Library -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    // Client ID and API key from the Developer Console
+    const CLIENT_ID = 'YOUR_CLIENT_ID';
+    const API_KEY = 'YOUR_API_KEY';
+
+    // Array of API discovery doc URLs for APIs used by the application
+    const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
+
+    // Authorization scopes required by the API; multiple scopes can be included, separated by spaces.
+    const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
+
+    let authorizeButton = document.getElementById('authorize-button');
+    let signoutButton = document.getElementById('signout-button');
+
+    function handleClientLoad() {
+      // Load the API client and auth2 library
+      gapi.load('client:auth2', initClient);
+    }
+
+    function initClient() {
+      gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES
+      }).then(function () {
+        // Listen for sign-in state changes.
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+        // Handle the initial sign-in state.
+        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+      });
+    }
+
+    function updateSigninStatus(isSignedIn) {
+      if (isSignedIn) {
+        listLabels();
+      }
+    }
+
+    function listLabels() {
+      gapi.client.gmail.users.messages.list({
+        'userId': 'me',
+        'labelIds': 'INBOX',
+        'maxResults': 10 // Change this number as per your requirement
+      }).then(function(response) {
+        let messages = response.result.messages;
+        if (messages && messages.length > 0) {
+          messages.forEach(function(message) {
+            // Display message details on your page as needed
+            console.log(message);
+            // Example: Append subject line to a list
+            let subject = message.payload.headers.find(header => header.name === 'Subject').value;
+            let listItem = document.createElement('li');
+            listItem.textContent = subject;
+            document.getElementById('inbox-list').appendChild(listItem);
+          });
+        } else {
+          console.log('No messages found.');
+        }
+      });
+    }
+  </script>
+</head>
+<body onload="handleClientLoad()">
+  <h1>Gmail Inbox</h1>
+  <ul id="inbox-list">
+    <!-- Inbox emails will be populated here -->
+  </ul>
+</body>
+</html>
