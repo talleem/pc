@@ -40,46 +40,40 @@
   }
 </style>
 
-      <script src="https://apis.google.com/js/api.js"></script>
-
+   <script src="https://accounts.google.com/gsi/client"></script>
  <script>
-    // Client ID and API key from the Developer Console
-    const CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28';
-
-    // Array of API discovery doc URLs for APIs used by the application
-    const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"];
-
-    // Authorization scopes required by the API; multiple scopes can be included, separated by spaces.
-    const SCOPES = 'https://www.googleapis.com/auth/gmail.readonly';
-
-    let authorizeButton = document.getElementById('authorize-button');
-    let signoutButton = document.getElementById('signout-button');
+    const CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your actual client ID
 
     function handleClientLoad() {
-      // Load the API client and auth2 library
-      gapi.load('client:auth2', initClient);
-    }
-
-    function initClient() {
-      gapi.client.init({
-        apiKey: API_KEY,
-        clientId: CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES
-      }).then(function () {
-        // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-
-        // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleAuthorization
       });
     }
 
-    function updateSigninStatus(isSignedIn) {
-      if (isSignedIn) {
-        listLabels();
+    function handleAuthorization(response) {
+      if (response.error) {
+        console.error('Authentication error:', response.error);
+        return;
       }
+      if (response.credential) {
+        // Initialize Gmail API client
+        gapi.load('client', initGmailClient);
+      }
+    }
+
+    function initGmailClient() {
+      gapi.client.init({
+        apiKey: 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28', // Replace with your actual API key
+        clientId: CLIENT_ID,
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
+        scope: 'https://www.googleapis.com/auth/gmail.readonly'
+      }).then(function () {
+        // Gmail API is initialized, fetch inbox emails
+        listLabels();
+      }).catch(function (error) {
+        console.error('Error initializing Gmail API:', error);
+      });
     }
 
     function listLabels() {
@@ -102,6 +96,8 @@
         } else {
           console.log('No messages found.');
         }
+      }).catch(function(error) {
+        console.error('Error fetching emails:', error);
       });
     }
   </script>
