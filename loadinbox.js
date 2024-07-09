@@ -4,8 +4,6 @@ google.accounts.id.initialize({
   client_id: CLIENT_ID,
   callback: handleAuthorization
 });
-console.log('Authorization response:');
-console.log('Authorization response:', response);
 function handleAuthorization(response) {
   console.log('Authorization response:', response);
   
