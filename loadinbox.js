@@ -20,6 +20,7 @@ function handleAuthorization(response) {
 
 function initGmailClient() {
   console.log('Initializing Gmail client...');
+  console.log('gapi.client:', gapi.client); // Check if gapi.client is defined
   gapi.client.init({
     apiKey: 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28', // Replace with your actual API key
     clientId: CLIENT_ID,
