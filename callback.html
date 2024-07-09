@@ -138,6 +138,7 @@
 
     function executeScript() {
         // Call functions defined in loadinbox.js
+        handleAuthorization(response); 
         initGmailClient();
         listLabels();
     }
