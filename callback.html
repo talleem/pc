@@ -40,9 +40,6 @@
   }
 </style>
 
-<script src="https://accounts.google.com/gsi/client"></script>
-<script src="https://apis.google.com/js/api.js"></script>
-
     
 </head>
 
@@ -130,26 +127,23 @@
         });
           </script>
 
-     <script src="https://accounts.google.com/gsi/client"></script>
-     <script src="https://apis.google.com/js/api.js"></script>
-     <button id="fetchemails"><h3>Fetch Emails</h3></button>
-     <script src="loadinbox.js">
-    </script>
-      <script>
-         document.getElementById('fetchemails').addEventListener('click', function() {
-              clearFields();
-        });
-          </script>
+    <button id="fetchemails"><h3>Fetch Emails</h3></button>
+<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="loadinbox.js"></script>
+<script>
+    document.getElementById('fetchemails').addEventListener('click', function() {
+        executeScript(); // Call the function to execute loadinbox.js functions
+    });
 
-     <script>
-       // Function to execute loadinbox.js when button is clicked
-       function executeScript() {
-         // This will execute the contents of loadinbox.js
-         listLabels();
-         handleAuthorization(); 
-         initGmailClient(); // Call the function from loadinbox.js to start fetching emails
-       }
-     </script>
+    function executeScript() {
+        // Call functions defined in loadinbox.js
+        listLabels();
+        handleAuthorization();
+        initGmailClient();
+    }
+</script>
+
 
 
 
