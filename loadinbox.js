@@ -7,11 +7,11 @@ google.accounts.id.initialize({
 function handleAuthorization(response) {
   console.log('Authorization response:', response);
   
-  if (response.error) {
+  if (response && response.error) {
     console.error('Authentication error:', response.error);
     return;
   }
-  if (response.credential) {
+  if (response && response.credential) {
     console.log('Credential:', response.credential);
     // Initialize Gmail API client
     gapi.load('client', initGmailClient);
