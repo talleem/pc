@@ -1,9 +1,13 @@
 const CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your actual client ID
 
+
+// Load Google API client library
+gapi.load('client', function() {
 google.accounts.id.initialize({
   clientId: CLIENT_ID,
   callback: handleAuthorization
 });
+  });
 function handleAuthorization(response) {
   console.log('Authorization response:', response);
   
