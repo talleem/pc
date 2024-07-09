@@ -7,7 +7,7 @@ google.accounts.id.initialize({
 
 function handleAuthorization(response) {
   console.log('Authorization response:', response);
-  console.log('Authorization response:', response);
+  console.log('Authorization response:');
   if (response.error) {
     console.error('Authentication error:', response.error);
     return;
