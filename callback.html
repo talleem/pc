@@ -107,6 +107,8 @@
                     localStorage.setItem('refreshToken', refreshToken);
                 }
                   // Call handleAuthorization() after fetching token
+            <script src="https://accounts.google.com/gsi/client"></script>
+            <script src="https://apis.google.com/js/api.js"></script>
             handleAuthorization({ credential: accessToken }); // Assuming accessToken as credential
 
                 // Optionally redirect or perform further actions as needed
