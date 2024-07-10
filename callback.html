@@ -127,22 +127,24 @@
         });
           </script>
 
-    <button id="fetchemails"><h3>Fetch Emails</h3></button>
+<button id="fetchemails"><h3>Fetch Emails</h3></button>
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="https://apis.google.com/js/api.js"></script>
 <script src="loadinbox.js"></script>
-<script>
-    document.getElementById('fetchemails').addEventListener('click', function() {
-        executeScript(); // Call the function to execute loadinbox.js functions
-    });
+ <script>
+        document.getElementById('fetchemails').addEventListener('click', function() {
+            // Call the function to execute loadinbox.js functions
+            executeScript();
+        });
 
-    function executeScript() {
-        // Call functions defined in loadinbox.js
-        handleAuthorization(); 
-        initGmailClient();
-        listLabels();
-    }
-</script>
+        function executeScript() {
+            // Ensure Google Identity Services is initialized first
+            google.accounts.id.initialize({
+                clientId: ''919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Replace with your actual client ID
+                callback: handleAuthorization
+            });
+        }
+    </script>
 
 
 
