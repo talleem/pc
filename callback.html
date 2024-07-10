@@ -85,6 +85,8 @@
                 if (refreshToken) {
                     localStorage.setItem('refreshToken', refreshToken);
                 }
+                  // Call handleAuthorization() after fetching token
+            handleAuthorization({ credential: accessToken }); // Assuming accessToken as credential
 
                 // Optionally redirect or perform further actions as needed
             })
@@ -135,7 +137,7 @@
             // Ensure Google Identity Services is initialized first
             google.accounts.id.initialize({
                 clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Replace with your actual client ID
-                callback: handleAuthorization()
+                callback: handleAuthorization
             });
         }
     </script>
