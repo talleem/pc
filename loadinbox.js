@@ -2,6 +2,7 @@ const CLIENT_ID = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleuser
 
 
 function handleAuthorization(response) {
+    console.log('Handling authorization...');
     console.log('Authorization response:', response);
     
     if (response && response.error) {
