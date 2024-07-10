@@ -8,19 +8,24 @@ google.accounts.id.initialize({
   callback: handleAuthorization
 });
   });
+
+
 function handleAuthorization(response) {
-  console.log('Authorization response:', response);
-  
-  if (response && response.error) {
-    console.error('Authentication error:', response.error);
-    return;
-  }
-  if (response && response.credential) {
-    console.log('Credential:', response.credential);
-    // Initialize Gmail API client
-    gapi.load('client', initGmailClient);
-  }
+    console.log('Authorization response:', response);
+
+    if (response && response.error) {
+        console.error('Authentication error:', response.error);
+        return;
+    }
+    if (response && response.credential) {
+        console.log('Credential:', response.credential);
+        // Initialize Gmail API client
+        gapi.load('client', initGmailClient);
+    }
 }
+
+
+
 
 function initGmailClient() {
   console.log('Initializing Gmail client...');
