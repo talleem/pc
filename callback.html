@@ -66,7 +66,7 @@
                 console.log('Credential:', response.credential);
                 // Initialize Gmail API client
                 gapi.load('client', function() {
-        
+         initGmailClient();
                 });
             }
         }
@@ -177,6 +177,7 @@
                 scope: 'https://www.googleapis.com/auth/gmail.readonly'
             }).then(function () {
                 console.log('Gmail API initialized.');
+                listLabels(); 
             }).catch(function (error) {
                 console.error('Error initializing Gmail API:', error);
             });
