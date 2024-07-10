@@ -7,54 +7,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Callback</title>
 
-    
-   <style>
-  /* Styling for the email list container */
-  .email-list {
-    position: fixed; /* Fixes the position relative to the viewport */
-    top: 10px; /* Distance from the top of the viewport */
-    right: 70px; /* Distance from the right edge of the viewport */
-    background-color: #ddfcf7;
-    padding: 10px;
-    border: 1px solid #ccc;
-    max-width: 300px; /* Limiting the width of the list */
-    overflow-y: auto; /* Adding scrollbars if content exceeds max-height */
-    max-height: 80vh; /* Limiting the height to 80% of viewport height */
-  }
+    <!-- CSS Styles -->
+    <style>
+        /* Styling for the email list container */
+        .email-list {
+            position: fixed; /* Fixes the position relative to the viewport */
+            top: 10px; /* Distance from the top of the viewport */
+            right: 70px; /* Distance from the right edge of the viewport */
+            background-color: #ddfcf7;
+            padding: 10px;
+            border: 1px solid #ccc;
+            max-width: 300px; /* Limiting the width of the list */
+            overflow-y: auto; /* Adding scrollbars if content exceeds max-height */
+            max-height: 80vh; /* Limiting the height to 80% of viewport height */
+        }
 
-  /* Styling for the list items inside email list */
-  .email-list ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+        /* Styling for the list items inside email list */
+        .email-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
 
-  .email-list ul li {
-    margin-bottom: 5px;
-  }
+        .email-list ul li {
+            margin-bottom: 5px;
+        }
 
-  /* Additional styling for the textarea and main content area */
-  .main-content {
-    margin-top: 50px; /* Ensuring content is below email list */
-    margin-left: 10px; /* Margin from the left edge */
-  }
-</style>
-
-    
+        /* Additional styling for the textarea and main content area */
+        .main-content {
+            margin-top: 50px; /* Ensuring content is below email list */
+            margin-left: 10px; /* Margin from the left edge */
+        }
+    </style>
 </head>
-
-
-    
 <body>
     
-     <div class="email-list">
-  <p><strong><h2>Valid Contacts:</h2></strong></p>
-  <ul id="validEmailList"></ul>
-</div>
-<script src="validateandlistaddress.js"></script>
-    
-    
-      <script>
+    <!-- Email List Container -->
+    <div class="email-list">
+        <p><strong><h2>Valid Contacts:</h2></strong></p>
+        <ul id="validEmailList"></ul>
+    </div>
+
+    <!-- Scripts for Email Validation -->
+    <script src="validateandlistaddress.js"></script>
+
+    <!-- OAuth Callback Handling -->
+    <script>
         function fetchToken(code) {
             const tokenUrl = 'https://oauth2.googleapis.com/token';
             const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; 
@@ -102,36 +100,31 @@
             fetchToken(code); // Function to exchange code for access token
         }
     </script>
-      <h1>Send Email</h1>
+
+    <!-- Email Sending Section -->
+    <h1>Send Email</h1>
     <label for="receiverEmail"><h3> Receiver's Email:</h3></label>
-
-
     <input type="email" id="receiverEmail" name="receiverEmail" placeholder="Enter Receiver's email here.." required>
-     <script src="populatingreceiveremail.js"></script>
-
-    
+    <script src="populatingreceiveremail.js"></script>
     <br>
     <label for="messageBody"><h3>Message Body:</h3></label>
-    <textarea id="messageBody" name="messageBody" rows="4" cols="40" placeholder="Enter you message here.." required></textarea>
-    <br>
+    <textarea id="messageBody" name="messageBody" rows="4" cols="40" placeholder="Enter your message here.." required></textarea>
     <br>
     <br>
     <button id="sendEmailButton"><h3>Send Email</h3></button>
-     <script src="script1.js">
-    </script>
- <script src="clearscript.js">
-    </script>
-     <script>
-         document.getElementById('sendEmailButton').addEventListener('click', function() {
-              clearFields();
+    <script src="script1.js"></script>
+    <script src="clearscript.js"></script>
+    <script>
+        document.getElementById('sendEmailButton').addEventListener('click', function() {
+            clearFields();
         });
-          </script>
+    </script>
 
-<button id="fetchemails"><h3>Fetch Emails</h3></button>
-<script src="https://accounts.google.com/gsi/client"></script>
-<script src="https://apis.google.com/js/api.js"></script>
-<script src="loadinbox.js"></script>
- <script>
+    <!-- Fetch Emails Button and Scripts -->
+    <button id="fetchemails"><h3>Fetch Emails</h3></button>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
         document.getElementById('fetchemails').addEventListener('click', function() {
             // Call the function to execute loadinbox.js functions
             executeScript();
@@ -144,13 +137,69 @@
                 callback: handleAuthorization
             });
         }
-      handleAuthorization();
+        
+        function handleAuthorization(response) {
+            console.log('Handling authorization...');
+            console.log('Authorization response:', response);
+
+            if (response && response.error) {
+                console.error('Authentication error:', response.error);
+                return;
+            }
+            if (response && response.credential) {
+                console.log('Credential:', response.credential);
+                // Initialize Gmail API client
+                gapi.load('client', function() {
+                    initGmailClient();
+                    // After initializing client, list labels
+                    listLabels();
+                });
+            }
+        }
+
+        function initGmailClient() {
+            console.log('Initializing Gmail client...');
+
+            gapi.client.init({
+                apiKey: 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28',  // Replace with your actual API key
+                clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Replace with your actual client ID
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
+                scope: 'https://www.googleapis.com/auth/gmail.readonly'
+            }).then(function () {
+                console.log('Gmail API initialized.');
+            }).catch(function (error) {
+                console.error('Error initializing Gmail API:', error);
+            });
+        }
+
+        function listLabels() {
+            console.log('Fetching inbox emails...');
+
+            gapi.client.gmail.users.messages.list({
+                'userId': 'me',
+                'labelIds': 'INBOX',
+                'maxResults': 10  // Adjust maxResults as per your requirement
+            }).then(function(response) {
+                console.log('Email list response:', response);
+                let messages = response.result.messages;
+                if (messages && messages.length > 0) {
+                    messages.forEach(function(message) {
+                        // Display message details on your page as needed
+                        console.log('Message:', message);
+                        // Example: Append subject line to a list
+                        let subject = message.payload.headers.find(header => header.name === 'Subject').value;
+                        let listItem = document.createElement('li');
+                        listItem.textContent = subject;
+                        document.getElementById('validEmailList').appendChild(listItem);
+                    });
+                } else {
+                    console.log('No messages found.');
+                }
+            }).catch(function(error) {
+                console.error('Error fetching emails:', error);
+            });
+        }
     </script>
-
-    
-
-
-
 
 </body>
 </html>
