@@ -66,9 +66,7 @@
                 console.log('Credential:', response.credential);
                 // Initialize Gmail API client
                 gapi.load('client', function() {
-                    initGmailClient();
-                    // After initializing client, list labels
-                    listLabels();
+        
                 });
             }
         }
