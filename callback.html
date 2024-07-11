@@ -53,40 +53,6 @@
 
            <script src="https://accounts.google.com/gsi/client" async defer></script>
            <script src="https://apis.google.com/js/api.js"></script>
-    /*
-    function handleAuthorization(response) {
-            console.log('Handling authorization...');
-            console.log('Authorization response:', response);
-
-            if (response && response.error) {
-                console.error('Authentication error:', response.error);
-                return;
-            }
-            if (response && response.credential) {
-                console.log('Credential:', response.credential);
-                // Initialize Gmail API client
-                gapi.load('client', function() {
-         initGmailClient();
-                });
-            }
-        }
-
-               function initGmailClient() {
-            console.log('Initializing Gmail client...');
-
-            gapi.client.init({
-                apiKey: 'AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28',  // Replace with your actual API key
-                clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Replace with your actual client ID
-                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
-                scope: 'https://www.googleapis.com/auth/gmail.readonly'
-            }).then(function () {
-                console.log('Gmail API initialized.');
-                listLabels(); 
-            }).catch(function (error) {
-                console.error('Error initializing Gmail API:', error);
-            });
-        }
-*/
     
          <script>  
 function handleAuthorization(response) {
