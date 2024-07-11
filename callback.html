@@ -64,7 +64,7 @@
 window.onload = function () {
     google.accounts.id.initialize({
         client_id: "919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com",
-        callback: handleCredentialResponse
+        callback: handleAuthorization
     });
     google.accounts.id.renderButton(
         document.getElementById("buttonDiv"),
