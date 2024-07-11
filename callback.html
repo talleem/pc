@@ -55,6 +55,23 @@
            <script src="https://accounts.google.com/gsi/client" async defer></script>
     
          <script>  
+
+             function handleAuthorization(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+    // You'll likely send this token to your backend for verification
+}
+
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: "YOUR_CLIENT_ID",
+        callback: handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }  // customization
+    );
+}
+
         function handleAuthorization(response) {
             console.log('Handling authorization...');
             console.log('Authorization response:', response);
