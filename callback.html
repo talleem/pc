@@ -92,8 +92,7 @@
              </script>
 
     <!-- OAuth Callback Handling -->
-     <script src="https://accounts.google.com/gsi/client"></script>
-            <script src="https://apis.google.com/js/api.js"></script>
+  
     <script>
         function fetchToken(code) {
             const tokenUrl = 'https://oauth2.googleapis.com/token';
@@ -167,8 +166,6 @@
 
     <!-- Fetch Emails Button and Scripts -->
     <button id="fetchemails"><h3>Fetch Emails</h3></button>
-    <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
     <script>
         document.getElementById('fetchemails').addEventListener('click', function() {
             // Call the function to execute loadinbox.js functions
