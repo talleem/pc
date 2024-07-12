@@ -138,7 +138,7 @@ google.accounts.id.initialize({
                     localStorage.setItem('refreshToken', refreshToken);
                 }
                   // Call handleAuthorization() after fetching token
-            handleCredentialResponse(credential: accessToken );
+            handleCredentialResponse({credential: accessToken});
 
                 // Optionally redirect or perform further actions as needed
             })
