@@ -54,26 +54,16 @@
     <script src="validateandlistaddress.js"></script>    
          <script>  
 
+// Add this at the beginning of your script (if not already present):
+google.accounts.id.initialize({
+    client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual client ID
+    callback: handleCredentialResponse 
+});
 
-             function handleAuthorization(response) {
+function handleCredentialResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
-    const accessToken = response.credential; // Store the access token
-
-    // Load the Google API client library
-    gapi.load('client:auth2', () => {
-        gapi.client.init({
-            clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
-            scope: 'https://www.googleapis.com/auth/gmail.readonly',
-            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"]
-        }).then(() => {
-            console.log('Google API client initialized.');
-            // Set the access token for API calls
-            gapi.auth.setToken({ access_token: accessToken }); 
-            loadGmailAPI();
-        }).catch(error => {
-            console.error('Error initializing Google API client:', error);
-        });
-    });
+    const accessToken = response.credential; 
+    // ... (rest of your logic to use the accessToken)
 }
 
 function loadGmailAPI() {
