@@ -53,13 +53,7 @@
     <!-- Scripts for Email Validation -->
     <script src="validateandlistaddress.js"></script>    
          <script>  
-
-// Add this at the beginning of your script (if not already present):
-google.accounts.id.initialize({
-    client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual client ID
-    callback: handleCredentialResponse 
-});
-
+             
 function handleCredentialResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     const accessToken = response.credential; 
@@ -131,7 +125,14 @@ function listLabels() {
                 const accessToken = data.access_token;
                 console.log('Access token:', accessToken);
                 localStorage.setItem('accessToken', accessToken);
-                handleAuthorization({ credential: accessToken });
+               
+// Add this at the beginning of your script (if not already present):
+google.accounts.id.initialize({
+    client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com', // Replace with your actual client ID
+    callback: handleCredentialResponse 
+});
+
+                
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
