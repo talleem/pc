@@ -109,55 +109,6 @@ function listLabels() {
         console.error('Error fetching emails:', error);
     });
 }
-             
-    function initGmailClient() {
-     gapi.client.init({
-        clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Your OAuth 2.0 client ID
-        scope: 'https://www.googleapis.com/auth/gmail.readonly'
-    }).then(function() {
-        console.log('Google API client initialized.');
-        // Now you can make API calls
-        loadGmailAPI();
-    }).catch(function(error) {
-        console.error('Error initializing Google API client:', error);
-    });
-}
-                 
-   function loadGmailAPI() {
-    gapi.client.load('gmail', 'v1', function() {
-        console.log('Gmail API loaded.');
-        // Now you can make Gmail API calls
-        listLabels();
-    });
-}
-
-        function listLabels() {
-            console.log('Fetching inbox emails...');
-
-            gapi.client.gmail.users.messages.list({
-                'userId': 'me',
-                'labelIds': 'INBOX',
-                'maxResults': 10  // Adjust maxResults as per your requirement
-            }).then(function(response) {
-                console.log('Email list response:', response);
-                let messages = response.result.messages;
-                if (messages && messages.length > 0) {
-                    messages.forEach(function(message) {
-                        // Display message details on your page as needed
-                        console.log('Message:', message);
-                        // Example: Append subject line to a list
-                        let subject = message.payload.headers.find(header => header.name === 'Subject').value;
-                        let listItem = document.createElement('li');
-                        listItem.textContent = subject;
-                        document.getElementById('validEmailList').appendChild(listItem);
-                    });
-                } else {
-                    console.log('No messages found.');
-                }
-            }).catch(function(error) {
-                console.error('Error fetching emails:', error);
-            });
-        }
     </script>
 
     
