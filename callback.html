@@ -57,6 +57,7 @@
 function handleAuthorization(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     // You'll likely send this token to your backend for verification
+    initGmailClient();
 }
 
              
