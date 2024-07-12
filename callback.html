@@ -40,7 +40,7 @@
         }
     </style>
     <script src="https://apis.google.com/js/api.js"></script>
-
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     
@@ -131,7 +131,7 @@ window.onload = function() {
                 const accessToken = data.access_token;
                 console.log('Access token:', accessToken);
                 localStorage.setItem('accessToken', accessToken);
-
+                handleAuthorization({ credential: accessToken });
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
@@ -139,7 +139,7 @@ window.onload = function() {
                 }
                   // Call handleAuthorization() after fetching token
            
-            handleAuthorization({ credential: accessToken }); // Assuming accessToken as credential
+             // Assuming accessToken as credential
 
                 // Optionally redirect or perform further actions as needed
             })
