@@ -71,7 +71,7 @@ document.getElementById("buttonDiv"),
 
              
     function initGmailClient() {
-     gapi.auth2.init({
+     gapi.client.init({
         clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Your OAuth 2.0 client ID
         scope: 'https://www.googleapis.com/auth/gmail.readonly'
     }).then(function() {
