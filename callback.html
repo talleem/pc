@@ -91,10 +91,40 @@ function handleAuthorization(response) {
         listLabels();
     });
 }
-
-             
+            
              </script>
 
+ <script>
+        function listLabels() {
+            console.log('Fetching inbox emails...');
+
+            gapi.client.gmail.users.messages.list({
+                'userId': 'me',
+                'labelIds': 'INBOX',
+                'maxResults': 10  // Adjust maxResults as per your requirement
+            }).then(function(response) {
+                console.log('Email list response:', response);
+                let messages = response.result.messages;
+                if (messages && messages.length > 0) {
+                    messages.forEach(function(message) {
+                        // Display message details on your page as needed
+                        console.log('Message:', message);
+                        // Example: Append subject line to a list
+                        let subject = message.payload.headers.find(header => header.name === 'Subject').value;
+                        let listItem = document.createElement('li');
+                        listItem.textContent = subject;
+                        document.getElementById('validEmailList').appendChild(listItem);
+                    });
+                } else {
+                    console.log('No messages found.');
+                }
+            }).catch(function(error) {
+                console.error('Error fetching emails:', error);
+            });
+        }
+    </script>
+
+    
     <!-- OAuth Callback Handling -->
   
     <script>
@@ -168,54 +198,7 @@ function handleAuthorization(response) {
         });
     </script>
 
-    <!-- Fetch Emails Button and Scripts -->
-    <button id="fetchemails"><h3>Fetch Emails</h3></button>
-    <script>
-        document.getElementById('fetchemails').addEventListener('click', function() {
-            // Call the function to execute loadinbox.js functions
-            executeScript();
-        });
-    </script>
-    <script>
-        function executeScript() {
-            // Ensure Google Identity Services is initialized first
-            google.accounts.id.initialize({
-                clientId: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',  // Replace with your actual client ID
-                callback: handleAuthorization
-            });
-            initGmailClient();
-        }
-    </script>
-<script>     
     
-        function listLabels() {
-            console.log('Fetching inbox emails...');
-
-            gapi.client.gmail.users.messages.list({
-                'userId': 'me',
-                'labelIds': 'INBOX',
-                'maxResults': 10  // Adjust maxResults as per your requirement
-            }).then(function(response) {
-                console.log('Email list response:', response);
-                let messages = response.result.messages;
-                if (messages && messages.length > 0) {
-                    messages.forEach(function(message) {
-                        // Display message details on your page as needed
-                        console.log('Message:', message);
-                        // Example: Append subject line to a list
-                        let subject = message.payload.headers.find(header => header.name === 'Subject').value;
-                        let listItem = document.createElement('li');
-                        listItem.textContent = subject;
-                        document.getElementById('validEmailList').appendChild(listItem);
-                    });
-                } else {
-                    console.log('No messages found.');
-                }
-            }).catch(function(error) {
-                console.error('Error fetching emails:', error);
-            });
-        }
-    </script>
-
+   
 </body>
 </html>
