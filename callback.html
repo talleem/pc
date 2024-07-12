@@ -67,7 +67,7 @@ function handleAuthorization(response) {
         document.getElementById("buttonDiv"),
         { theme: "outline", size: "large" }  // customization
     );
-    initGmailClient(); 
+     gapi.load('client', initGmailClient);
 }
 
              
