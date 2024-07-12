@@ -73,7 +73,21 @@ function handleAuthorization(response) {
     initGmailClient(); 
 }
              function initGmailClient() {
-    console.log('Initializing Gmail client...');
+    gapi.client.init({
+        apiKey: 'YOUR_API_KEY',  // If required, provide your API key here
+        clientId: 'YOUR_CLIENT_ID',  // Your OAuth 2.0 client ID
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"],
+        scope: 'https://www.googleapis.com/auth/gmail.readonly'
+    }).then(function() {
+        console.log('Google API client initialized.');
+        // Now you can make API calls
+        loadGmailAPI();
+    }).catch(function(error) {
+        console.error('Error initializing Google API client:', error);
+    });
+}
+                 
+   function loadGmailAPI() {
     gapi.client.load('gmail', 'v1', function() {
         console.log('Gmail API loaded.');
         // Now you can make Gmail API calls
@@ -81,6 +95,10 @@ function handleAuthorization(response) {
     });
 }
 
+// Call initGmailClient when window loads
+window.onload = function() {
+    initGmailClient();
+};
              
              </script>
 
