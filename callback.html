@@ -57,6 +57,18 @@
 function handleAuthorization(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     // You'll likely send this token to your backend for verification
+
+    google.accounts.id.initialize({
+        client_id: "919212619443-
+d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com",
+        callback: handleAuthorization
+    });
+    google.accounts.id.renderButton(
+document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large" }  // customization
+    );
+     gapi.load('client', initGmailClient);
+
     initGmailClient();
 }
 
