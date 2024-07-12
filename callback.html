@@ -131,8 +131,6 @@ google.accounts.id.initialize({
     client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com', // Replace with your actual client ID
     callback: handleCredentialResponse 
 });
-
- handleCredentialResponse();
                 
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
@@ -140,8 +138,7 @@ google.accounts.id.initialize({
                     localStorage.setItem('refreshToken', refreshToken);
                 }
                   // Call handleAuthorization() after fetching token
-           
-             // Assuming accessToken as credential
+            handleCredentialResponse();
 
                 // Optionally redirect or perform further actions as needed
             })
