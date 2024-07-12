@@ -39,7 +39,6 @@
             margin-left: 10px; /* Margin from the left edge */
         }
     </style>
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -51,12 +50,9 @@
     </div>
 
     <!-- Scripts for Email Validation -->
-    <script src="validateandlistaddress.js"></script>
-
-           <script src="https://accounts.google.com/gsi/client" async defer></script>
-           <script src="https://apis.google.com/js/api.js"></script>
-    
+    <script src="validateandlistaddress.js"></script>    
          <script>  
+             
 function handleAuthorization(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     // You'll likely send this token to your backend for verification
