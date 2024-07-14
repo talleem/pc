@@ -90,6 +90,14 @@ function handleCredentialResponse(response) {
     <!-- OAuth Callback Handling -->
   
     <script>
+
+        // Add this at the beginning of your script (if not already present):
+google.accounts.id.initialize({
+    client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com', // Replace with your actual client ID
+    callback: handleCredentialResponse 
+});
+    
+        
         function fetchToken(code) {
             const tokenUrl = 'https://oauth2.googleapis.com/token';
             const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; 
@@ -116,13 +124,7 @@ function handleCredentialResponse(response) {
                 const accessToken = data.access_token;
                 console.log('Access token:', accessToken);
                 localStorage.setItem('accessToken', accessToken);
-               
-// Add this at the beginning of your script (if not already present):
-google.accounts.id.initialize({
-    client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com', // Replace with your actual client ID
-    callback: handleCredentialResponse 
-});
-                
+                           
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
