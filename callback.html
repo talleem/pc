@@ -158,7 +158,16 @@ function handleCredentialResponse(response) {
         }
   
        // Load Google API client
-        gapi.load('client', initClient);  
+        gapi.load('client', initClient); 
+
+  // Check for OAuth callback and handle it
+        if (window.location.pathname === '/hello-world-page/callback') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            fetchToken(code); // Function to exchange code for access token
+        }
+    
+        
     </script>
 
     <!-- Email Sending Section -->
