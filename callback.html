@@ -131,11 +131,7 @@ function handleCredentialResponse(response) {
                 console.error('Error exchanging code for token:', error);
             });
         }
-              // Add this at the beginning of your script (if not already present):
-google.accounts.id.initialize({
-    client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com', // Replace with your actual client ID
-    callback: handleCredentialResponse 
-});
+
         // Check for OAuth callback and handle it
         if (window.location.pathname === '/hello-world-page/callback') {
             const urlParams = new URLSearchParams(window.location.search);
