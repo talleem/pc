@@ -98,11 +98,13 @@
   
     <script>
      
+       
+
         function fetchToken(code) {
             const tokenUrl = 'https://oauth2.googleapis.com/token';
-            const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; 
-            const clientSecret = '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'; 
-            const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback';
+            const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.comD'; // Replace with your actual client ID
+            const clientSecret = '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'; // Replace with your actual client secret
+            const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your actual callback URL
 
             const requestBody = {
                 code: code,
@@ -124,29 +126,41 @@
                 const accessToken = data.access_token;
                 console.log('Access token:', accessToken);
                 localStorage.setItem('accessToken', accessToken);
-                           
+
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
                     localStorage.setItem('refreshToken', refreshToken);
                 }
-                  // Call handleAuthorization() after fetching token
-            handleCredentialResponse({credential: accessToken});
 
-                // Optionally redirect or perform further actions as needed
+                // Wait for the Google API client to be ready
+                gapi.load('client', () => {
+                    gapi.client.init({
+                        // ... your API client configuration (if needed)
+                    }).then(() => {
+                        // Now call handleCredentialResponse
+                        handleCredentialResponse({credential: accessToken});
+                    });
+                });
             })
             .catch(error => {
                 console.error('Error exchanging code for token:', error);
             });
         }
 
+        // Initialize Google Sign-In
+        google.accounts.id.initialize({
+            client_id: 'YOUR_CLIENT_ID', // Replace with your actual client ID
+            callback: handleCredentialResponse 
+        });
+
         // Check for OAuth callback and handle it
-        if (window.location.pathname === '/hello-world-page/callback') {
+        if (window.location.pathname === '/YOUR_CALLBACK_PATH') { // Replace with your actual callback path
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-            fetchToken(code); // Function to exchange code for access token
+            fetchToken(code); 
         }
-    
+
     </script>
 
     <!-- Email Sending Section -->
