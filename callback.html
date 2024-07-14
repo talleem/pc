@@ -164,7 +164,8 @@ function handleCredentialResponse(response) {
             });
         }
   
-        
+       // Load Google API client
+        gapi.load('client', initClient);  
     </script>
 
     <!-- Email Sending Section -->
