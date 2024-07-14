@@ -61,13 +61,12 @@ function handleCredentialResponse(response) {
 }
 
 function loadGmailAPI() {
-    gapi.client.load('gmail', 'v1').then(() => {
-        console.log('Gmail API loaded.');
-        listLabels();
-    }).catch(error => {
-        console.error('Error loading Gmail API:', error);
-    });
+  // No need to load 'gmail', 'v1' explicitly anymore
+  // The Gmail API client library is already loaded via the script tag
+  console.log('Gmail API is ready to use.'); 
+  listLabels(); // Call listLabels directly since the API is ready
 }
+
 
 function listLabels() {
     console.log('Fetching inbox emails...');
