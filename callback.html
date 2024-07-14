@@ -143,6 +143,30 @@ function handleCredentialResponse(response) {
     
     </script>
 
+    <script>
+
+      function initClient() {
+            gapi.client.init({
+                apiKey: 'YOUR_API_KEY', // Replace with your actual API key
+                clientId: 'YOUR_CLIENT_ID', // Replace with your actual client ID
+                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
+                scope: 'https://www.googleapis.com/auth/gmail.readonly'
+            }).then(() => {
+                console.log('Google API client initialized');
+                // Check for OAuth callback and handle it
+                if (window.location.pathname === '/hello-world-page/callback') {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const code = urlParams.get('code');
+                    fetchToken(code); // Function to exchange code for access token
+                }
+            }).catch(error => {
+                console.error('Error initializing Google API client:', error);
+            });
+        }
+  
+        
+    </script>
+
     <!-- Email Sending Section -->
     <h1>Send Email</h1>
     <label for="receiverEmail"><h3> Receiver's Email:</h3></label>
