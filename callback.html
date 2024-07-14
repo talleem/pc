@@ -147,12 +147,7 @@
             });
         }
 
-        // Initialize Google Sign-In
-        google.accounts.id.initialize({
-            client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.comD', // Replace with your actual client ID
-            callback: handleCredentialResponse 
-        });
-
+      
         // Check for OAuth callback and handle it
         if (window.location.pathname === '/YOUR_CALLBACK_PATH') { // Replace with your actual callback path
             const urlParams = new URLSearchParams(window.location.search);
