@@ -62,7 +62,6 @@ function handleCredentialResponse(response) {
              
   function fetchEmails(accessToken) {           
   console.log('Fetching inbox emails...');
-
   // Assuming 'gapi.client.gmail' is available from the new library
   gapi.client.gmail.users.messages.list({
     userId: 'me',
@@ -84,9 +83,7 @@ function handleCredentialResponse(response) {
     }
   }).catch(error => {
     console.error('Error fetching emails:', error);
-  });
-}
-             }
+  });}
              
     </script>
 
