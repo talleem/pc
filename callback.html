@@ -70,29 +70,32 @@ function loadGmailAPI() {
 
 
 function listLabels() {
-    console.log('Fetching inbox emails...');
-    gapi.client.gmail.users.messages.list({
-        'userId': 'me',
-        'labelIds': 'INBOX',
-        'maxResults': 10 
-    }).then(response => {
-        console.log('Email list response:', response);
-        let messages = response.result.messages;
-        if (messages && messages.length > 0) {
-            messages.forEach(message => {
-                console.log('Message:', message);
-                let subject = message.payload.headers.find(header => header.name === 'Subject').value;
-                let listItem = document.createElement('li');
-                listItem.textContent = subject;
-                document.getElementById('validEmailList').appendChild(listItem);
-            });
-        } else {
-            console.log('No messages found.');
-        }
-    }).catch(error => {
-        console.error('Error fetching emails:', error);
-    });
+  console.log('Fetching inbox emails...');
+
+  // Assuming 'gapi.client.gmail' is available from the new library
+  gapi.client.gmail.users.messages.list({
+    userId: 'me',
+    labelIds: 'INBOX',
+    maxResults: 10
+  }).then(response => {
+    console.log('Email list response:', response);
+    let messages = response.result.messages;
+    if (messages && messages.length > 0) {
+      messages.forEach(message => {
+        console.log('Message:', message);
+        let subject = message.payload.headers.find(header => header.name === 'Subject').value;
+        let listItem = document.createElement('li');
+        listItem.textContent = subject;
+        document.getElementById('validEmailList').appendChild(listItem);
+      });
+    } else {
+      console.log('No messages found.');
+    }
+  }).catch(error => {
+    console.error('Error fetching emails:', error);
+  });
 }
+
     </script>
 
     
