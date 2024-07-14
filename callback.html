@@ -58,19 +58,7 @@ function handleCredentialResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     const accessToken = response.credential; 
     // ... (rest of your logic to use the accessToken)
-    loadGmailAPI();
-}
-
-function loadGmailAPI() {
-  // No need to load 'gmail', 'v1' explicitly anymore
-  // The Gmail API client library is already loaded via the script tag
-  console.log('Gmail API is ready to use.'); 
-  listLabels(); // Call listLabels directly since the API is ready
-}
-
-
-function listLabels() {
-  console.log('Fetching inbox emails...');
+  console.log('Fetching inbox emails...');
 
   // Assuming 'gapi.client.gmail' is available from the new library
   gapi.client.gmail.users.messages.list({
