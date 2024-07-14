@@ -58,6 +58,7 @@ function handleCredentialResponse(response) {
     console.log("Encoded JWT ID token: " + response.credential);
     const accessToken = response.credential; 
     // ... (rest of your logic to use the accessToken)
+    loadGmailAPI();
 }
 
 function loadGmailAPI() {
