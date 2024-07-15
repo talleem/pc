@@ -174,7 +174,7 @@
     });
 
     // Handle authentication response
-    function handleCredentialResponse(response) {
+   function handleCredentialResponse(response) {
       if (response.credential) {
         console.log('Credential obtained:', response.credential);
         // Proceed with authenticated API calls or other actions
@@ -183,7 +183,6 @@
         console.error('Authentication failed:', response.error);
       }
     }
-
     // Function to load Gmail API client after successful authentication
     function loadClient() {
       gapi.client.load('gmail', 'v1', listMessages);
@@ -206,6 +205,8 @@
         } else {
           console.log('No messages found.');
         }
+      }).catch(function(error) {
+        console.error('Error fetching messages:', error);
       });
     }
   </script>
