@@ -198,7 +198,7 @@
     }
 
     gapi.load('client:auth2', function() {
-      gapi.auth2.init({ client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com }).then(function() {
+      gapi.auth2.init({ client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com' }).then(function() {
         // Initialize and make API calls
         if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
           authenticate().then(loadClient);
