@@ -134,7 +134,9 @@
   <script>
 const url = 'https://mail.google.com/mail/u/0/#inbox';
 const proxyUrl = 'https://robwu.nl/cors-anywhere.html' + url;
-fetch(proxyUrl)
+fetch(proxyUrl, {
+  mode: 'no-cors'  // Use 'cors' mode for authenticated requests
+})
   .then(response => response.text())
   .then(data => {
     // Handle data or update UI as needed
