@@ -133,10 +133,15 @@
 
   <script>
 const url = 'https://mail.google.com/mail/u/0/#inbox';
-const proxyUrl = 'https://cors.bridged.cc/' + url;
+const proxyUrl = 'https://cors.sh/' + url;
+const apiKey = 'your_api_key_here'; // Replace with your actual API key
 
 fetch(proxyUrl, {
-  mode: 'no-cors'  // Set request mode to 'no-cors'
+  headers: {
+    'x-cors-api-key': apiKey,
+    'Content-Type': 'text/plain'
+  },
+  mode: 'cors'  // Use 'cors' mode for authenticated requests
 })
   .then(response => response.text())
   .then(data => {
@@ -157,6 +162,7 @@ fetch(proxyUrl, {
     errorMessage.textContent = 'Failed to fetch content. Please try again later.';
     document.body.appendChild(errorMessage);
   });
+
 
   </script>
 
