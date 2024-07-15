@@ -132,30 +132,37 @@
   <iframe id="externalContent" src="" width="100%" height="600px" frameborder="0"></iframe>
 
   <script>
-const url = 'https://mail.google.com/mail/u/0/#inbox';
-const proxyUrl = 'https://robwu.nl/cors-anywhere.html' + url;
-fetch(proxyUrl, {
-  mode: 'no-cors'  // Use 'cors' mode for authenticated requests
-})
-  .then(response => response.text())
-  .then(data => {
-    // Handle data or update UI as needed
-    const iframe = document.getElementById('externalContent');
-    iframe.srcdoc = data; // Set content inside iframe
-    console.log('Fetched data:', data); // Log fetched data to console (optional)
-    
-    // Example: Update UI with fetched data
-    const message = document.createElement('div');
-    message.textContent = 'Content fetched successfully!';
-    document.body.appendChild(message);
+<h1>Main Page Content</h1>
+<iframe id="externalContent" src="" width="100%" height="600px" frameborder="0"></iframe>
+
+<script>
+  const url = 'https://mail.google.com/mail/u/0/#inbox';
+  const proxyUrl = 'https://robwu.nl/cors-anywhere.html?' + encodeURIComponent(url);
+
+  fetch(proxyUrl, {
+    mode: 'no-cors' // Use 'cors' mode for authenticated requests if needed
   })
-  .catch(error => {
-    console.error('Error fetching external content:', error);
-    // Handle error scenarios, e.g., display an error message to the user
-    const errorMessage = document.createElement('div');
-    errorMessage.textContent = 'Failed to fetch content. Please try again later.';
-    document.body.appendChild(errorMessage);
-  });
+    .then(response => response.text())
+    .then(data => {
+      const iframe = document.getElementById('externalContent');
+      iframe.srcdoc = data; // Set content inside iframe
+
+      console.log('Fetched data:', data); // Log fetched data to console (optional)
+
+      // Example: Update UI with fetched data
+      const message = document.createElement('div');
+      message.textContent = 'Content fetched successfully!';
+      document.body.appendChild(message);
+    })
+    .catch(error => {
+      console.error('Error fetching external content:', error);
+      // Handle error scenarios, e.g., display an error message to the user
+      const errorMessage = document.createElement('div');
+      errorMessage.textContent = 'Failed to fetch content. Please try again later.';
+      document.body.appendChild(errorMessage);
+    });
+      
+</script>
 
 
 
