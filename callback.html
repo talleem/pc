@@ -164,6 +164,40 @@
       document.body.appendChild(errorMessage);
     });
 </script>
+<script>
+    // Load the Gmail API client library
+    function loadGmailApi() {
+      gapi.client.load('gmail', 'v1', listMessages);
+    }
 
+    // Fetch list of messages from Gmail
+    function listMessages() {
+      var request = gapi.client.gmail.users.messages.list({
+        'userId': 'me',
+        'labelIds': ['INBOX']
+      });
+
+      request.execute(function(response) {
+        var messages = response.messages;
+        if (messages && messages.length > 0) {
+          var messageList = document.getElementById('messages');
+          messages.forEach(function(message) {
+            var messageItem = document.createElement('div');
+            messageItem.textContent = message.id;
+            messageList.appendChild(messageItem);
+          });
+        } else {
+          console.log('No messages found.');
+        }
+      });
+    }
+  </script>
+
+  <!-- Include the Google API client library -->
+  <script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    // Initialize the API client and make API calls
+    gapi.load('client', loadGmailApi);
+  </script>
 </body>
 </html>
