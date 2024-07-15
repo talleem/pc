@@ -137,7 +137,7 @@
   const proxyUrl = 'https://robwu.nl/cors-anywhere.html?' + encodeURIComponent(url);
 
   fetch(proxyUrl, {
-    mode: 'no-cors' // Use 'cors' mode for authenticated requests if needed
+    mode: 'cors' // Use 'cors' mode for authenticated requests if needed
   })
     .then(response => response.text())
     .then(data => {
