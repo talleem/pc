@@ -133,8 +133,8 @@
 
   <script>
 const url = 'https://mail.google.com/mail/u/0/#inbox';
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
-
+const proxyUrl = 'https://api.allorigins.win/' + url;
+//https://cors-anywhere.herokuapp.com/
 fetch(proxyUrl)
   .then(response => response.text())
   .then(data => {
