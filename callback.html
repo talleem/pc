@@ -132,11 +132,12 @@
   <iframe id="externalContent" src="" width="100%" height="600px" frameborder="0"></iframe>
 
   <script>
-
-      const url = 'https://mail.google.com/mail/u/0/#inbox';
+const url = 'https://mail.google.com/mail/u/0/#inbox';
 const proxyUrl = 'https://cors.bridged.cc/' + url;
 
-fetch(proxyUrl)
+fetch(proxyUrl, {
+  mode: 'no-cors'  // Set request mode to 'no-cors'
+})
   .then(response => response.text())
   .then(data => {
     // Handle data or update UI as needed
