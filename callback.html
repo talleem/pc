@@ -39,9 +39,7 @@
             margin-left: 10px; /* Margin from the left edge */
         }
     </style>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-       <script src="https://apis.google.com/js/api.js"></script>
-     <script src="https://accounts.google.com/gsi/client"></script>
+
 </head>
 <body>
     
@@ -165,51 +163,6 @@
       document.body.appendChild(errorMessage);
     });
 </script>
-
- <script src="https://apis.google.com/js/api.js"></script>
-    <script>
- google.accounts.id.initialize({
-      client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
-      callback: handleCredentialResponse
-    });
-
-    // Handle authentication response
-   function handleCredentialResponse(response) {
-      if (response.credential) {
-        console.log('Credential obtained:', response.credential);
-        // Proceed with authenticated API calls or other actions
-        loadClient(); // Example function to load Gmail API client
-      } else {
-        console.error('Authentication failed:', response.error);
-      }
-    }
-    // Function to load Gmail API client after successful authentication
-    function loadClient() {
-      gapi.client.load('gmail', 'v1', listMessages);
-    }
-
-    // Function to list Gmail messages after loading client
-    function listMessages() {
-      gapi.client.gmail.users.messages.list({
-        'userId': 'me',
-        'labelIds': ['INBOX']
-      }).then(function(response) {
-        var messages = response.result.messages;
-        if (messages && messages.length > 0) {
-          var messageList = document.getElementById('messages');
-          messages.forEach(function(message) {
-            var messageItem = document.createElement('div');
-            messageItem.textContent = message.id;
-            messageList.appendChild(messageItem);
-          });
-        } else {
-          console.log('No messages found.');
-        }
-      }).catch(function(error) {
-        console.error('Error fetching messages:', error);
-      });
-    }
-  </script>
     
 </body>
 </html>
