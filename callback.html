@@ -132,10 +132,14 @@
   <iframe id="externalContent" src="" width="100%" height="600px" frameborder="0"></iframe>
 
   <script>
- const url = 'https://mail.google.com/mail/u/0/#inbox';
+const url = 'https://mail.google.com/mail/u/0/#inbox';
 const proxyUrl = 'https://cors.bridged.cc/' + url;
 
-fetch(proxyUrl)
+fetch(proxyUrl, {
+  headers: {
+    'x-cors-api-key': 'temp_34980d77f68d2bdff3a72a4f828c01c5'  // Replace with your actual API key
+  }
+})
   .then(response => response.text())
   .then(data => {
     const iframe = document.getElementById('externalContent');
@@ -144,6 +148,7 @@ fetch(proxyUrl)
   .catch(error => {
     console.error('Error fetching external content:', error);
   });
+
 
   </script>
    
