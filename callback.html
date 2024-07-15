@@ -164,21 +164,28 @@
       document.body.appendChild(errorMessage);
     });
 </script>
-<script>
-    // Load the Gmail API client library
-    function loadGmailApi() {
+
+
+
+<script src="https://apis.google.com/js/api.js"></script>
+  <script>
+    function authenticate() {
+      return gapi.auth2.getAuthInstance()
+        .signIn({ scope: 'https://www.googleapis.com/auth/gmail.readonly' })
+        .then(function() { console.log('Sign-in successful'); },
+              function(err) { console.error('Error signing in', err); });
+    }
+
+    function loadClient() {
       gapi.client.load('gmail', 'v1', listMessages);
     }
 
-    // Fetch list of messages from Gmail
     function listMessages() {
-      var request = gapi.client.gmail.users.messages.list({
+      gapi.client.gmail.users.messages.list({
         'userId': 'me',
         'labelIds': ['INBOX']
-      });
-
-      request.execute(function(response) {
-        var messages = response.messages;
+      }).then(function(response) {
+        var messages = response.result.messages;
         if (messages && messages.length > 0) {
           var messageList = document.getElementById('messages');
           messages.forEach(function(message) {
@@ -191,13 +198,22 @@
         }
       });
     }
+
+    gapi.load('client:auth2', function() {
+      gapi.auth2.init({ client_id: 'YOUR_CLIENT_ID' }).then(function() {
+        // Initialize and make API calls
+        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
+          authenticate().then(loadClient);
+        } else {
+          loadClient();
+        }
+      });
+    });
   </script>
 
-  <!-- Include the Google API client library -->
-  <script src="https://apis.google.com/js/api.js"></script>
-  <script>
-    // Initialize the API client and make API calls
-    gapi.load('client', loadGmailApi);
-  </script>
+    
+
+
+    
 </body>
 </html>
