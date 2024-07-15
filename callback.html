@@ -134,6 +134,10 @@ const url = 'https://mail.google.com/mail/u/0/#inbox';
 const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
 
 fetch(proxyUrl,{
+    method: 'GET',
+      headers: {
+        'Origin': 'https://yourwebsite.com'  // Replace with your website's origin
+      },
     mode: 'no-cors' 
 })
   .then(response => response.text())
