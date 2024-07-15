@@ -133,16 +133,9 @@
 
   <script>
 const url = 'https://mail.google.com/mail/u/0/#inbox';
-const proxyUrl = 'https://cors.sh/' + url;
-const apiKey = 'temp_34980d77f68d2bdff3a72a4f828c01c5'; // Replace with your actual API key
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
 
-fetch(proxyUrl, {
-  headers: {
-    'x-cors-api-key': apiKey,
-    'Content-Type': 'text/plain'
-  },
-  mode: 'cors'  // Use 'cors' mode for authenticated requests
-})
+fetch(proxyUrl)
   .then(response => response.text())
   .then(data => {
     // Handle data or update UI as needed
@@ -162,6 +155,7 @@ fetch(proxyUrl, {
     errorMessage.textContent = 'Failed to fetch content. Please try again later.';
     document.body.appendChild(errorMessage);
   });
+
 
 
   </script>
