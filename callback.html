@@ -41,6 +41,7 @@
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
        <script src="https://apis.google.com/js/api.js"></script>
+     <script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
     
@@ -166,18 +167,29 @@
 </script>
 
  <script src="https://apis.google.com/js/api.js"></script>
-  <script>
-    function authenticate() {
-      return gapi.auth2.getAuthInstance()
-        .signIn({ scope: 'https://www.googleapis.com/auth/gmail.readonly' })
-        .then(function() { console.log('Sign-in successful'); },
-              function(err) { console.error('Error signing in', err); });
+    <script>
+ google.accounts.id.initialize({
+      client_id: 919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
+      callback: handleCredentialResponse
+    });
+
+    // Handle authentication response
+    function handleCredentialResponse(response) {
+      if (response.credential) {
+        console.log('Credential obtained:', response.credential);
+        // Proceed with authenticated API calls or other actions
+        loadClient(); // Example function to load Gmail API client
+      } else {
+        console.error('Authentication failed:', response.error);
+      }
     }
 
+    // Function to load Gmail API client after successful authentication
     function loadClient() {
       gapi.client.load('gmail', 'v1', listMessages);
     }
 
+    // Function to list Gmail messages after loading client
     function listMessages() {
       gapi.client.gmail.users.messages.list({
         'userId': 'me',
@@ -196,17 +208,6 @@
         }
       });
     }
-
-    gapi.load('client:auth2', function() {
-      gapi.auth2.init({ client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com' }).then(function() {
-        // Initialize and make API calls
-        if (!gapi.auth2.getAuthInstance().isSignedIn.get()) {
-          authenticate().then(loadClient);
-        } else {
-          loadClient();
-        }
-      });
-    });
   </script>
     
 </body>
