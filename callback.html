@@ -159,27 +159,5 @@ fetch(proxyUrl)
 
   </script>
 
-    <script>
-const url = 'https://mail.google.com/mail/u/0/#inbox';
-const proxyUrl = 'https://cors.bridged.cc/' + url;
-
-fetch(proxyUrl, {
-  headers: {
-       mode: 'no-cors',
-    'x-cors-api-key': 'temp_34980d77f68d2bdff3a72a4f828c01c5'  // Replace with your actual API key
-  }
-})
-  .then(response => response.text())
-  .then(data => {
-    const iframe = document.getElementById('externalContent');
-    iframe.srcdoc = data; // Set content inside iframe
-  })
-  .catch(error => {
-    console.error('Error fetching external content:', error);
-  });
-
-
-  </script>
-   
 </body>
 </html>
