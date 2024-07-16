@@ -137,11 +137,6 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
         //https://www.foundationdb.org/https://mail.google.com/mail/u/0/#inbox
 
 fetch(proxyUrl, {
-  method: 'GET',
-  headers: {
-    'Origin': 'https://engineerr1983.github.io',  // Replace with your website's origin
-    'x-requested-with': 'XMLHttpRequest'
-  },
     mode: 'no-cors'
 })
 .then(response => response.text())
