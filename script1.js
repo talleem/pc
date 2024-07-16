@@ -61,6 +61,7 @@ function showMessage2(message2) {
     setTimeout(function() {
         div2.remove(); // Remove the div from the DOM
     }, 4500); // 4000 milliseconds = 4 seconds
+    openGmail();
 }
 
 //function to open a new tab to Gmail
@@ -143,7 +144,7 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
         console.log('Email sent successfully!');
         showMessage('Email sent successfully!');
         showMessage2('You have new message/s in you Gmail inbox');// This will display on the screen
-        openGmail();
+        
 
     })
     .catch(error => {
