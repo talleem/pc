@@ -138,10 +138,8 @@ const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
 
 fetch(proxyUrl, {
      headers: {
-    'Content-Type': 'origin',
-     'Content-Type': 'x-requested-with',
        'origin':'https://engineerr1983.github.io/',
-         'x-requested-with':''
+         'x-requested-with':'XMLHttpRequest'
 },
     mode: 'no-cors'
 })
