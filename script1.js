@@ -40,7 +40,7 @@ function showMessage(message) {
 
 function showMessage2(message2) {
     // Create a new <div> element
-    var div2 = document.createElement('div');
+    var div2 = document.createElement('div2');
     
     // Set the text content of the <div> to the message
     div2.textContent = message2;
