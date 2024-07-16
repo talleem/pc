@@ -142,7 +142,7 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
         }
         console.log('Email sent successfully!');
         showMessage('Email sent successfully!');
-        showMessage2('You have new message/s in you Gmail inbox');// This will display on the screen
+        showMessage2('You have new message/s in your Gmail inbox');// This will display on the screen
         setTimeout(function() {
         openGmail(); // Remove the div from the DOM
     }, 4500); // 4000 milliseconds = 4 seconds
