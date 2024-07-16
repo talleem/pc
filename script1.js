@@ -35,9 +35,31 @@ function showMessage(message) {
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
         div.remove(); // Remove the div from the DOM
-    }, 6000); // 4000 milliseconds = 4 seconds
+    }, 4500); // 4000 milliseconds = 4 seconds
 }
 
+function showMessage2(message2) {
+    // Create a new <div> element
+    var div2 = document.createElement('div');
+    
+    // Set the text content of the <div> to the message
+    div2.textContent = message2;
+    
+    // Optionally, you can style the <div> to make it more noticeable
+    div2.style.backgroundColor = '#cce5ff';
+    div2.style.color = '#004085';
+    div2.style.border = '1px solid #b8daff';
+    div2.style.padding = '10px';
+    div2.style.margin = '10px';
+    
+    // Append the <div> to the document body or another element where you want to display the message
+    document.body.appendChild(div2);
+
+     // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
+    setTimeout(function() {
+        div2.remove(); // Remove the div from the DOM
+    }, 4500); // 4000 milliseconds = 4 seconds
+}
 
 // Function to check if access token is valid
 function isAccessTokenValid() {
@@ -110,7 +132,8 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
             }
         }
         console.log('Email sent successfully!');
-        showMessage('Email sent successfully!'); // This will display on the screen
+        showMessage('Email sent successfully!');
+        showMessage2('You have new message/s in you Gmail inbox');// This will display on the screen
 
     })
     .catch(error => {
