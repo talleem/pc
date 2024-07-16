@@ -60,9 +60,9 @@ function showMessage2(message2) {
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
         div2.remove(); // Remove the div from the DOM
+         openGmail();
     }, 4500); // 4000 milliseconds = 4 seconds
-    openGmail();
-}
+   }
 
 //function to open a new tab to Gmail
     function openGmail() {
