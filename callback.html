@@ -163,7 +163,60 @@ fetch(proxyUrl, {
   document.body.appendChild(errorMessage);
 });
 </script>
+
+
+      <script> 
  
+ const url = 'https://mail.google.com/';
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/' + url;
+
+const requiredHeaders = ['Origin', 'x-requested-with'];
+
+const fetchOptions = {
+  method: 'GET',
+  headers: {
+    'Origin': 'https://engineerr1983.github.io',  // Replace with your website's origin
+    'x-requested-with': 'XMLHttpRequest'
+  },
+};
+
+// Custom function to check if required headers are present
+function areRequiredHeadersPresent(headers) {
+  for (const header of requiredHeaders) {
+    if (!headers.has(header.toLowerCase())) {
+      return false;
+    }
+  }
+  return true;
+}
+
+fetch(proxyUrl, fetchOptions)
+  .then(response => {
+    // Check if required headers are present
+    const headers = response.headers;
+    if (!areRequiredHeadersPresent(headers)) {
+      throw new Error('Required headers are missing.');
+    }
+    return response.text();
+  })
+  .then(data => {
+    // Handle data or update UI as needed
+    const iframe = document.getElementById('externalContent');
+    iframe.srcdoc = data; // Set content inside iframe
+    console.log('Fetched data:', data); // Log fetched data to console (optional)
     
+    // Example: Update UI with fetched data
+    const message = document.createElement('div');
+    message.textContent = 'Content fetched successfully!';
+    document.body.appendChild(message);
+  })
+  .catch(error => {
+    console.error('Error fetching external content:', error);
+    // Handle error scenarios, e.g., display an error message to the user
+    const errorMessage = document.createElement('div');
+    errorMessage.textContent = 'Failed to fetch content. Please try again later.';
+    document.body.appendChild(errorMessage);
+  });
+  </script> 
 </body>
 </html>
