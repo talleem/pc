@@ -46,7 +46,7 @@ function showMessage2(message2) {
     div2.textContent = message2;
     
     // Optionally, you can style the <div> to make it more noticeable
-    div2.style.backgroundColor = '#cce5ff';
+    div2.style.backgroundColor = '#FFFFC5';
     div2.style.color = '#004085';
     div2.style.border = '1px solid #b8daff';
     div2.style.padding = '10px';
