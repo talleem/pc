@@ -51,7 +51,7 @@ function showMessage2(message2) {
     div2.style.border = '1px solid #b8daff';
     div2.style.padding = '10px';
     div2.style.margin = '10px';
-    div2.style.fontSize = '1.5em';
+    div2.style.fontSize = '1.2em';
     
     
     // Append the <div> to the document body or another element where you want to display the message
@@ -60,7 +60,6 @@ function showMessage2(message2) {
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
         div2.remove(); // Remove the div from the DOM
-         openGmail();
     }, 4500); // 4000 milliseconds = 4 seconds
    }
 
@@ -144,6 +143,9 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
         console.log('Email sent successfully!');
         showMessage('Email sent successfully!');
         showMessage2('You have new message/s in you Gmail inbox');// This will display on the screen
+        setTimeout(function() {
+        openGmail(); // Remove the div from the DOM
+    }, 4500); // 4000 milliseconds = 4 seconds
         
 
     })
