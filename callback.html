@@ -141,7 +141,7 @@ fetch(proxyUrl, {
     'Content-Type': "origin",
      'Content-Type': "x-requested-with"
 },
-    mode: 'no-cors'
+    mode: 'cors'
 })
 .then(response => response.text())
 .then(data => {
