@@ -51,6 +51,7 @@ function showMessage2(message2) {
     div2.style.border = '1px solid #b8daff';
     div2.style.padding = '10px';
     div2.style.margin = '10px';
+    div.style.fontSize = '1.1em';
     
     
     // Append the <div> to the document body or another element where you want to display the message
