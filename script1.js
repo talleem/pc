@@ -63,6 +63,13 @@ function showMessage2(message2) {
     }, 4500); // 4000 milliseconds = 4 seconds
 }
 
+//function to open a new tab to Gmail
+    function openGmail() {
+      window.open('https://mail.google.com/', '_blank');
+    }
+
+
+
 // Function to check if access token is valid
 function isAccessTokenValid() {
     const accessToken = localStorage.getItem('accessToken');
@@ -136,6 +143,7 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
         console.log('Email sent successfully!');
         showMessage('Email sent successfully!');
         showMessage2('You have new message/s in you Gmail inbox');// This will display on the screen
+        openGmail();
 
     })
     .catch(error => {
