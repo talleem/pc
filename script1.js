@@ -39,28 +39,28 @@ function showMessage(message) {
     }, 4500); // 4000 milliseconds = 4 seconds
 }
 
-function showMessage2(message2) {
+function showMessage2(message) {
     // Create a new <div> element
-    var div2 = document.createElement('div2');
+    var div = document.createElement('div');
     
     // Set the text content of the <div> to the message
-    div2.textContent = message2;
+    div2.textContent = message;
     
     // Optionally, you can style the <div> to make it more noticeable
-    div2.style.backgroundColor = '#ffffc5';
-    div2.style.color = '#004085';
-    div2.style.border = '1px solid #b8daff';
-    div2.style.padding = '10px';
-    div2.style.margin = '10px';
-    div2.style.fontSize = '1.2em';
+    div.style.backgroundColor = '#ffffc5';
+    div.style.color = '#004085';
+    div.style.border = '1px solid #b8daff';
+    div.style.padding = '10px';
+    div.style.margin = '10px';
+    div.style.fontSize = '1.2em';
     
     
     // Append the <div> to the document body or another element where you want to display the message
-    document.body.appendChild(div2);
+    document.body.appendChild(div);
 
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
-        div2.remove(); // Remove the div from the DOM
+        div.remove(); // Remove the div from the DOM
     }, 4500); // 4000 milliseconds = 4 seconds
    }
 
