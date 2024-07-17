@@ -35,11 +35,6 @@ function showMessage(message) {
     // Append the <div> to the document body or another element where you want to display the message
      // Return the created div
     return div;
-
-     // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
-    setTimeout(function() {
-        div.remove(); // Remove the div from the DOM
-    }, 4500); // 4000 milliseconds = 4 seconds
    }
 
 //function to open a new tab to Gmail
@@ -134,6 +129,12 @@ container.appendChild(message2);
 
 // Append the container div to the document body
 document.body.appendChild(container);
+
+
+            // Automatically remove the message after 4 seconds
+    setTimeout(function() {
+        container.remove();
+    }, 4500); // 4000 milliseconds = 4 seconds
 
         
         setTimeout(function() {
