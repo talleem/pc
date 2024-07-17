@@ -20,7 +20,7 @@ function showMessage(message) {
     var div = document.createElement('div');
     
     // Set the text content of the <div> to the message
-    div2.textContent = message;
+    div.textContent = message;
     
     // Optionally, you can style the <div> to make it more noticeable
     div.style.backgroundColor = '#ffffc5';
