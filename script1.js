@@ -28,7 +28,7 @@ function showMessage(message) {
     div.style.border = '1px solid #b8daff';
     div.style.padding = '10px';
     div.style.margin = '10px';
-    div.style.display = 'inline-block';
+     div.style.width = 'fit-content';
     
     // Append the <div> to the document body or another element where you want to display the message
     document.body.appendChild(div);
@@ -53,6 +53,7 @@ function showMessage2(message) {
     div.style.padding = '10px';
     div.style.margin = '10px';
     div.style.fontSize = '1.2em';
+     div.style.width = 'fit-content';
     
     
     // Append the <div> to the document body or another element where you want to display the message
