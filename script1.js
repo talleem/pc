@@ -127,8 +127,11 @@ container.appendChild(message1);
 var message2 = showMessage('You have new message/s in your Gmail inbox');
 container.appendChild(message2);
 
-// Append the container div to the document body
-document.body.appendChild(container);
+        // Get the message frame container
+var messageFrame = document.getElementById('messageFrame');
+
+// Append the container div with messages to the message frame
+messageFrame.appendChild(container);
 
 
             // Automatically remove the message after 4 seconds
