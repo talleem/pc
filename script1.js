@@ -28,7 +28,7 @@ function showMessage(message) {
     div.style.border = '1px solid #b8daff';
     div.style.padding = '10px';
     div.style.margin = '6px';
-    div.style.fontSize = '1.1em';
+    div.style.fontSize = '1.15em';
      div.style.width = 'fit-content';
     
     
