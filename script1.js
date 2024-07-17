@@ -14,33 +14,8 @@ function makeEmail(email) {
     };
 }
 
-// Create a function to display a message on the screen
+
 function showMessage(message) {
-    // Create a new <div> element
-    var div = document.createElement('div');
-    
-    // Set the text content of the <div> to the message
-    div.textContent = message;
-    
-    // Optionally, you can style the <div> to make it more noticeable
-    div.style.backgroundColor = '#cce5ff';
-    div.style.color = '#004085';
-    div.style.border = '1px solid #b8daff';
-    div.style.padding = '10px';
-    div.style.margin = '10px';
-     div.style.width = 'fit-content';
-    
-    // Append the <div> to the document body or another element where you want to display the message
-    document.body.appendChild(div);
-    document.body.appendChild(document.createElement('br'))
-
-     // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
-    setTimeout(function() {
-        div.remove(); // Remove the div from the DOM
-    }, 4500); // 4000 milliseconds = 4 seconds
-}
-
-function showMessage2(message) {
     // Create a new <div> element
     var div = document.createElement('div');
     
@@ -58,7 +33,8 @@ function showMessage2(message) {
     
     
     // Append the <div> to the document body or another element where you want to display the message
-    document.body.appendChild(div);
+     // Return the created div
+    return div;
 
      // Set a timeout to remove the message after 4 seconds (4000 milliseconds)
     setTimeout(function() {
@@ -144,8 +120,22 @@ function sendMessageWithRetry(accessToken, email, retries = 1) {
             }
         }
         console.log('Email sent successfully!');
-        showMessage('Email sent successfully!');
-        showMessage2('You have new message/s in your Gmail inbox');// This will display on the screen
+      
+// Create a container div to hold the messages
+var container = document.createElement('div');
+
+// Display the first message
+var message1 = showMessage('Email sent successfully!');
+container.appendChild(message1);
+
+// Display the second message
+var message2 = showMessage('You have new message/s in your Gmail inbox');
+container.appendChild(message2);
+
+// Append the container div to the document body
+document.body.appendChild(container);
+
+        
         setTimeout(function() {
         openGmail(); // Remove the div from the DOM
     }, 4500); // 4000 milliseconds = 4 seconds
