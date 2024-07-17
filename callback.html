@@ -47,6 +47,15 @@
             display: inline-block;
         }
     </style>
+     <style>
+        #messageFrame {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f0f0f0;
+            width: 400px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
     
@@ -128,7 +137,9 @@
     <br>
     <button id="sendEmailButton"><h3>Send Email</h3></button>
           </div>
-    <script src="script1.js"></script>
+       <div id="messageFrame">
+      <script src="script1.js"></script>
+    </div>
     <script src="clearscript.js"></script>
     <script>
         document.getElementById('sendEmailButton').addEventListener('click', function() {
