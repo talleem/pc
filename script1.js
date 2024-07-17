@@ -133,10 +133,14 @@ var messageFrame = document.getElementById('messageFrame');
 // Append the container div with messages to the message frame
 messageFrame.appendChild(container);
 
+         // Show the message frame container
+    messageFrame.style.display = 'block';
+
 
             // Automatically remove the message after 4 seconds
     setTimeout(function() {
         container.remove();
+          messageFrame.style.display = 'none';
     }, 4500); // 4000 milliseconds = 4 seconds
 
         
