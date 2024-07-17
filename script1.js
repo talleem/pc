@@ -134,7 +134,7 @@ var messageFrame = document.getElementById('messageFrame');
 messageFrame.appendChild(container);
 
          // Show the message frame container
-    messageFrame.style.display = 'block';
+    messageFrame.style.display = 'none';
 
 
             // Automatically remove the message after 4 seconds
