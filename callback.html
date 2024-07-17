@@ -56,14 +56,20 @@
             margin: auto 20px 20px 20px;
         }
     </style>
-    <style>
+  <style>
   .header {
     background-color: #ddfcf7;
     padding: 8px 12px;
-    margin: 0; /* Ensure no margin */
-      display: inline-block; 
-      width:fit-content; /* Adjust width as needed */
-    margin-left: -10px; /* Adjust negative margin to center */
+    margin: 0;
+    width: 100%; /* Full width header */
+    position: fixed; /* Fixed position at the top */
+    top: 0; /* Stick to the top of the viewport */
+    left: 0; /* Align to the left */
+    z-index: 1000; /* Ensure it's above other content */
+  }
+  
+  .header h1 {
+    margin: 0; /* Remove any default margins */
   }
 </style>
 </head>
