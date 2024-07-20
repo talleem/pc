@@ -57,18 +57,7 @@
         }
     </style>
 </head>
-<body>
-    
-    <!-- Email List Container -->
-    <div class="email-list">
-        <p><strong><h2>Valid Contacts:</h2></strong></p>
-        <ul id="validEmailList"></ul>
-    </div>
-
-    <!-- Scripts for Email Validation -->
-     <script src="populatewithcontacts.js"></script> 
-
-    
+<body>  
          <script>  
     <!-- OAuth Callback Handling -->     
         function fetchToken(code) {
@@ -103,8 +92,6 @@
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
                     localStorage.setItem('refreshToken', refreshToken);
-                     //To populate email contacts list
-                populateEmailList(accessToken);
                 }
             })
             .catch(error => {
@@ -126,6 +113,15 @@
     </script>
 
     <!-- Email Sending Section -->
+
+      <!-- Email List Container -->
+    <div class="email-list">
+        <p><strong><h2>Valid Contacts:</h2></strong></p>
+        <ul id="validEmailList"></ul>
+    </div>
+
+    <!-- Scripts for Email Validation -->
+     <script src="populatewithcontacts.js"></script>
 
 <h1 style="background-color: #ddfcf7; width: fit-content;font-family:Trebuchet MS,sans-serif;">Send Email</h1>
      <div class="frame">
