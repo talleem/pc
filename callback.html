@@ -126,6 +126,13 @@
     
         
     </script>
+    
+<script>
+    window.onload = function() {
+    const accessToken = localStorage.getItem('accessToken');
+    populateEmailList(accessToken);
+};
+ </script>
 
     <!-- Email Sending Section -->
 
