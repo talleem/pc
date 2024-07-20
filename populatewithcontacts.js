@@ -44,7 +44,7 @@ function refreshToken() {
 }
 
 // Function to fetch contacts from Google People API using the provided access token
-async function fetchContacts(accessToken) {
+ function fetchContacts(accessToken) {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
 
     try {
