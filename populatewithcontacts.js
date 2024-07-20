@@ -1,13 +1,11 @@
-// populatewithcontacts.js
-
-// Function to fetch contacts from Google People API
-async function fetchContacts() {
+// Function to fetch contacts from Google People API using the provided access token
+async function fetchContacts(accessToken) {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
 
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': 'Bearer ya29.a0AXooCgtpp55XcC8Wxlghlg1wzeTeI1rRaU1fDUtQ-rjy5TI2RWsl-MTSk5-s1IiZ0aopA7S_ixLnF38NAmCYunCm1LqNoQ_0McYa528mgqkKYMFsOM14CuXBnNKGUYTXQ48uOJ9dxsEIueZX___6xhxPuoPbo2MsQbUaCgYKAcMSARESFQHGX2MiEBC9RMPlEA8WKkqHuOmdxg0170',
+                'Authorization': `Bearer ${accessToken}`, // Use the provided access token
             },
         });
 
@@ -30,9 +28,9 @@ function isValidEmail(email) {
 }
 
 // Function to populate the email list in the HTML
-async function populateEmailList() {
+async function populateEmailList(accessToken) {
     const validEmailList = document.getElementById('validEmailList');
-    const contacts = await fetchContacts();
+    const contacts = await fetchContacts(accessToken);
 
     const textarea = document.getElementById('receiverEmail');
     const emailList = document.getElementById('validEmailList');
@@ -96,5 +94,8 @@ async function populateEmailList() {
     updateEmailList();
 }
 
-// Call populateEmailList during page load
-window.onload = populateEmailList;
+// Call populateEmailList during page load, assuming accessToken is passed from callback.html
+window.onload = function() {
+    const accessToken = localStorage.getItem('accessToken');
+    populateEmailList(accessToken);
+};
