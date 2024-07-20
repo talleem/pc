@@ -48,7 +48,7 @@ function refreshToken() {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
 
     try {
-        const response = await fetch(url, {
+        const response = fetch(url, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`, // Use the provided access token
             },
