@@ -58,7 +58,7 @@ function refreshToken() {
             throw new Error('Failed to fetch contacts');
         }
 
-        const data = await response.json();
+        const data = response.json();
         return data.connections || []; // Return empty array if no connections
     } catch (error) {
         console.error('Error fetching contacts:', error);
