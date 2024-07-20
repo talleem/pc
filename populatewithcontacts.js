@@ -44,26 +44,27 @@ function refreshToken() {
 }
 
 // Function to fetch contacts from Google People API using the provided access token
- function fetchContacts(accessToken) {
+function fetchContacts(accessToken) {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
 
-    try {
-        const response = fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`, // Use the provided access token
-            },
-        });
-
+    return fetch(url, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`, // Use the provided access token
+        },
+    })
+    .then(response => {
         if (!response.ok) {
             throw new Error('Failed to fetch contacts');
         }
-
-        const data = response.json();
+        return response.json();
+    })
+    .then(data => {
         return data.connections || []; // Return empty array if no connections
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('Error fetching contacts:', error);
         return [];
-    }
+    });
 }
 
 // Function to validate an email address
@@ -73,21 +74,16 @@ function isValidEmail(email) {
 }
 
 // Function to populate the email list in the HTML
-async function populateEmailList(accessToken) {
+function populateEmailList(accessToken) {
     const validEmailList = document.getElementById('validEmailList');
-    const contacts = await fetchContacts(accessToken);
+    let validEmails = [];
 
     const textarea = document.getElementById('receiverEmail');
     const emailList = document.getElementById('validEmailList');
 
-    // Initialize an array to store unique valid emails
-    let validEmails = [];
-
-    // Function to update the email list display
     function updateEmailList() {
         emailList.innerHTML = ''; // Clear the current list
 
-        // Add each valid email to the list
         validEmails.forEach(email => {
             const li = document.createElement('li');
             li.textContent = email;
@@ -95,51 +91,48 @@ async function populateEmailList(accessToken) {
         });
     }
 
-    // Event listener for when textarea is focused
     textarea.addEventListener('focus', function() {
-        // Update the email list display
         updateEmailList();
     });
 
-    // Event listener for when a key is pressed in the textarea
     textarea.addEventListener('keyup', function(event) {
         if (event.key === 'Enter' || event.key === ',') {
-            // Split the textarea value by newline or comma to get potential email addresses
             const emails = textarea.value.split(/[\n,]+/);
 
-            // Validate each email and add it to the validEmails array if unique and valid
             emails.forEach(email => {
-                email = email.trim(); // Trim whitespace
+                email = email.trim();
 
                 if (email && isValidEmail(email) && !validEmails.includes(email)) {
                     validEmails.push(email);
                 }
             });
 
-            // Clear the textarea and update the email list display
             textarea.value = '';
             updateEmailList();
         }
     });
 
-    // Add contacts' email addresses to validEmails array (unique)
-    contacts.forEach(contact => {
-        const emailAddresses = contact.emailAddresses;
-        if (emailAddresses) {
-            emailAddresses.forEach(email => {
-                const emailValue = email.value.trim();
-                if (emailValue && isValidEmail(emailValue) && !validEmails.includes(emailValue)) {
-                    validEmails.push(emailValue);
-                }
-            });
-        }
-    });
+    fetchContacts(accessToken)
+    .then(contacts => {
+        contacts.forEach(contact => {
+            const emailAddresses = contact.emailAddresses;
+            if (emailAddresses) {
+                emailAddresses.forEach(email => {
+                    const emailValue = email.value.trim();
+                    if (emailValue && isValidEmail(emailValue) && !validEmails.includes(emailValue)) {
+                        validEmails.push(emailValue);
+                    }
+                });
+            }
+        });
 
-    // Populate the email list with valid emails
-    updateEmailList();
+        updateEmailList();
+    })
+    .catch(error => {
+        console.error('Error fetching contacts:', error);
+    });
 }
 
-// Call populateEmailList during page load, assuming accessToken is passed from callback.html
 window.onload = function() {
     const accessToken = localStorage.getItem('accessToken');
     populateEmailList(accessToken);
