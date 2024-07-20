@@ -133,7 +133,4 @@ function populateEmailList(accessToken) {
     });
 }
 
-window.onload = function() {
-    const accessToken = localStorage.getItem('accessToken');
-    populateEmailList(accessToken);
-};
+
