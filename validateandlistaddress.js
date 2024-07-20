@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to update the email list display
   function updateEmailList() {
     // Clear the current list
-    emailList.innerHTML = '';
+   // emailList.innerHTML = '';
 
     // Add each valid email to the list
     validEmails.forEach(email => {
