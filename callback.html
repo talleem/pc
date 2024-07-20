@@ -98,13 +98,13 @@
                 console.log('Access token:', accessToken);
                 localStorage.setItem('accessToken', accessToken);
                 
-                //To populate email contacts list
-                populateEmailList(accessToken);
-                           
+                                    
                 // Optional: Store refresh token if provided
                 const refreshToken = data.refresh_token;
                 if (refreshToken) {
                     localStorage.setItem('refreshToken', refreshToken);
+                     //To populate email contacts list
+                populateEmailList(accessToken);
                 }
             })
             .catch(error => {
