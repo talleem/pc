@@ -1,3 +1,48 @@
+// Function to check if access token is valid
+function isAccessTokenValid() {
+    const accessToken = localStorage.getItem('accessToken');
+    const expiration = localStorage.getItem('tokenExpiration');
+
+    // Check if access token exists and if it's still valid
+    return accessToken && expiration && Date.now() < parseInt(expiration);
+}
+
+// Function to refresh access token using refresh token
+function refreshToken() {
+    const refreshToken = localStorage.getItem('refreshToken');
+    const tokenUrl = 'https://oauth2.googleapis.com/token';
+    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
+    const clientSecret = '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';
+    const requestBody = {
+        refresh_token: refreshToken,
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token'
+    };
+
+    return fetch(tokenUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => response.json())
+    .then(data => {
+        const newAccessToken = data.access_token;
+        const expiresIn = data.expires_in; // Typically in seconds
+
+        // Calculate new expiration timestamp
+        const expiration = Date.now() + expiresIn * 1000;
+
+        // Update localStorage with new token and expiration
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('tokenExpiration', expiration);
+
+        return newAccessToken;
+    });
+}
+
 // Function to fetch contacts from Google People API using the provided access token
 async function fetchContacts(accessToken) {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
