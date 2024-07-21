@@ -7,7 +7,7 @@ async function fetchContacts() {
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': 'Bearer ya29.a0AXooCgvczIUsn9Gg_CxlCuF-osSKoiiwX2_jnSJSwsTMZZIJ_yf6d6mR6v2-9IY27jfRvBOmKCsRFoOYIHgJiLyiRl8Kv_8YLe7Lc6DZg8ZX2dcz9zp4ulArpjpF6x_8ujtD0LUH7_RPUQONhwzWUB6A0JXq0CVnf_IaCgYKAWkSARESFQHGX2MiEhLmbtOaiQRNSCfIAeakyA0170',
+                'Authorization': 'Bearer ya29.a0AXooCguGrLQQX0gJiLf12cR5ICc0r0rZhh99qh-ozA2Ca2f1rWwZrYDozH0P4DtOFErGPZ6CvqAhd-fLd3G31jdNYTctrd-OjuJrWNasqcHcMD68ckvePp7Bvu5AU9KcrG1DrnAeNpsefSxHsx0JJiMZOxGiK3PxMAIaCgYKAWMSARESFQHGX2MiEo7c5ScGyGN_cGykaLJ88A0170',
             },
         });
 
