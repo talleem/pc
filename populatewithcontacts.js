@@ -49,11 +49,12 @@ function refreshToken() {
 // Function to fetch contacts from Google People API
 async function fetchContacts() {
     const url = 'https://people.googleapis.com/v1/people/me/connections?personFields=emailAddresses';
+    const accessToken = localStorage.getItem('accessToken');
 
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': `Bearer ${newAccessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
         });
