@@ -53,7 +53,8 @@ async function fetchContacts() {
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': 'Bearer ${newAccessToken}',
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
             },
         });
 
