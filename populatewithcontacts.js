@@ -53,7 +53,7 @@ async function fetchContacts() {
     try {
         const response = await fetch(url, {
             headers: {
-                'Authorization': 'Bearer ya29.a0AXooCguGrLQQX0gJiLf12cR5ICc0r0rZhh99qh-ozA2Ca2f1rWwZrYDozH0P4DtOFErGPZ6CvqAhd-fLd3G31jdNYTctrd-OjuJrWNasqcHcMD68ckvePp7Bvu5AU9KcrG1DrnAeNpsefSxHsx0JJiMZOxGiK3PxMAIaCgYKAWMSARESFQHGX2MiEo7c5ScGyGN_cGykaLJ88A0170',
+                'Authorization': 'Bearer ${accessToken}',
             },
         });
 
