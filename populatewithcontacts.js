@@ -97,4 +97,4 @@ async function populateEmailList() {
 }
 
 // Call populateEmailList during page load
-window.onload = populateEmailList;
+//window.onload = populateEmailList;
