@@ -1,0 +1,26 @@
+/* Hide all tab content by default */
+.tabcontent {
+    display: none;
+}
+
+/* Style the tab buttons */
+.tablink {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.tablink:hover {
+    background-color: #ddd;
+}
+
+/* Style the active tab button */
+.tablink.active {
+    background-color: #ccc;
+}
+
+/* Show the active tab content */
+.tabcontent.active {
+    display: block;
+}
