@@ -1,9 +1,11 @@
+// scripts.js
+
 // Function to switch tabs
 function openTab(evt, tabName) {
     // Hide all tab content
     var tabcontent = document.getElementsByClassName("tabcontent");
     for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].classList.remove("active");
+        tabcontent[i].style.display = "none";
     }
 
     // Deactivate all tab buttons
@@ -13,6 +15,6 @@ function openTab(evt, tabName) {
     }
 
     // Show the clicked tab content and mark the button as active
-    document.getElementById(tabName).classList.add("active");
+    document.getElementById(tabName).style.display = "block";
     evt.currentTarget.classList.add("active");
 }
