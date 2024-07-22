@@ -178,6 +178,54 @@
             clearFields();
         });
     </script>
-       
+
+ <script>
+
+     function showMessage3(message) {
+    // Create a new <div> element
+    var div = document.createElement('div');
+    
+    // Set the text content of the <div> to the message
+    div.textContent = message;
+    
+    // Optionally, you can style the <div> to make it more noticeable
+    div.style.backgroundColor = '#ffffc5';
+    div.style.color = '#004085';
+    div.style.border = '1px solid #b8daff';
+    div.style.padding = '10px';
+    div.style.margin = '6px';
+    div.style.fontSize = '1.15em';
+    div.style.width = 'fit-content';
+    
+    
+    // Append the <div> to the document body or another element where you want to display the message
+     // Return the created div
+    return div;
+   }
+   // Create a container div to hold the messages
+var container = document.createElement('div');
+// Display the first message
+var message3 = showMessage3('Click (Contacts) button to load your contacts list..');
+container.appendChild(message3);
+
+        // Get the message frame container
+var messageFrame = document.getElementById('messageFrame');
+
+// Append the container div with messages to the message frame
+messageFrame.appendChild(container);
+
+         // Show the message frame container
+    messageFrame.style.display = 'block';
+
+
+            // Automatically remove the message after 4 seconds
+    setTimeout(function() {
+        container.remove();
+          messageFrame.style.display = 'none';
+    }, 4500); // 4000 milliseconds = 4 seconds
+     
+     
+ </script>
+    
 </body>
 </html>
