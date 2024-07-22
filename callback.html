@@ -143,7 +143,25 @@
      <div class="frame">
     <label for="receiverEmail"><h3 style="background-color: #ddfcf7; width: fit-content;font-family:helvetica,sans-serif;"> Receiver's Email:</h3></label>
     <input type="email" id="receiverEmail" name="receiverEmail" placeholder="Enter Receiver's email here.." style="height: 30px; width: 300px;" required>
-    <script src="populatingreceiveremail.js"></script>
+   
+         <script>
+        // Get references to the button and input field
+        const button = document.getElementById('ContactsButton');
+        const inputField = document.getElementById('receiverEmail');
+
+        // Function to toggle the disabled state
+        function toggleInputField() {
+            inputField.disabled = !inputField.disabled;
+        }
+
+        // Add an event listener to the button to call the function on click
+        button.addEventListener('click', toggleInputField);
+
+        // Optionally set the initial state of the input field if needed
+        inputField.disabled = true; // or false if you want it enabled initially
+    </script>
+         
+         <script src="populatingreceiveremail.js"></script>
     <label for="messageBody"><h3 style="background-color: #ddfcf7; width: fit-content;font-family:helvetica,sans-serif;">Message Body:</h3></label>
     <textarea id="messageBody" name="messageBody" rows="12" cols="80" placeholder="Enter your message here.." required></textarea>
     <br>
