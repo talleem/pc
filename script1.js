@@ -38,7 +38,7 @@ function showMessage(message) {
    }
 
 //Open the browser with full screen
-function openFullscreen() {
+function openFullscreen(element) {
   if (document.documentElement.requestFullscreen) {
     document.documentElement.requestFullscreen();
   } else if (document.documentElement.mozRequestFullScreen) { // Firefox
@@ -56,7 +56,7 @@ function openFullscreen() {
       window.open('https://mail.google.com/', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
      win.onload = function() {
                 win.document.documentElement.onclick = function() {
-                    openFullscreen();
+                    openFullscreen(win.document.documentElement);
                 };
             };
     }
