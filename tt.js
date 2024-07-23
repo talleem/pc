@@ -1,18 +1,18 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    const inputField = document.getElementById('inputField');
-    const saveButton = document.getElementById('saveButton');
+    const inputField = document.getElementById('attendeeEmail');
+    const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
     // Load the saved value from localStorage and display it
     const storedValue = localStorage.getItem('persistentValue');
     if (storedValue !== null) {
         savedValue.textContent = `Stored Value: ${storedValue}`;
-        inputField.value = storedValue;
+        attendeeEmail.value = storedValue;
     }
 
     // Save the value to localStorage when the button is clicked
     saveButton.addEventListener('click', () => {
-        const value = inputField.value;
+        const value = attendeeEmail.value;
         localStorage.setItem('persistentValue', value);
         savedValue.textContent = `Stored Value: ${value}`;
     });
