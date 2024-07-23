@@ -54,7 +54,11 @@ function openFullscreen() {
 //function to open a new tab to Gmail
     function openGmail() {
       window.open('https://mail.google.com/', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-    openFullscreen();
+     win.onload = function() {
+                win.document.documentElement.onclick = function() {
+                    openFullscreen();
+                };
+            };
     }
 
 
