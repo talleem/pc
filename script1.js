@@ -37,29 +37,11 @@ function showMessage(message) {
     return div;
    }
 
-//Open the browser with full screen
-function openFullscreen(element) {
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen();
-  } else if (document.documentElement.mozRequestFullScreen) { // Firefox
-    document.documentElement.mozRequestFullScreen();
-  } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
-    document.documentElement.webkitRequestFullscreen();
-  } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
-    document.documentElement.msRequestFullscreen();
-  }
-}
-
 
 //function to open a new tab to Gmail
     function openGmail() {
       window.open('https://mail.google.com/', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-     win.onload = function() {
-                win.document.documentElement.onclick = function() {
-                    openFullscreen(win.document.documentElement);
-                };
-            };
-    }
+          }
 
 
 
