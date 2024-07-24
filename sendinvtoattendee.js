@@ -21,32 +21,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Initialize Firestore
     const db = firebase.firestore();
 
-    // Load the saved value from Firestore and display it
-    db.collection('attendees').doc('attendeeEmail').get()
-        .then((doc) => {
-            if (doc.exists) {
-                const storedValue = doc.data().value;
-                savedValue.textContent = `Stored Value: ${storedValue}`;
-                inputField.value = storedValue;
-                console.log('Document data:', doc.data());
-            } else {
-                console.log('No such document!');
-            }
-        })
-        .catch((error) => {
-            console.error('Error getting document: ', error);
-        });
-
-    // Save the value to Firestore when the button is clicked
+  // Load the saved value from Firestore and display it
     saveButton.addEventListener('click', () => {
-        const value = inputField.value;
-        db.collection('attendees').doc('attendeeEmail').set({ value: value })
+        const email = inputField.value;
+
+        // Save the value to Firestore
+        db.collection('attendees').doc(email).set({ value: inputField.value })
             .then(() => {
                 console.log('Value successfully saved!');
-                savedValue.textContent = `Stored Value: ${value}`;
+                savedValue.textContent = `Stored Value: ${inputField.value}`;
             })
             .catch((error) => {
                 console.error('Error saving document: ', error);
             });
     });
+
+    // Retrieve and display the saved value from Firestore
+    const email = inputField.value;
+    db.collection('attendees').doc(email).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const storedValue = doc.data().value;
+                savedValue.textContent = `Stored Value: ${storedValue}`;
+                inputField.value = storedValue;
+            } else {
+                savedValue.textContent = 'No data found!';
+            }
+        })
+        .catch((error) => {
+            console.error('Error getting document: ', error);
+        });
 });
