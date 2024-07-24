@@ -1,8 +1,10 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+
+ document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
+  
   // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -15,9 +17,8 @@ const firebaseConfig = {
   measurementId: "G-X22VZ2TVWT"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
 
     // Initialize Firestore
     const db = firebase.firestore();
