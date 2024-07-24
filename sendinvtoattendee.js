@@ -1,14 +1,11 @@
-
- document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
-  
-  // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
   authDomain: "engineerr1983meet.firebaseapp.com",
   projectId: "engineerr1983meet",
   storageBucket: "engineerr1983meet.appspot.com",
