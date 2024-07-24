@@ -20,7 +20,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Initialize Firebase and Firestore
     firebase.initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+     console.log('Firebase initialized:', firebase.apps.length);
+
+    // Initialize Firestore
+    const db = firebase.firestore();
 
     // Save value to Firestore
     saveButton.addEventListener('click', async () => {
