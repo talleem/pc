@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persistent Storage Example</title>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+   
 </head>
 <body>
     Google Meet...
-    <br>
-    <br>
+    <br><br>
     <input type="email" id="attendeeEmail" name="attendeeEmail" placeholder="Enter attendee's email here.." style="height: 30px; width: 300px; background-color: #ddfcf7" required>
     <button id="sendinvit" style="height: 35px;">Send invit</button>
     <p id="savedValue"></p>
-    <script src="sendinvtoattendee.js"></script>
+     <script src="sendinvtoattendee.js" defer></script>
 </body>
 </html>
