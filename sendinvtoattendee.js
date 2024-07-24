@@ -3,27 +3,20 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
-// Import the functions you need from the SDKs you need
-//import { initializeApp } from "firebase/app";
-//import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
+        authDomain: "engineerr1983meet.firebaseapp.com",
+        projectId: "engineerr1983meet",
+        storageBucket: "engineerr1983meet.appspot.com",
+        messagingSenderId: "308801516934",
+        appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
+        measurementId: "G-X22VZ2TVWT"
+    };
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
-  authDomain: "engineerr1983meet.firebaseapp.com",
-  projectId: "engineerr1983meet",
-  storageBucket: "engineerr1983meet.appspot.com",
-  messagingSenderId: "308801516934",
-  appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
-  measurementId: "G-X22VZ2TVWT"
-};
-
-//    const app = initializeApp(firebaseConfig);
-firebase.initializeApp(firebaseConfig);
-//const analytics = getAnalytics(app);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    console.log('Firebase initialized:', firebase.apps.length);
 
     // Initialize Firestore
     const db = firebase.firestore();
@@ -35,6 +28,7 @@ firebase.initializeApp(firebaseConfig);
                 const storedValue = doc.data().value;
                 savedValue.textContent = `Stored Value: ${storedValue}`;
                 inputField.value = storedValue;
+                console.log('Document data:', doc.data());
             } else {
                 console.log('No such document!');
             }
