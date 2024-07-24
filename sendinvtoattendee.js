@@ -1,13 +1,9 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
-    // Import Firebase modules
-  //  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-   // import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
-
-    // Your Firebase configuration
+    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
         authDomain: "engineerr1983meet.firebaseapp.com",
@@ -18,47 +14,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         measurementId: "G-X22VZ2TVWT"
     };
 
-    // Initialize Firebase and Firestore
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-     console.log('Firebase initialized:', firebase.apps.length);
+    console.log('Firebase initialized:', firebase.apps.length);
 
     // Initialize Firestore
     const db = firebase.firestore();
 
-    // Save value to Firestore
-    saveButton.addEventListener('click', async () => {
-        const email = inputField.value;
-
-        if (email.trim() === '') {
-            alert('Please enter an email.');
-            return;
-        }
-
-        try {
-            await setDoc(doc(db, 'attendees', email), { value: inputField.value });
-            console.log('Value successfully saved!');
-            savedValue.textContent = `Stored Value: ${inputField.value}`;
-        } catch (error) {
-            console.error('Error saving document: ', error);
-        }
-    });
-
-    // Load value from Firestore
-    const email = inputField.value;
-    if (email.trim() !== '') {
-        try {
-            const docRef = doc(db, 'attendees', email);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const storedValue = docSnap.data().value;
+    // Load the saved value from Firestore and display it
+    db.collection('attendees').doc('attendeeEmail').get()
+        .then((doc) => {
+            if (doc.exists) {
+                const storedValue = doc.data().value;
                 savedValue.textContent = `Stored Value: ${storedValue}`;
                 inputField.value = storedValue;
+                console.log('Document data:', doc.data());
             } else {
-                savedValue.textContent = 'No data found!';
+                console.log('No such document!');
             }
-        } catch (error) {
+        })
+        .catch((error) => {
             console.error('Error getting document: ', error);
-        }
-    }
+        });
+
+    // Save the value to Firestore when the button is clicked
+    saveButton.addEventListener('click', () => {
+        const value = inputField.value;
+        db.collection('attendees').doc('attendeeEmail').set({ value: value })
+            .then(() => {
+                console.log('Value successfully saved!');
+                savedValue.textContent = `Stored Value: ${value}`;
+            })
+            .catch((error) => {
+                console.error('Error saving document: ', error);
+            });
+    });
 });
