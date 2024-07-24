@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const savedValue = document.getElementById('savedValue');
 
     // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+  //  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+   // import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
     // Your Firebase configuration
     const firebaseConfig = {
