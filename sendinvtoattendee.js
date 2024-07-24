@@ -3,15 +3,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValue');
 
-    // Import the functions you need from the SDKs you need
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
   apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
   authDomain: "engineerr1983meet.firebaseapp.com",
   projectId: "engineerr1983meet",
@@ -19,10 +19,11 @@ import { getAnalytics } from "firebase/analytics";
   messagingSenderId: "308801516934",
   appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
   measurementId: "G-X22VZ2TVWT"
-    };
+};
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     // Initialize Firestore
     const db = firebase.firestore();
