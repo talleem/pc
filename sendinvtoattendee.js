@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     // Initialize Firebase and Firestore
-    const app = initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     // Save value to Firestore
