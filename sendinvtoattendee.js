@@ -21,30 +21,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Initialize Firestore
     const db = firebase.firestore();
 
-    // Load the saved value from Firestore and display it
-    db.collection('attendees').doc('attendeeEmail').get()
-        .then((doc) => {
-            if (doc.exists) {
+    // Load saved values from Firestore and display them in the list
+    db.collection('attendees').orderBy('timestamp').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
                 const storedValue = doc.data().value;
-                savedValue.textContent = `Stored Value: ${storedValue}`;
-                inputField.value = storedValue;
-                console.log('Document data:', doc.data());
-            } else {
-                console.log('No such document!');
-            }
+                const listItem = document.createElement('li');
+                listItem.textContent = storedValue;
+                savedValuesList.appendChild(listItem);
+            });
         })
         .catch((error) => {
-            console.error('Error getting document: ', error);
+            console.error('Error getting documents: ', error);
         });
 
     // Save the value to Firestore when the button is clicked
     saveButton.addEventListener('click', () => {
         const value = inputField.value;
-        db.collection('attendees').doc('attendeeEmail').set({ value: value })
-            .then(() => {
-                console.log('Value successfully saved!');
-                savedValue.textContent = `Stored Value: ${value}`;
-            })
+        db.collection('attendees').add({
+            value: value,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then((docRef) => {
+            console.log('Value successfully saved!');
+            const listItem = document.createElement('li');
+            listItem.textContent = value;
+            savedValuesList.appendChild(listItem);
+            inputField.value = ''; // Clear the input field
+        })
             .catch((error) => {
                 console.error('Error saving document: ', error);
             });
