@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
-    const savedValue = document.getElementById('savedValue');
+    const savedValue = document.getElementById('savedValuesList');
 
     // Firebase configuration
     const firebaseConfig = {
