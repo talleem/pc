@@ -35,22 +35,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
             console.error('Error getting documents: ', error);
         });
 
+    // Check if the value is unique
+    const isUnique = (value) => {
+        const listItems = savedValuesList.getElementsByTagName('li');
+        for (let item of listItems) {
+            if (item.textContent === value) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     // Save the value to Firestore when the button is clicked
     saveButton.addEventListener('click', () => {
         const value = inputField.value;
-        db.collection('attendees').add({
-            value: value,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
-        .then((docRef) => {
-            console.log('Value successfully saved!');
-            const listItem = document.createElement('li');
-            listItem.textContent = value;
-            savedValuesList.appendChild(listItem);
-            inputField.value = ''; // Clear the input field
-        })
+        
+        if (isUnique(value)) {
+            db.collection('attendees').add({
+                value: value,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then((docRef) => {
+                console.log('Value successfully saved!');
+                const listItem = document.createElement('li');
+                listItem.textContent = value;
+                savedValuesList.appendChild(listItem);
+                inputField.value = ''; // Clear the input field
+            })
             .catch((error) => {
                 console.error('Error saving document: ', error);
             });
+        } else {
+            alert('This email has already been added.');
+        }
     });
 });
