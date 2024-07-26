@@ -20,6 +20,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Initialize Firestore
     const db = firebase.firestore();
+     const auth = firebase.auth();
+
+    let loggedInEmail = '';
+
+    // Function to check authentication state and get the logged-in user's email
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            loggedInEmail = user.email;
+            console.log('Logged in as:', loggedInEmail);
+        } else {
+            console.log('No user is logged in.');
+        }
+    });
 
 
     // Load saved values from Firestore and display them in the list
