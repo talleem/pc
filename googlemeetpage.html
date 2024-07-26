@@ -7,7 +7,7 @@
     <!-- Other head elements like meta, title, CSS, etc. -->
      <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-</head>
+</head onload="checkList()">
 <body>
     Google Meet...
     <br><br>
@@ -17,9 +17,9 @@
     <button id="joinmeeting" style="height: 35px;">join meeting</button>
    <script src="enabledisablebutton.js"></script>
      <script>
-        document.getElementById('joinmeeting').addEventListener('click', function() {
-            checkList();
-        });
+       // document.getElementById('joinmeeting').addEventListener('click', function() {
+            //checkList();
+       // });
     </script>
     <ul id="savedValuesList"></ul> 
 
