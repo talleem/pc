@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 listItem.textContent = value;
                 savedValuesList.appendChild(listItem);
                 inputField.value = ''; // Clear the input field
+                 checkList();
             })
             .catch((error) => {
                 console.error('Error saving document: ', error);
