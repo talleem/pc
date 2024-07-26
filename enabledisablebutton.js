@@ -1,3 +1,4 @@
+console.log("Begin executing")
 document.addEventListener('DOMContentLoaded', function() {
     const joinMeetingButton = document.getElementById('joinmeeting');
     const savedValuesList = document.getElementById('savedValuesList');
