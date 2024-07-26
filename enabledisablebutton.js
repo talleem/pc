@@ -10,7 +10,4 @@ document.addEventListener('DOMContentLoaded', function() {
             joinMeetingButton.disabled = false;
         }
     }
-
-    // Initial check when the page loads
-    checkList();
 });
