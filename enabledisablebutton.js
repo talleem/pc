@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkList() {
         if (savedValuesList.children.length > 0) {
             joinMeetingButton.disabled = true;
+            console.log("Not Empty", savedValuesList.children.length);
         } else {
             joinMeetingButton.disabled = false;
+             console.log("Empty", savedValuesList.children.length);
         }
     }
 });
