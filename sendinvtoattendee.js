@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             console.log('Logged in as:', loggedInEmail);
         } else {
             console.log('No user is logged in.');
+             console.log('Logged in as:', user.email);
         }
     });
 
