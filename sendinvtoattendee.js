@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const listItem = document.createElement('li');
                 listItem.textContent = storedValue;
                 savedValuesList.appendChild(listItem);
+                checkList();
             });
         })
         .catch((error) => {
