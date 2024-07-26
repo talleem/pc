@@ -49,8 +49,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Save the value to Firestore when the button is clicked
     saveButton.addEventListener('click', () => {
-        const value = inputField.value;
-        
+        const value = inputField.value.trim(); // Trim any extra whitespace
+
+        if (value === '') {
+            alert('Please enter a value.');
+            return; // Do not proceed if the value is empty
+        }
+
         if (isUnique(value)) {
             db.collection('attendees').add({
                 value: value,
@@ -62,7 +67,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 listItem.textContent = value;
                 savedValuesList.appendChild(listItem);
                 inputField.value = ''; // Clear the input field
-                 checkList();
+                checkList();
             })
             .catch((error) => {
                 console.error('Error saving document: ', error);
