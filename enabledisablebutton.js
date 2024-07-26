@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // If you add or remove elements from the list dynamically,
-    // you can call checkList() to update the button's state
+    // Initial check when the page loads
+    checkList();
 });
-
