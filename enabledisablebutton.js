@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to check the list and enable/disable the button
     window.checkList = function() {
         if (savedValuesList.children.length > 0) {
-            joinMeetingButton.disabled = true;
+            joinMeetingButton.disabled = false;
             console.log("Not Empty");
         } else {
-            joinMeetingButton.disabled = false;
+            joinMeetingButton.disabled = true;
              console.log("Empty");
         }
     };
