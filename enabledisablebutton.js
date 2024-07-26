@@ -1,4 +1,3 @@
-console.log("Begin executing")
 document.addEventListener('DOMContentLoaded', function() {
     const joinMeetingButton = document.getElementById('joinmeeting');
     const savedValuesList = document.getElementById('savedValuesList');
@@ -7,10 +6,8 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkList = function() {
         if (savedValuesList.children.length > 0) {
             joinMeetingButton.disabled = false;
-            console.log("Not Empty");
         } else {
             joinMeetingButton.disabled = true;
-             console.log("Empty");
         }
     };
 });
