@@ -79,8 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkList() {
         if (savedValuesList.children.length > 0) {
             joinMeetingButton.disabled = false;
+            console.log("Not Empty", savedValuesList.children.length)
         } else {
             joinMeetingButton.disabled = true;
+             console.log("Empty", savedValuesList.children.length)
         }
     }
 });
