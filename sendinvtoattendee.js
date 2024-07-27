@@ -24,22 +24,45 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     let loggedInEmail = '';
 
-   // Function to check authentication state and get the logged-in user's email
-auth.onAuthStateChanged(user => {
-    if (user) {
-        if (user.emailVerified) {
-            loggedInEmail = user.email;
-            console.log('Logged in as:', loggedInEmail);
-            // Proceed with allowing user to access the application
-        } else {
-            console.log('Email not verified.');
-            alert('Please verify your email before logging in.');
-            auth.signOut();
+ // Function to handle Google Sign-In
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then(result => {
+                    const user = result.user;
+                    if (user.emailVerified) {
+                        loggedInEmail = user.email;
+                        console.log('Logged in as:', loggedInEmail);
+                        // Proceed with allowing user to access the application
+                    } else {
+                        console.log('Email not verified.');
+                        alert('Please verify your email before logging in.');
+                        auth.signOut();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error signing in:', error);
+                    alert('Error signing in: ' + error.message);
+                });
         }
-    } else {
-        console.log('No user is logged in.');
-    }
-});
+
+        // Function to check authentication state and get the logged-in user's email
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                if (user.emailVerified) {
+                    loggedInEmail = user.email;
+                    console.log('Logged in as:', loggedInEmail);
+                    // Proceed with allowing user to access the application
+                } else {
+                    console.log('Email not verified.');
+                    alert('Please verify your email before logging in.');
+                    auth.signOut();
+                }
+            } else {
+                console.log('No user is logged in.');
+            }
+        });
+
 
     // Load saved values from Firestore and display them in the list
     db.collection('attendees').orderBy('timestamp').get()
