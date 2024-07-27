@@ -24,12 +24,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     let loggedInEmail = '';
 
-    // Function to check authentication state and get the logged-in user's email
-   onAuthStateChanged(auth, (user) => {
+   // Function to check authentication state and get the logged-in user's email
+auth.onAuthStateChanged(user => {
     if (user) {
-        console.log('User is signed in:', user.email);
+        loggedInEmail = user.email;
+        console.log('Logged in as:', loggedInEmail);
     } else {
-        console.log('No user is signed in');
+        console.log('No user is logged in.');
     }
 });
 
