@@ -25,16 +25,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let loggedInEmail = '';
 
     // Function to check authentication state and get the logged-in user's email
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            loggedInEmail = user.email;
-            console.log('Logged in as:', loggedInEmail);
-        } else {
-            console.log('No user is logged in.');
-             console.log('Logged in as:', user.email);
-        }
-    });
-
+   onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log('User is signed in:', user.email);
+    } else {
+        console.log('No user is signed in');
+    }
+});
 
     // Load saved values from Firestore and display them in the list
     db.collection('attendees').orderBy('timestamp').get()
