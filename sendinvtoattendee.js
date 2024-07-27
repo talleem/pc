@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth-compat.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app-compat.js";
 
 document.addEventListener('DOMContentLoaded', (event) => {
