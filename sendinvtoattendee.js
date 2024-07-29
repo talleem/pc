@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValuesList');
+    // Get the stored email from localStorage
+    const storedEmail = localStorage.getItem('loggedInEmail');
 
     // Firebase configuration
     const firebaseConfig = {
@@ -47,20 +49,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
 
 
-    // Load saved values from Firestore and display them in the list
-    db.collection('attendees').orderBy('timestamp').get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const storedValue = doc.data().value;
-                const listItem = document.createElement('li');
-                listItem.textContent = storedValue;
-                savedValuesList.appendChild(listItem);
-                checkList();
-            });
-        })
-        .catch((error) => {
-            console.error('Error getting documents: ', error);
+   // Load saved values from Firestore and display them in the list
+db.collection('attendees').orderBy('timestamp').get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const storedValue = doc.data().value;
+            const listItem = document.createElement('li');
+            listItem.textContent = storedValue;
+            
+            // Style the list item if it matches the stored email
+            if (storedValue === storedEmail) {
+                listItem.style.color = 'blue';
+                listItem.style.fontWeight = 'bold';
+            }
+
+            savedValuesList.appendChild(listItem);
         });
+    })
+    .catch((error) => {
+        console.error('Error getting documents: ', error);
+    });
 
     // Check if the value is unique
     const isUnique = (value) => {
