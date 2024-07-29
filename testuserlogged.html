@@ -50,6 +50,7 @@
             auth.signOut().then(() => {
                 console.log('User signed out.');
                 loggedInEmail = '';
+                google.accounts.id.disableAutoSelect();
                 // Handle any post-sign-out logic here
             }).catch(error => {
                 console.error('Error signing out:', error);
