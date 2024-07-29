@@ -30,6 +30,7 @@
         firebase.initializeApp(firebaseConfig);
 
         const auth = firebase.auth();
+        const firestore = firebase.firestore();
 
         // Registration form submission handler
         document.getElementById('registerForm').addEventListener('submit', function (e) {
@@ -37,10 +38,25 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
 
+           
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     // Signed up successfully
                     const user = userCredential.user;
+
+                    // Save email and password to Firestore
+                    firestore.collection('users_tbl').add({
+                        email: email,
+                        password: password
+                    })
+                    .then(() => {
+                        console.log('User data saved to Firestore.');
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data to Firestore:', error.message);
+                    });
+
+                    // Send email verification
                     user.sendEmailVerification()
                         .then(() => {
                             console.log('Verification email sent.');
