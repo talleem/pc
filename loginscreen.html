@@ -1,9 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  
+    <h1>Login</h1>
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" style="width:225px; height: 31px;" required>
+        <input type="password" id="loginPassword" placeholder="Password" style="width:225px; height: 31px;" required>
+        <button type="submit" style="width:75px; height: 35px;">Sign In</button>
+    </form>
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
+            authDomain: "engineerr1983meet.firebaseapp.com",
+            projectId: "engineerr1983meet",
+            storageBucket: "engineerr1983meet.appspot.com",
+            messagingSenderId: "308801516934",
+            appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
+            measurementId: "G-X22VZ2TVWT"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const firestore = firebase.firestore();
+
+        // Login form submission handler
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Check Firestore for user credentials
+            firestore.collection('users_tbl').where('email', '==', email)
+                .get()
+                .then(querySnapshot => {
+                    if (querySnapshot.empty) {
+                        alert('Login failed, check your email and/or password');
+                        return;
+                    }
+
+                    // Check password
+                    let isPasswordCorrect = false;
+                    querySnapshot.forEach(doc => {
+                        if (doc.data().password === password) {
+                            isPasswordCorrect = true;
+                        }
+                    });
+
+                    if (isPasswordCorrect) {
+                        // Redirect to index.html
+                        window.location.href = 'index.html';
+                    } else {
+                        alert('Login failed, check your email and/or password');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error logging in:', error.message);
+                    alert('Error logging in: ' + error.message);
+                });
+        });
+    </script>
 </body>
 </html>
