@@ -53,6 +53,7 @@
                 loggedInEmail = '';
                 if (window.google && google.accounts && google.accounts.id) {
                     google.accounts.id.disableAutoSelect();
+                    console.log('it worked');
                 } else {
                     console.warn('Google accounts library is not loaded.');
                 }
