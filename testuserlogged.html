@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sign-In with Firebase</title>
+    <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <button id="googleSignInBtn">Sign in with Google</button>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let loggedInEmail = '';
+
+        // Function to handle Google Sign-In
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then(result => {
+                    const user = result.user;
+                    loggedInEmail = user.email;
+                    console.log('Logged in as:', loggedInEmail);
+                    // Proceed with allowing user to access the application
+                })
+                .catch(error => {
+                    console.error('Error signing in:', error);
+                    alert('Error signing in: ' + error.message);
+                });
+        }
+
+        // Function to check authentication state and get the logged-in user's email
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loggedInEmail = user.email;
+                console.log('Auth state changed. Logged in as:', loggedInEmail);
+                // Proceed with allowing user to access the application
+            } else {
+                console.log('No user is logged in.');
+            }
+        });
+
+        // Attach the sign-in function to the button
+        document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
+    </script>
+</body>
+</html>
