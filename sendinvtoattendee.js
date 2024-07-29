@@ -56,6 +56,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 const storedValue = doc.data().value;
                 const listItem = document.createElement('li');
                 listItem.textContent = storedValue;
+                
+                // Style the list item if it matches the stored email
+            if (storedValue === storedEmail) {
+                listItem.style.color = 'blue';
+                listItem.style.fontWeight = 'bold';
+            }
                 savedValuesList.appendChild(listItem);
                 checkList();
             });
