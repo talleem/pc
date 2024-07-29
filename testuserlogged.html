@@ -51,13 +51,18 @@
             auth.signOut().then(() => {
                 console.log('User signed out.');
                 loggedInEmail = '';
-                google.accounts.id.disableAutoSelect();
+                if (window.google && google.accounts && google.accounts.id) {
+                    google.accounts.id.disableAutoSelect();
+                } else {
+                    console.warn('Google accounts library is not loaded.');
+                }
                 // Handle any post-sign-out logic here
             }).catch(error => {
                 console.error('Error signing out:', error);
                 alert('Error signing out: ' + error.message);
             });
         }
+
 
         // Function to check authentication state and get the logged-in user's email
         auth.onAuthStateChanged(user => {
