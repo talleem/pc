@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const savedValue = document.getElementById('savedValuesList');
     // Get the stored email from localStorage
     const storedEmail = localStorage.getItem('loggedInEmail');
-    console.log(loggedInEmail)
+    console.log(loggedInEmail);
 
     // Firebase configuration
     const firebaseConfig = {
