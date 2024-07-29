@@ -46,23 +46,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 });
         }
 
-        // Function to check authentication state and get the logged-in user's email
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                if (user.emailVerified) {
-                    loggedInEmail = user.email;
-                    console.log('Logged in as:', loggedInEmail);
-                    // Proceed with allowing user to access the application
-                } else {
-                    console.log('Email not verified.');
-                    alert('Please verify your email before logging in.');
-                    auth.signOut();
-                }
-            } else {
-                console.log('No user is logged in.');
-            }
-        });
-
 
     // Load saved values from Firestore and display them in the list
     db.collection('attendees').orderBy('timestamp').get()
