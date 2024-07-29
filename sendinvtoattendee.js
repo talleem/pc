@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             if (storedValue === storedEmail) {
                 listItem.style.color = 'blue';
                 listItem.style.fontWeight = 'bold';
+                 listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             }
                 savedValuesList.appendChild(listItem);
                 checkList();
