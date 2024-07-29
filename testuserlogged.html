@@ -6,6 +6,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.9.1/firebase-firestore-compat.js"></script>
      <script src="https://accounts.google.com/gsi/client" async defer></script>
+     <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
     <button id="googleSignInBtn">Sign in with Google</button>
@@ -46,24 +47,29 @@
                 });
         }
 
-         // Function to handle Google Sign-Out
+        // Function to handle Google Sign-Out
         function signOut() {
             auth.signOut().then(() => {
                 console.log('User signed out.');
                 loggedInEmail = '';
                 if (window.google && google.accounts && google.accounts.id) {
                     google.accounts.id.disableAutoSelect();
-                    console.log('it worked');
                 } else {
                     console.warn('Google accounts library is not loaded.');
                 }
-                // Handle any post-sign-out logic here
+                if (gapi.auth2) {
+                    const auth2 = gapi.auth2.getAuthInstance();
+                    auth2.signOut().then(() => {
+                        console.log('Google user signed out.');
+                    });
+                } else {
+                    console.warn('Google API client library is not loaded.');
+                }
             }).catch(error => {
                 console.error('Error signing out:', error);
                 alert('Error signing out: ' + error.message);
             });
         }
-
 
         // Function to check authentication state and get the logged-in user's email
         auth.onAuthStateChanged(user => {
@@ -79,6 +85,20 @@
         // Attach the sign-in function to the button
         document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
         document.getElementById('googleSignOutBtn').addEventListener('click', signOut);
+         // Load the Google API client library
+        function loadGapiClient() {
+            gapi.load('auth2', () => {
+                gapi.auth2.init({
+                    client_id: 'YOUR_GOOGLE_CLIENT_ID'
+                });
+            });
+        }
+
+        // Initialize the Google API client library
+        window.onload = () => {
+            loadGapiClient();
+        };
+        
     </script>
 </body>
 </html>
