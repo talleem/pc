@@ -31,45 +31,7 @@
 
         let loggedInEmail = '';
 
-          // Initialize the Google Identity Services client
-        const client = google.accounts.id.initialize({
-            client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
-            callback: handleCredentialResponse
-        });
-
-        function handleCredentialResponse(response) {
-            const credential = response.credential;
-            auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(credential))
-                .then(result => {
-                    const user = result.user;
-                    loggedInEmail = user.email;
-                    console.log('Logged in as:', loggedInEmail);
-                    // Proceed with allowing user to access the application
-                })
-                .catch(error => {
-                    console.error('Error signing in:', error);
-                    alert('Error signing in: ' + error.message);
-                });
-        }
-
-
-        // Function to handle Google Sign-In
-        function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then(result => {
-                    const user = result.user;
-                    loggedInEmail = user.email;
-                    console.log('Logged in as:', loggedInEmail);
-                    // Proceed with allowing user to access the application
-                })
-                .catch(error => {
-                    console.error('Error signing in:', error);
-                    alert('Error signing in: ' + error.message);
-                });
-        }
-
-       // Function to handle Google Sign-In
+     // Function to handle Google Sign-In
         function signInWithGoogle() {
             google.accounts.id.prompt();
         }
@@ -89,6 +51,22 @@
             });
         }
 
+        // Function to handle the credential response from Google Identity Services
+        function handleCredentialResponse(response) {
+            const credential = response.credential;
+            auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(credential))
+                .then(result => {
+                    const user = result.user;
+                    loggedInEmail = user.email;
+                    console.log('Logged in as:', loggedInEmail);
+                    // Proceed with allowing user to access the application
+                })
+                .catch(error => {
+                    console.error('Error signing in:', error);
+                    alert('Error signing in: ' + error.message);
+                });
+        }
+
         // Function to check authentication state and get the logged-in user's email
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -99,6 +77,14 @@
                 console.log('No user is logged in.');
             }
         });
+
+        // Initialize the Google Identity Services client after the library is loaded
+        window.onload = () => {
+            google.accounts.id.initialize({
+                client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
+                callback: handleCredentialResponse
+            });
+        };
 
         // Attach the sign-in function to the button
         document.getElementById('googleSignInBtn').addEventListener('click', signInWithGoogle);
