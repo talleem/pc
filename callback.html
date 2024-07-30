@@ -240,6 +240,48 @@ messageFrame.appendChild(container);
         // Change color every 1 second
         setInterval(changeColor, 1000);
     </script>
+
+ <script>
+        // Add dynamic styles to the document
+        const style = document.createElement('style');
+        style.textContent = `
+            .shift-animation {
+                display: inline-block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                color: yellow;
+                animation: shift 5s linear forwards; /* Adjust duration as needed */
+            }
+
+            @keyframes shift {
+                from {
+                    left: 0;
+                }
+                to {
+                    left: 100%;
+                    transform: translateX(-100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Apply the shift-animation class dynamically
+        document.getElementById('letterShift').classList.add('shift-animation');
+
+        // JavaScript for color change
+        const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+        let currentColorIndex = 0;
+
+        function changeColor() {
+            const element = document.getElementById('colorText');
+            element.style.color = colors[currentColorIndex];
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+        }
+
+        // Change color every 1 second
+        setInterval(changeColor, 1000);
+    </script>
     
 </body>
 </html>
