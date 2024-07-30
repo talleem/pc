@@ -225,8 +225,8 @@ messageFrame.appendChild(container);
     }, 4500); // 4000 milliseconds = 4 seconds
      
  </script>
-    <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;"> <span id="letterShift">Go</span>ogle (Meet / Maps / Drive / Calendar)</p></h2></a>
-<script>
+    <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;">Google (Meet / Maps / Drive / Calendar)  <span id="highlight" style="position: absolute; background-color: yellow; color: transparent;"></span></p></h2></a>
+ <script>
         // Add dynamic styles to the document
         const style = document.createElement('style');
         style.textContent = `
@@ -234,32 +234,35 @@ messageFrame.appendChild(container);
                 font-size: 24px; /* Adjust as needed */
                 font-weight: bold; /* Adjust as needed */
                 position: relative;
+                display: inline-block;
             }
 
-            .shift-animation {
+            #highlight {
                 display: inline-block;
                 position: absolute;
                 top: 0;
                 left: 0;
-                color: yellow;
-                animation: shift 5s linear forwards; /* Adjust duration as needed */
+                background-color: yellow;
+                color: transparent;
+                animation: highlight 5s linear infinite;
             }
 
-            @keyframes shift {
-                from {
+            @keyframes highlight {
+                0% {
                     left: 0;
+                    width: 2ch; /* Adjust width as needed */
                 }
-                to {
+                100% {
                     left: 100%;
-                    transform: translateX(-100%);
+                    width: 2ch;
                 }
             }
         `;
         document.head.appendChild(style);
 
-        // Apply the shift-animation class dynamically
-        document.getElementById('letterShift').classList.add('shift-animation');
-    </script>
+        // Apply the animation class to the highlight element
+        const highlight = document.getElementById('highlight');
+ </script>
     
     <script>
         const colors = ['red', 'blue', 'green', 'orange', 'purple','black'];
