@@ -251,56 +251,37 @@ messageFrame.appendChild(container);
     setInterval(changeColor, 1000);
 </script>
 
-    
-     <script>
-    // Add dynamic styles to the document
-    const style = document.createElement('style');
-    style.textContent = `
-        #colorText {
-            font-size: 24px; /* Adjust as needed */
-            font-weight: bold; /* Adjust as needed */
-            position: relative;
-            display: inline-block;
-            overflow: hidden; /* Prevent overflow of the animated highlight */
-        }
+     // Add dynamic styles to the document
+            const style = document.createElement('style');
+            style.textContent = `
+                #colorText {
+                    font-size: 24px; /* Adjust as needed */
+                    font-weight: bold; /* Adjust as needed */
+                    position: relative;
+                    display: inline-block;
+                    overflow: hidden; /* Prevent overflow of the animated highlight */
+                    background: linear-gradient(to right, yellow 50%, transparent 50%);
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    color: transparent;
+                }
 
-        #highlight {
-            display: inline-block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: yellow;
-            color: transparent;
-            white-space: nowrap;
-            animation: highlight 5s linear infinite;
-        }
+                @keyframes highlight {
+                    0% {
+                        background-position: -100%;
+                    }
+                    100% {
+                        background-position: 100%;
+                    }
+                }
 
-        @keyframes highlight {
-            0% {
-                left: -2ch; /* Start before the text */
-                width: 2ch; /* Adjust width as needed */
-            }
-            100% {
-                left: 100%;
-                width: 2ch; /* End after the text */
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Position and size the highlight span
-    function adjustHighlight() {
-        const textElement = document.getElementById('colorText');
-        const highlight = document.getElementById('highlight');
-        const textWidth = textElement.scrollWidth;
-        highlight.style.width = '2ch'; // Adjust width as needed
-        highlight.style.height = textElement.clientHeight + 'px';
-        highlight.style.transform = `translateX(0)`;
-    }
-
-    window.addEventListener('load', adjustHighlight);
-    window.addEventListener('resize', adjustHighlight);
-</script>
+                #colorText {
+                    animation: highlight 5s linear forwards; /* Adjust duration as needed */
+                }
+            `;
+            document.head.appendChild(style);
+        }, colorChangeDuration); // Delay in milliseconds
+    </script>
 
     
 </body>
