@@ -236,72 +236,72 @@ messageFrame.appendChild(container);
         </h2>
     </a>
 
-    <script>
-        // Add dynamic styles to the document
-        const style = document.createElement('style');
-        style.textContent = `
-            #colorText {
-                font-size: 24px; /* Adjust as needed */
-                font-weight: bold; /* Adjust as needed */
-                position: relative;
-                display: inline-block;
-                overflow: hidden; /* Prevent overflow of the animated highlight */
-            }
+  <script>
+    // JavaScript for color change
+    const colors = ['red', 'blue', 'green', 'orange', 'purple', 'black'];
+    let currentColorIndex = 0;
 
-            #highlight {
-                display: inline-block;
-                position: absolute;
-                top: 0;
-                left: 0;
-                background-color: yellow;
-                color: transparent;
-                white-space: nowrap;
-                animation: highlight 5s linear infinite;
-            }
+    function changeColor() {
+        const element = document.getElementById('colorText');
+        element.style.color = colors[currentColorIndex];
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
+    }
 
-            @keyframes highlight {
-                0% {
-                    left: -2ch; /* Start before the text */
-                    width: 2ch; /* Adjust width as needed */
-                }
-                100% {
-                    left: 100%;
-                    width: 2ch; /* End after the text */
-                }
-            }
-        `;
-        document.head.appendChild(style);
+    // Change color every 1 second
+    setInterval(changeColor, 1000);
+</script>
 
-        // Apply the animation class to the highlight element
+    
+     <script>
+    // Add dynamic styles to the document
+    const style = document.createElement('style');
+    style.textContent = `
+        #colorText {
+            font-size: 24px; /* Adjust as needed */
+            font-weight: bold; /* Adjust as needed */
+            position: relative;
+            display: inline-block;
+            overflow: hidden; /* Prevent overflow of the animated highlight */
+        }
+
+        #highlight {
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: yellow;
+            color: transparent;
+            white-space: nowrap;
+            animation: highlight 5s linear infinite;
+        }
+
+        @keyframes highlight {
+            0% {
+                left: -2ch; /* Start before the text */
+                width: 2ch; /* Adjust width as needed */
+            }
+            100% {
+                left: 100%;
+                width: 2ch; /* End after the text */
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Position and size the highlight span
+    function adjustHighlight() {
+        const textElement = document.getElementById('colorText');
         const highlight = document.getElementById('highlight');
+        const textWidth = textElement.scrollWidth;
+        highlight.style.width = '2ch'; // Adjust width as needed
+        highlight.style.height = textElement.clientHeight + 'px';
+        highlight.style.transform = `translateX(0)`;
+    }
 
-        // Position and size the highlight span
-        function adjustHighlight() {
-            const textElement = document.getElementById('colorText');
-            const textWidth = textElement.scrollWidth;
-            highlight.style.width = '2ch'; // Adjust width as needed
-            highlight.style.height = textElement.clientHeight + 'px';
-            highlight.style.transform = `translateX(0)`;
-        }
+    window.addEventListener('load', adjustHighlight);
+    window.addEventListener('resize', adjustHighlight);
+</script>
 
-        window.addEventListener('load', adjustHighlight);
-        window.addEventListener('resize', adjustHighlight);
-    </script>
-
-       <script>
-        // JavaScript for color change
-        const colors = ['red', 'blue', 'green', 'orange', 'purple', 'black'];
-        let currentColorIndex = 0;
-
-        function changeColor() {
-            const element = document.getElementById('colorText');
-            element.style.color = colors[currentColorIndex];
-            currentColorIndex = (currentColorIndex + 1) % colors.length;
-        }
-
-        // Change color every 1 second
-        setInterval(changeColor, 1000);
-    </script>
     
 </body>
 </html>
