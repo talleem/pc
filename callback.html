@@ -268,19 +268,6 @@ messageFrame.appendChild(container);
 
         // Apply the shift-animation class dynamically
         document.getElementById('letterShift').classList.add('shift-animation');
-
-        // JavaScript for color change
-        const colors = ['red', 'blue', 'green', 'orange', 'purple'];
-        let currentColorIndex = 0;
-
-        function changeColor() {
-            const element = document.getElementById('colorText');
-            element.style.color = colors[currentColorIndex];
-            currentColorIndex = (currentColorIndex + 1) % colors.length;
-        }
-
-        // Change color every 1 second
-        setInterval(changeColor, 1000);
     </script>
     
 </body>
