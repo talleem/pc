@@ -20,7 +20,7 @@
    <button id="signout" style="height: 35px;">Sign out</button>
      <script>
     document.getElementById('signout').addEventListener('click', function() {
-       location.replace('loginscreen.html');
+       window.top.location.href = 'loginscreen.html';
     });
   </script>
     <ul id="savedValuesList"></ul> 
