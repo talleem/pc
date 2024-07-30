@@ -225,8 +225,18 @@ messageFrame.appendChild(container);
     }, 4500); // 4000 milliseconds = 4 seconds
      
  </script>
-    <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;">Google (Meet / Maps / Drive / Calendar) <span id="highlight" style="position: absolute; background-color: yellow; color: transparent; top: 0; left: 0; white-space: nowrap;"></span></p></h2></a>
- <script>
+
+    
+   <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html">
+        <h2>
+            <p id="colorText" style="text-align: center; position: relative; display: inline-block;">
+                Google (Meet / Maps / Drive / Calendar)
+                <span id="highlight"></span>
+            </p>
+        </h2>
+    </a>
+
+    <script>
         // Add dynamic styles to the document
         const style = document.createElement('style');
         style.textContent = `
@@ -251,12 +261,12 @@ messageFrame.appendChild(container);
 
             @keyframes highlight {
                 0% {
-                    left: 0;
+                    left: -2ch; /* Start before the text */
                     width: 2ch; /* Adjust width as needed */
                 }
                 100% {
                     left: 100%;
-                    width: 2ch;
+                    width: 2ch; /* End after the text */
                 }
             }
         `;
@@ -264,13 +274,18 @@ messageFrame.appendChild(container);
 
         // Apply the animation class to the highlight element
         const highlight = document.getElementById('highlight');
-        const textElement = document.getElementById('colorText');
-        const textWidth = textElement.offsetWidth;
 
-        // Set the highlight width and position
-        highlight.style.width = '2ch'; // Adjust width as needed
-        highlight.style.transform = `translateX(-${textWidth}px)`;
-        
+        // Position and size the highlight span
+        function adjustHighlight() {
+            const textElement = document.getElementById('colorText');
+            const textWidth = textElement.scrollWidth;
+            highlight.style.width = '2ch'; // Adjust width as needed
+            highlight.style.height = textElement.clientHeight + 'px';
+            highlight.style.transform = `translateX(0)`;
+        }
+
+        window.addEventListener('load', adjustHighlight);
+        window.addEventListener('resize', adjustHighlight);
     </script>
 </body>
 </html>
