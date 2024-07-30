@@ -225,7 +225,7 @@ messageFrame.appendChild(container);
     }, 4500); // 4000 milliseconds = 4 seconds
      
  </script>
-    <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;">Google (Meet / Maps / Drive / Calendar)  <span id="highlight" style="position: absolute; background-color: yellow; color: transparent;"></span></p></h2></a>
+    <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;">Google (Meet / Maps / Drive / Calendar) <span id="highlight" style="position: absolute; background-color: yellow; color: transparent; top: 0; left: 0; white-space: nowrap;"></span></p></h2></a>
  <script>
         // Add dynamic styles to the document
         const style = document.createElement('style');
@@ -235,6 +235,7 @@ messageFrame.appendChild(container);
                 font-weight: bold; /* Adjust as needed */
                 position: relative;
                 display: inline-block;
+                overflow: hidden; /* Prevent overflow of the animated highlight */
             }
 
             #highlight {
@@ -244,6 +245,7 @@ messageFrame.appendChild(container);
                 left: 0;
                 background-color: yellow;
                 color: transparent;
+                white-space: nowrap;
                 animation: highlight 5s linear infinite;
             }
 
@@ -262,7 +264,14 @@ messageFrame.appendChild(container);
 
         // Apply the animation class to the highlight element
         const highlight = document.getElementById('highlight');
- </script>
+        const textElement = document.getElementById('colorText');
+        const textWidth = textElement.offsetWidth;
+
+        // Set the highlight width and position
+        highlight.style.width = '2ch'; // Adjust width as needed
+        highlight.style.transform = `translateX(-${textWidth}px)`;
+        
+    </script>
     
     <script>
         const colors = ['red', 'blue', 'green', 'orange', 'purple','black'];
