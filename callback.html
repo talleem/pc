@@ -226,22 +226,7 @@ messageFrame.appendChild(container);
      
  </script>
     <a href="https://engineerr1983.github.io/hello-world-page/pagewithtabs.html"><h2><p id="colorText" style="text-align: center;">Google (Meet / Maps / Drive / Calendar)</p></h2></a>
-
-    <script>
-        const colors = ['red', 'blue', 'green', 'orange', 'purple','black'];
-        let currentColorIndex = 0;
-
-        function changeColor() {
-            const element = document.getElementById('colorText');
-            element.style.color = colors[currentColorIndex];
-            currentColorIndex = (currentColorIndex + 1) % colors.length;
-        }
-
-        // Change color every 1 second
-        setInterval(changeColor, 1000);
-    </script>
-
- <script>
+<script>
         // Add dynamic styles to the document
         const style = document.createElement('style');
         style.textContent = `
@@ -276,5 +261,18 @@ messageFrame.appendChild(container);
         document.getElementById('letterShift').classList.add('shift-animation');
     </script>
     
+    <script>
+        const colors = ['red', 'blue', 'green', 'orange', 'purple','black'];
+        let currentColorIndex = 0;
+
+        function changeColor() {
+            const element = document.getElementById('colorText');
+            element.style.color = colors[currentColorIndex];
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+        }
+
+        // Change color every 1 second
+        setInterval(changeColor, 1000);
+    </script>
 </body>
 </html>
