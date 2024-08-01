@@ -251,7 +251,12 @@ messageFrame.appendChild(container);
     setInterval(changeColor, 1000);
 </script>
 
-
+ <button id="signout2" style="height: 35px;">Sign out</button>
+     <script>
+    document.getElementById('signout2').addEventListener('click', function() {
+       window.top.location.href = 'loginscreen.html';
+    });
+  </script>
     
 </body>
 </html>
