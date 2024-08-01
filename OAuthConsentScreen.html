@@ -24,8 +24,13 @@
         </button>
          <script src="script.js">
          </script>
-         <button id="anotherButton" style="display: flex; align-items: center; justify-content: center; height: 35px;">
+         <button id="signout3" style="display: flex; align-items: center; justify-content: center; height: 35px;">
             <h4 style="margin: 0;">Sign out</h4>
+              <script>
+    document.getElementById('signout3').addEventListener('click', function() {
+       window.top.location.href = 'loginscreen.html';
+    });
+  </script>
     </div>
 
 </body>
