@@ -7,15 +7,23 @@ document.addEventListener('DOMContentLoaded', function() {
     window.checkList = function() {
         let shouldEnableButton = false;
 
-        // Check if the list has any children
-        if (savedValuesList.children.length > 0) {
-            // Iterate through each child and compare with storedEmail
-            for (let i = 0; i < savedValuesList.children.length; i++) {
-                const childValue = savedValuesList.children[i].textContent.trim();
-                if (childValue === storedEmail) {
-                    shouldEnableButton = true;
-                    break;
-                }
+        // Iterate through each child and compare with storedEmail
+        for (let i = 0; i < savedValuesList.children.length; i++) {
+            const listItem = savedValuesList.children[i];
+            const childValue = listItem.textContent.trim();
+
+            if (childValue === storedEmail) {
+                shouldEnableButton = true;
+
+                // Apply styles to the matching list item
+                listItem.style.color = 'blue';
+                listItem.style.fontWeight = 'bold';
+                listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
+            } else {
+                // Optional: Reset styles for non-matching items
+                listItem.style.color = '';
+                listItem.style.fontWeight = '';
+                listItem.style.fontSize = '';
             }
         }
 
@@ -23,6 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
         joinMeetingButton.disabled = !shouldEnableButton;
     };
 
-    // Call checkList to initialize button state
+    // Call checkList to initialize button state and apply styles
     checkList();
 });
