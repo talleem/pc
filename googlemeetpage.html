@@ -45,12 +45,20 @@
             required
         >
     </div>
+     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#starttime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i", // Customize date format
+            placeholder: "Enter date and time"
+        });
+    </script>
     <div style="display: flex; justify-content: flex-end; padding: 20px;">
         <input 
             type="datetime-local" 
             id="endtime" 
             name="endtime" 
-            placeholder="Enter the start time here.." 
+            placeholder="Enter the end time here.." 
             style="
                 height: 30px; 
                 width: 300px; 
@@ -61,5 +69,13 @@
             required
         >
     </div>
+     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#endtime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i", // Customize date format
+            placeholder: "Enter date and time"
+        });
+    </script>
 </body>
 </html>
