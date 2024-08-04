@@ -2,6 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const joinMeetingButton = document.getElementById('joinmeeting');
     const savedValuesList = document.getElementById('savedValuesList');
     const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    
 
     // Function to check the list and enable/disable the button
     window.checkList = function() {
