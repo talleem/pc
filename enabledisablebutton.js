@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const joinMeetingButton = document.getElementById('joinmeeting');
     const savedValuesList = document.getElementById('savedValuesList');
     const storedEmail = localStorage.getItem('loggedInEmail');
-    const createinvit = localStorage.getElementById('createinvit');
-    const updateinvit = localStorage.getElementById('updateinvit');
-    const loadinvit = localStorage.getElementById('loadinvit');
-    const endtime = localStorage.getElementById('endtime');
-    const starttime = localStorage.getElementById('starttime');
-    const meetingid = localStorage.getElementById('meetingid');
+    const createinvit = document.getElementById('createinvit');
+    const updateinvit = document.getElementById('updateinvit');
+    const loadinvit = document.getElementById('loadinvit');
+    const endtime = document.getElementById('endtime');
+    const starttime = document.getElementById('starttime');
+    const meetingid = document.getElementById('meetingid');
     
 
     // Function to check the list and enable/disable the button
