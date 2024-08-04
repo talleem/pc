@@ -162,51 +162,58 @@
             " 
          >Create invit</button>
     
-     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedValuesList = document.getElementById('savedValuesList');
-            const startTimeInput = document.getElementById('starttime');
-            const endTimeInput = document.getElementById('endtime');
-            const joinMeetingButton = document.getElementById('createinvit');
+ <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedValuesList = document.getElementById('savedValuesList');
+        const startTimeInput = document.getElementById('starttime');
+        const endTimeInput = document.getElementById('endtime');
+        const createInvitButton = document.getElementById('createinvit');
 
-            function createMeetingEvent() {
-                if (savedValuesList.children.length > 0) {
-                    const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
-                    const startTime = startTimeInput.value;
-                    const endTime = endTimeInput.value;
+        // Retrieve the access token from localStorage
+        const accessToken = localStorage.getItem('accessToken'); // Retrieve the access token
 
-                    const event = {
-                        summary: 'Recurring Meeting',
-                        start: { dateTime: startTime },
-                        end: { dateTime: endTime },
-                        recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
-                        attendees: attendees,
-                    };
+        // Function to create a recurring meeting event
+        function createMeetingEvent() {
+            if (savedValuesList.children.length > 0 && accessToken) {
+                const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
+                const startTime = startTimeInput.value;
+                const endTime = endTimeInput.value;
 
-                    gapi.client.calendar.events.insert({
-                        calendarId: 'primary',
-                        resource: event,
-                    }).then(response => {
-                        console.log('Event created: ', response);
-                    }).catch(error => {
-                        console.error('Error creating event: ', error);
-                    });
-                }
-            }
+                const event = {
+                    summary: 'Recurring Meeting',
+                    start: { dateTime: startTime },
+                    end: { dateTime: endTime },
+                    recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
+                    attendees: attendees,
+                };
 
-            gapi.load('client:auth2', () => {
-                gapi.auth2.init({ client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com' });
-                gapi.client.load('calendar', 'v3', () => {
-                    joinMeetingButton.addEventListener('click', () => {
-                        gapi.auth2.getAuthInstance().signIn().then(() => {
-                            createMeetingEvent();
-                        });
-                    });
+                fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(event),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Event created: ', data);
+                })
+                .catch(error => {
+                    console.error('Error creating event: ', error);
                 });
-            });
-           
+            } else {
+                console.error('Access token is missing or no attendees available.');
+            }
+        }
+
+        // Add click event listener to the button
+        createInvitButton.addEventListener('click', function() {
+            createMeetingEvent();
         });
-    </script>
+    });
+</script>
+
     
 </body>
 </html>
