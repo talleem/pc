@@ -163,57 +163,61 @@
          >Create invit</button>
     
  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedValuesList = document.getElementById('savedValuesList');
-        const startTimeInput = document.getElementById('starttime');
-        const endTimeInput = document.getElementById('endtime');
-        const createInvitButton = document.getElementById('createinvit');
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedValuesList = document.getElementById('savedValuesList');
+            const startTimeInput = document.getElementById('starttime');
+            const endTimeInput = document.getElementById('endtime');
+            const createInvitButton = document.getElementById('createinvit');
 
-        // Retrieve the access token from localStorage
-        const accessToken = localStorage.getItem('accessToken'); // Retrieve the access token
-        console.log('access token is:',accessToken);
+            // Retrieve the access token from localStorage
+            const accessToken = localStorage.getItem('accessToken');
+            console.log('access token is:', accessToken);
 
-        // Function to create a recurring meeting event
-        function createMeetingEvent() {
-            if (savedValuesList.children.length > 0 && accessToken) {
-                const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
-                const startTime = startTimeInput.value;
-                const endTime = endTimeInput.value;
+            // Function to create a recurring meeting event
+            function createMeetingEvent() {
+                if (savedValuesList.children.length > 0 && accessToken) {
+                    const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
+                    const startTime = startTimeInput.value;
+                    const endTime = endTimeInput.value;
 
-                const event = {
-                    summary: 'Recurring Meeting',
-                    start: { dateTime: startTime },
-                    end: { dateTime: endTime },
-                    recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
-                    attendees: attendees,
-                };
+                    const event = {
+                        summary: 'Recurring Meeting',
+                        start: { dateTime: startTime },
+                        end: { dateTime: endTime },
+                        recurrence: ['RULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
+                        attendees: attendees,
+                    };
 
-                fetch('https://www.googleapis.com/calendar/v3/calendars/engineerr1983@gmail.com/events', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(event),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Event created: ', data);
-                })
-                .catch(error => {
-                    console.error('Error creating event: ', error);
-                });
-            } else {
-                console.error('Access token is missing or no attendees available.');
+                    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(event),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Error creating event:', data.error.message);
+                        } else {
+                            console.log('Event created:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error creating event:', error);
+                    });
+                } else {
+                    console.error('Access token is missing or no attendees available.');
+                }
             }
-        }
 
-        // Add click event listener to the button
-        createInvitButton.addEventListener('click', function() {
-            createMeetingEvent();
+            // Add click event listener to the button
+            createInvitButton.addEventListener('click', function() {
+                createMeetingEvent();
+            });
         });
-    });
-</script>
+    </script>
 
     
 </body>
