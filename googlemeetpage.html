@@ -160,12 +160,13 @@
                 /* Additional inline styles here if needed */
             " 
          >Create invit</button>
+    
      <script>
         document.addEventListener('DOMContentLoaded', function() {
             const savedValuesList = document.getElementById('savedValuesList');
             const startTimeInput = document.getElementById('starttime');
             const endTimeInput = document.getElementById('endtime');
-            const joinMeetingButton = document.getElementById('joinmeeting');
+            const joinMeetingButton = document.getElementById('createinvit');
 
             function createMeetingEvent() {
                 if (savedValuesList.children.length > 0) {
@@ -202,8 +203,7 @@
                     });
                 });
             });
-            // Check whenever list changes
-            new MutationObserver(checkList).observe(savedValuesList, { childList: true });
+           
         });
     </script>
     
