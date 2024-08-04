@@ -160,5 +160,52 @@
                 /* Additional inline styles here if needed */
             " 
          >Create invit</button>
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedValuesList = document.getElementById('savedValuesList');
+            const startTimeInput = document.getElementById('starttime');
+            const endTimeInput = document.getElementById('endtime');
+            const joinMeetingButton = document.getElementById('joinmeeting');
+
+            function createMeetingEvent() {
+                if (savedValuesList.children.length > 0) {
+                    const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
+                    const startTime = startTimeInput.value;
+                    const endTime = endTimeInput.value;
+
+                    const event = {
+                        summary: 'Recurring Meeting',
+                        start: { dateTime: startTime },
+                        end: { dateTime: endTime },
+                        recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
+                        attendees: attendees,
+                    };
+
+                    gapi.client.calendar.events.insert({
+                        calendarId: 'primary',
+                        resource: event,
+                    }).then(response => {
+                        console.log('Event created: ', response);
+                    }).catch(error => {
+                        console.error('Error creating event: ', error);
+                    });
+                }
+            }
+
+            gapi.load('client:auth2', () => {
+                gapi.auth2.init({ client_id: 'YOUR_CLIENT_ID' });
+                gapi.client.load('calendar', 'v3', () => {
+                    joinMeetingButton.addEventListener('click', () => {
+                        gapi.auth2.getAuthInstance().signIn().then(() => {
+                            createMeetingEvent();
+                        });
+                    });
+                });
+            });
+            // Check whenever list changes
+            new MutationObserver(checkList).observe(savedValuesList, { childList: true });
+        });
+    </script>
+    
 </body>
 </html>
