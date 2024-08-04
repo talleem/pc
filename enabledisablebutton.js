@@ -36,6 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Enable or disable the button based on the comparison
         joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
+        joinMeetingButton.disabled = !shouldEnableButton;
     };
 
     // Call checkList to initialize button state and apply styles
