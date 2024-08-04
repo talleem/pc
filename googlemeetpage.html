@@ -187,7 +187,7 @@
                         recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
                         attendees: attendees,
                     };
-
+                    console.log('attendees',attendees);
                     fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
                         method: 'POST',
                         headers: {
