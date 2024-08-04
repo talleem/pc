@@ -194,7 +194,7 @@
             }
 
             gapi.load('client:auth2', () => {
-                gapi.auth2.init({ client_id: 'YOUR_CLIENT_ID' });
+                gapi.auth2.init({ client_id: '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com' });
                 gapi.client.load('calendar', 'v3', () => {
                     joinMeetingButton.addEventListener('click', () => {
                         gapi.auth2.getAuthInstance().signIn().then(() => {
