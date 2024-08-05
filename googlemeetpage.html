@@ -169,14 +169,13 @@
             const endTimeInput = document.getElementById('endtime');
             const createInvitButton = document.getElementById('createinvit');
 
-             function validateInputs() {
-            if (startTimeInput === '' || endTimeInput === '') {
+            function validateInputs() {
+            if (startTimeInput.value === '' || endTimeInput.value === '') {
                 alert("Please enter both start time and end time.");
-                  return false; 
+                return false; // Return false to stop further execution
             }
-                 return true;
-            };
-
+            return true; // Return true if inputs are valid
+        }
             // Retrieve the access token from localStorage
             const accessToken = localStorage.getItem('accessToken');
             console.log('access token is:', accessToken);
