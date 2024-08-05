@@ -168,9 +168,6 @@
             const startTimeInput = document.getElementById('starttime');
             const endTimeInput = document.getElementById('endtime');
             const createInvitButton = document.getElementById('createinvit');
-         
-          console.log("Please enter both start time and end time.");
-           
 
             // Retrieve the access token from localStorage
             const accessToken = localStorage.getItem('accessToken');
@@ -178,6 +175,9 @@
 
             // Function to create a recurring meeting event
             function createMeetingEvent() {
+                 if (startTimeInput === '' || endTimeInput === '') {
+          alert("Please enter both start time and end time.");
+          };
                 if (savedValuesList.children.length > 0 && accessToken) {
                    const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
                     const startTime = new Date(startTimeInput.value).toISOString();
