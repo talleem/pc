@@ -172,6 +172,9 @@
              function validateInputs() {
             if (startTimeInput === '' || endTimeInput === '') {
                 alert("Please enter both start time and end time.");
+                  return false; 
+            }
+                 return true;
             };
 
             // Retrieve the access token from localStorage
