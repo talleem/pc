@@ -176,6 +176,10 @@
             }
             return true; // Return true if inputs are valid
         }
+            function generateRequestId() {
+    return 'req-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+}
+
             // Retrieve the access token from localStorage
             const accessToken = localStorage.getItem('accessToken');
             console.log('access token is:', accessToken);
