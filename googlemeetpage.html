@@ -222,8 +222,9 @@
 
             // Add click event listener to the button
             createInvitButton.addEventListener('click', function() {
-                validateInputs(),
+                 if (validateInputs()) { 
                 createMeetingEvent();
+                 }
             });
         });
     </script>
