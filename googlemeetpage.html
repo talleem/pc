@@ -10,7 +10,7 @@
      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
      <script src="https://apis.google.com/js/api.js"></script>
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     OneSignalDeferred.push(async function(OneSignal) {
@@ -19,11 +19,7 @@
         notifyButton: {
           enable: true, // Enable the notify button if desired
         },
-        serviceWorkerParam: {
-          scope: '/hello-world-page/' // Specify the scope
-        },
-        serviceWorkerPath: '/hello-world-page/OneSignalSDKWorker.js'
-        // No serviceWorkerUpdaterPath specified
+        serviceWorkerPath: '/hello-world-page/OneSignalSDKWorker.js', // Path at the root directory
       });
 
       // Handle notification display
