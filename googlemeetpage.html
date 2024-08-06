@@ -10,24 +10,7 @@
      <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
      <script src="https://apis.google.com/js/api.js"></script>
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "e90baac9-0df5-46c6-a149-34f0886d8b33",
-        notifyButton: {
-          enable: true, // Enable the notify button if desired
-        },
-        serviceWorkerPath: '/hello-world-page/OneSignalSDKWorker.js', // Path at the root directory
-      });
-
-      // Handle notification display
-      OneSignal.on('notificationDisplay', function(event) {
-        console.log('Notification displayed:', event);
-      });
-    });
-  </script>
+ <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
 </head>
 <body onload="checkList()">
    <h4 style="font-weight:bold;color:#0000ff;">Enter:Google Meet list of attendees emails with the</h4>
