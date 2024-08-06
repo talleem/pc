@@ -11,6 +11,16 @@
      <script src="https://apis.google.com/js/api.js"></script>
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
  <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
+    <script>
+  const beamsClient = new PusherPushNotifications.Client({
+    instanceId: 'dd857255-a776-4693-b811-b2caf5ef52b7',
+  });
+
+  beamsClient.start()
+    .then(() => beamsClient.addDeviceInterest('hello'))
+    .then(() => console.log('Successfully registered and subscribed!'))
+    .catch(console.error);
+</script>
 </head>
 <body onload="checkList()">
    <h4 style="font-weight:bold;color:#0000ff;">Enter:Google Meet list of attendees emails with the</h4>
