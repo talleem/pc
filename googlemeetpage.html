@@ -184,52 +184,81 @@
             const accessToken = localStorage.getItem('accessToken');
             console.log('access token is:', accessToken);
 
-            // Function to create a recurring meeting event
-            function createMeetingEvent() {
-                if (savedValuesList.children.length > 0 && accessToken) {
-                   const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
-                    const startTime = new Date(startTimeInput.value).toISOString();
-                    const endTime = new Date(endTimeInput.value).toISOString();
-                    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the browser's time zone
-                    const event = {
-                        summary: 'Recurring Meeting',
-                        start: { dateTime: startTime, timeZone: timeZone },
-                        end: { dateTime: endTime, timeZone: timeZone },
-                        recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
-                        attendees: attendees,
-                         conferenceData: {
-        createRequest: {
-            requestId: generateRequestId(), // Generate a unique request ID
-            conferenceSolutionKey: {
-                type: "hangoutsMeet"
-            }
-        }
-    }
-                    };
-                    console.log('attendees',attendees);
-                    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(event),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            console.error('Error creating event:', data.error.message);
-                        } else {
-                            console.log('Event created:', data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error creating event:', error);
-                    });
-                } else {
-                    console.error('Access token is missing or no attendees available.');
+        // Function to create a recurring meeting event
+function createMeetingEvent() {
+    if (savedValuesList.children.length > 0 && accessToken) {
+        const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
+        const startTime = new Date(startTimeInput.value).toISOString();
+        const endTime = new Date(endTimeInput.value).toISOString();
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the browser's time zone
+        const event = {
+            summary: 'Recurring Meeting',
+            start: { dateTime: startTime, timeZone: timeZone },
+            end: { dateTime: endTime, timeZone: timeZone },
+            recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
+            attendees: attendees,
+            conferenceData: {
+                createRequest: {
+                    requestId: generateRequestId(), // Generate a unique request ID
+                    conferenceSolutionKey: {
+                        type: "hangoutsMeet"
+                    }
                 }
             }
+        };
+        console.log('attendees', attendees);
+        fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(event),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error creating event:', data.error.message);
+            } else {
+                console.log('Event created:', data);
+                // Extract the necessary information from the response
+                const conferenceId = data.conferenceData.createRequest.conferenceSolutionKey.type;
+                const createdDate = new Date(data.created).toLocaleString();
+                const creatorEmail = data.creator.email;
+                const hangoutLink = data.hangoutLink;
+                const startTime = new Date(data.start.dateTime).toLocaleString();
+                const endTime = new Date(data.end.dateTime).toLocaleString();
+                const recurrence = data.recurrence ? data.recurrence.join(", ") : 'None';
+                const status = data.status;
+                const summary = data.summary;
+
+                // Create the alert message
+                const alertMessage = `
+                    Creation of the meeting event successful, details:
+                    Conference ID: ${conferenceId}
+                    Created Date: ${createdDate}
+                    Creator Email: ${creatorEmail}
+                    Hangout Link: ${hangoutLink}
+                    Start Time: ${startTime}
+                    End Time: ${endTime}
+                    Recurrence: ${recurrence}
+                    Status: ${status}
+                    Summary: ${summary}
+                `;
+
+                // Display the alert
+                alert(alertMessage);
+            }
+        })
+        .catch(error => {
+            console.error('Error creating event:', error);
+            alert('There was an error creating the meeting event.');
+        });
+    } else {
+        console.error('Access token is missing or no attendees available.');
+    }
+}
+            
 
             // Add click event listener to the button
             createInvitButton.addEventListener('click', function() {
