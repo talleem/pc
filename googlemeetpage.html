@@ -17,6 +17,10 @@
     await OneSignal.init({
       appId: "e90baac9-0df5-46c6-a149-34f0886d8b33",
     });
+       // Handle notification display
+      OneSignal.on('notificationDisplay', function(event) {
+        console.log('Notification displayed:', event);
+      });
   });
 </script>
 </script>
