@@ -12,86 +12,20 @@
      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
  <script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
     <script src="https://js.pusher.com/beams/1.0/pusher.beams.min.js"></script>
-
-   <script>
-  // Function to request notification permission
-  function requestNotificationPermission() {
-    return new Promise((resolve, reject) => {
-      if (Notification.permission === 'granted') {
-        console.log('Notification permission already granted');
-        resolve();
-      } else if (Notification.permission === 'denied') {
-        console.log('Notification permission denied');
-        reject('Notification permission denied');
-      } else {
-        console.log('Requesting notification permission');
-        Notification.requestPermission()
-          .then(permission => {
-            if (permission === 'granted') {
-              console.log('Notification permission granted');
-              resolve();
-            } else {
-              console.log('Notification permission not granted');
-              reject('Notification permission not granted');
-            }
-          });
-      }
-    });
-  }
-
-  // Initialize Pusher Beams
-  function initializePusherBeams() {
+<script>
+    // Initialize Pusher Beams
     const beamsClient = new PusherPushNotifications.Client({
       instanceId: 'dd857255-a776-4693-b811-b2caf5ef52b7',
     });
 
-    return beamsClient.start()
-      .then(() => beamsClient.addDeviceInterest('hello'))
+    // Start Pusher Beams
+    beamsClient.start()
       .then(() => {
-        console.log('Successfully registered and subscribed!');
-        return beamsClient;
+        console.log('Pusher Beams initialized and client started.');
       })
       .catch(console.error);
-  }
-
-  // Show subscription prompt to the user
-  function showSubscriptionPrompt() {
-    return new Promise((resolve, reject) => {
-      console.log('Showing subscription prompt');
-      const userConfirmed = confirm('Would you like to receive notifications from this app?');
-      if (userConfirmed) {
-        console.log('User agreed to subscribe');
-        resolve();
-      } else {
-        console.log('User declined subscription');
-        reject('User declined subscription');
-      }
-    });
-  }
-
-  // Handle incoming notifications
-  function handleNotifications(beamsClient) {
-    beamsClient.on('notification', (notification) => {
-      console.log('Received notification:', notification);
-      // Customize how you handle notifications here
-    });
-  }
-
-  // Main function to handle subscription and notifications
-  function setupNotifications() {
-    requestNotificationPermission()
-      .then(() => showSubscriptionPrompt())
-      .then(() => initializePusherBeams())
-      .then(beamsClient => {
-        handleNotifications(beamsClient);
-      })
-      .catch(console.error);
-  }
-
-  // Call setupNotifications when the page loads or when you want to initialize notifications
-  setupNotifications();
 </script>
-
+  
 </head>
 <body onload="checkList()">
    <h4 style="font-weight:bold;color:#0000ff;">Enter:Google Meet list of attendees emails with the</h4>
