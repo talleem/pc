@@ -1,3 +1,6 @@
+import fetch from 'node-fetch';
+import PushNotifications from '@pusher/push-notifications-server';
+
 export default async function handler(req, res) {
     // Allow CORS for specific origin
     res.setHeader('Access-Control-Allow-Origin', 'https://engineerr1983.github.io');
@@ -10,27 +13,6 @@ export default async function handler(req, res) {
         return;
     }
 
-    if (req.method === 'POST') {
-        const { accessToken } = req.body;
-
-        if (!accessToken) {
-            return res.status(400).json({ error: 'Access token is required' });
-        }
-
-        // Process the access token here
-        // ...
-
-        // Send response
-        return res.status(200).json({ message: 'Access token received' });
-    } else {
-        res.status(405).json({ error: 'Method not allowed' });
-    }
-}
-
-import fetch from 'node-fetch';
-import PushNotifications from '@pusher/push-notifications-server';
-
-export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { accessToken } = req.body;
 
@@ -105,4 +87,3 @@ export default async function handler(req, res) {
         res.status(405).json({ error: 'Method not allowed' });
     }
 }
-
