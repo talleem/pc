@@ -44,8 +44,8 @@ export default async function handler(req, res) {
                     body: new URLSearchParams({
                         'grant_type': 'refresh_token',
                         'refresh_token': refreshToken,
-                        'client_id': 'YOUR_CLIENT_ID',
-                        'client_secret': 'YOUR_CLIENT_SECRET'
+                        'client_id': '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
+                        'client_secret': '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'
                     })
                 });
                 const data = await refreshResponse.json();
