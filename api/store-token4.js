@@ -13,26 +13,17 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { accessToken, refreshToken } = req.body;
 
-        if (!accessToken || !refreshToken) {
-            return res.status(400).json({ error: 'Access token and refresh token are required' });
+        if (!accessToken) {
+            return res.status(400).json({ error: 'Access token is required' });
         }
 
-        // Check if the token is expired
-        let isTokenExpired = false;
+        let tokenToUse = accessToken;
+
         try {
+            // Check if the token is expired
             const response = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`);
-            if (response.status === 400) {
-                isTokenExpired = true;  // Google returns 400 for invalid or expired tokens
-            }
-        } catch (error) {
-            console.error('Error checking token expiry:', error);
-            return res.status(500).json({ error: 'Error checking token expiry' });
-        }
-
-        // Refresh the token if necessary
-        let newAccessToken = accessToken;
-        if (isTokenExpired) {
-            try {
+            if (response.status === 400 && refreshToken) {
+                // Token is expired, try to refresh it
                 const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
                     method: 'POST',
                     headers: {
@@ -41,39 +32,23 @@ export default async function handler(req, res) {
                     body: new URLSearchParams({
                         'grant_type': 'refresh_token',
                         'refresh_token': refreshToken,
-                        'client_id': process.env.GOOGLE_CLIENT_ID,
-                        'client_secret': process.env.GOOGLE_CLIENT_SECRET
+                        'client_id': '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com',
+                        'client_secret': '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'
                     })
                 });
+
                 const data = await refreshResponse.json();
-                newAccessToken = data.access_token;
-            } catch (error) {
-                console.error('Error refreshing token:', error);
-                return res.status(500).json({ error: 'Error refreshing token' });
+                tokenToUse = data.access_token;
             }
-        }
-
-        // Initialize Pusher Beams
-        const beamsClient = new PushNotifications({
-            instanceId: process.env.PUSHER_INSTANCE_ID,
-            secretKey: process.env.PUSHER_SECRET_KEY
-        });
-
-        try {
-            await beamsClient.publishToInterests(['your-interest'], {
-                web: {
-                    notification: {
-                        title: 'Access Token Update',
-                        body: `Access token: ${newAccessToken}`,
-                        deep_link: 'https://engineerr1983.github.io',
-                    }
-                }
-            });
-            return res.status(200).json({ message: 'Notification sent' });
         } catch (error) {
-            console.error('Error sending notification:', error);
-            return res.status(500).json({ error: 'Error sending notification' });
+            console.error('Error during token check or refresh:', error);
+            return res.status(500).json({ error: 'Error during token check or refresh' });
         }
+
+        // Process the access token (e.g., send notification)
+        // ...
+
+        return res.status(200).json({ message: 'Access token processed', token: tokenToUse });
     } else {
         res.status(405).json({ error: 'Method not allowed' });
     }
