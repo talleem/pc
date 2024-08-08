@@ -68,7 +68,7 @@ export default async function handler(req, res) {
                     notification: {
                         title: 'Access Token Update',
                         body: `Access token: ${newAccessToken}`,
-                        deep_link: 'https://engineerr1983.github.io',
+                        deep_link: 'https://engineerr1983.github.io/hello-world-page/',
                     }
                 }
             });
