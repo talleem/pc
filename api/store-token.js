@@ -59,7 +59,7 @@ export default async function handler(req, res) {
         // Initialize Pusher Beams
         const beamsClient = new PushNotifications({
             instanceId: 'dd857255-a776-4693-b811-b2caf5ef52b7',
-            secretKey: 'YOUR_PUSHER_SECRET_KEY'
+            secretKey: 'D5BDC9FEC0127DB991A83EB637A1BE43319242976A9DC3C31B7F8F4BBC506464'
         });
 
         try {
