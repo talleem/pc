@@ -3,10 +3,10 @@
 // For demonstration, we'll use a mock storage method
 
 // Mock function to simulate storing the token
-//const storeTokenInPersistentStorage = async (token) => {
+const storeTokenInPersistentStorage = async (token) => {
     // Replace this with real implementation, e.g., a database or secure key management
-//    console.log(`Token stored: ${token}`);
-//};
+   console.log(`Token stored: ${token}`);
+};
 
 export default async function handler(req, res) {
     // Allow CORS for specific origin
