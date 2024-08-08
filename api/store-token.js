@@ -74,7 +74,7 @@ export default async function handler(req, res) {
                     notification: {
                         title: 'Access Token Update',
                         body: `Access token: ${process.env.ACCESS_TOKEN}`,
-                        deep_link: 'https://your-app-url.com',
+                        deep_link: 'https://engineerr1983.github.io/hello-world-page/pagewithtabs.html',
                     }
                 }
             });
