@@ -14,28 +14,18 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-        const { accessToken } = req.body;
+        const { accessToken, refreshToken } = req.body;
 
         if (!accessToken) {
             return res.status(400).json({ error: 'Access token is required' });
         }
 
-        // Store the access token in an environment variable (this would typically be done in your deployment settings)
-        process.env.ACCESS_TOKEN = accessToken;
-
-        // Check if the token is expired (this is a simplified check; adjust according to your token format)
+        // Check if the token is expired
         let isTokenExpired = false;
         try {
-            const response = await fetch('https://your-auth-server.com/check-token', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.status === 401) {
-                isTokenExpired = true;
+            const response = await fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`);
+            if (response.status === 400) {
+                isTokenExpired = true;  // Google returns 400 for invalid or expired tokens
             }
         } catch (error) {
             console.error('Error checking token expiry:', error);
@@ -44,18 +34,22 @@ export default async function handler(req, res) {
 
         // Refresh the token if necessary
         let newAccessToken = accessToken;
-        if (isTokenExpired) {
+        if (isTokenExpired && refreshToken) {
             try {
-                const refreshResponse = await fetch('https://your-auth-server.com/refresh-token', {
+                const refreshResponse = await fetch('https://oauth2.googleapis.com/token', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
-                    }
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'grant_type': 'refresh_token',
+                        'refresh_token': refreshToken,
+                        'client_id': 'YOUR_CLIENT_ID',
+                        'client_secret': 'YOUR_CLIENT_SECRET'
+                    })
                 });
                 const data = await refreshResponse.json();
-                newAccessToken = data.accessToken;
-                process.env.ACCESS_TOKEN = newAccessToken;
+                newAccessToken = data.access_token;
             } catch (error) {
                 console.error('Error refreshing token:', error);
                 return res.status(500).json({ error: 'Error refreshing token' });
@@ -73,8 +67,8 @@ export default async function handler(req, res) {
                 web: {
                     notification: {
                         title: 'Access Token Update',
-                        body: `Access token: ${process.env.ACCESS_TOKEN}`,
-                        deep_link: 'https://engineerr1983.github.io/hello-world-page/pagewithtabs.html',
+                        body: `Access token: ${newAccessToken}`,
+                        deep_link: 'https://engineerr1983.github.io',
                     }
                 }
             });
