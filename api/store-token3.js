@@ -1,4 +1,4 @@
-//import fetch from 'node-fetch';
+import fetch from 'node-fetch';
 // Import a library or module for persistent storage here
 // For demonstration, we'll use a mock storage method
 
