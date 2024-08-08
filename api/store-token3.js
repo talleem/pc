@@ -30,6 +30,7 @@ export default async function handler(req, res) {
         // Store the access token in persistent storage
         try {
             await storeTokenInPersistentStorage(accessToken);
+            console.log(accesstoken);
             return res.status(200).json({ message: 'Access token received and stored' });
         } catch (error) {
             console.error('Error storing access token:', error);
