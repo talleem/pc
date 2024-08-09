@@ -3,13 +3,5 @@
     "api/store-token4.js": {
       "runtime": "nodejs20.x"
     }
-  },
-  "cron": {
-    "jobs": [
-      {
-        "path": "/api/store-token4",
-        "schedule": "*/3 * * * *"
-      }
-    ]
   }
 }
