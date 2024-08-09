@@ -1,7 +1,5 @@
 {
-"functions": {
-    "api/store-token4.js": {
-      "runtime":"nodejs20.x"
-    }
+  "functions": {
+    "api/store-token4.js": {}
   }
 }
