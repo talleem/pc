@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/store-token4.js": {
-      "runtime": "now-php@18.0.0"
+      "runtime": "nodejs@18.0.0"
     }
   }
 }
