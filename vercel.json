@@ -1,5 +1,7 @@
 {
   "functions": {
-    "api/store-token4.js": {}
+    "api/store-token.js": {
+      "runtime": "nodejs18.x"
+    }
   }
 }
