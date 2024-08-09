@@ -1,14 +1,14 @@
 {
   "functions": {
     "api/store-token.js": {
-      "runtime": "nodejs16.x"
+      "runtime": "nodejs20.x"
     }
   },
   "cron": {
     "jobs": [
       {
         "path": "/api/store-token4",
-        "schedule": "0 * * * *"  // This runs the job every hour
+        "schedule": "*/3 * * * *"
       }
     ]
   }
