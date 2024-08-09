@@ -160,72 +160,92 @@
             " 
         >Load invit</button>
 
-       <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const loadInvitButton = document.getElementById('loadinvit');
+     <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loadInvitButton = document.getElementById('loadinvit');
+    
+    loadInvitButton.addEventListener('click', function() {
+        // Retrieve the access token and logged-in email from localStorage
+        const accessToken = localStorage.getItem('accessToken');
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
         
-        loadInvitButton.addEventListener('click', function() {
-            // Retrieve the access token and logged-in email from localStorage
-            const accessToken = localStorage.getItem('accessToken');
-            const loggedInEmail = localStorage.getItem('loggedInEmail');
-            
-            if (accessToken && loggedInEmail) {
-                // Function to load meetings for the logged-in email
-                function loadMeetings() {
-                    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': `Bearer ${accessToken}`,
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // Filter events to include only those where the logged-in email is an attendee
-                        const filteredEvents = data.items.filter(event => 
-                            event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
-                        );
+        if (accessToken && loggedInEmail) {
+            // Function to load meetings for the logged-in email
+            function loadMeetings() {
+                fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Filter events to include only those where the logged-in email is an attendee
+                    const filteredEvents = data.items.filter(event => 
+                        event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
+                    );
 
-                        // Create a new window and display the meeting data
-                        const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-                        newWindow.document.write('<html><head><title>Meetings</title></head><body>');
-                        newWindow.document.write('<h2>Meetings</h2>');
-                        newWindow.document.write('<ul>');
+                    // Create a new window and display the meeting data
+                    const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
+                    newWindow.document.write('<html><head><title>Meetings</title></head><body>');
+                    newWindow.document.write('<h2>Meetings</h2>');
+                    newWindow.document.write('<ul>');
+                    
+                    filteredEvents.forEach(event => {
+                        const startTime = new Date(event.start.dateTime).toLocaleString();
+                        const endTime = new Date(event.end.dateTime).toLocaleString();
+                        const creatorEmail = event.creator.email;
+                        const description = event.description || 'No description';
+                        const hangoutLink = event.hangoutLink || 'No link available';
                         
-                        filteredEvents.forEach(event => {
-                            const startTime = new Date(event.start.dateTime).toLocaleString();
-                            const endTime = new Date(event.end.dateTime).toLocaleString();
-                            const creatorEmail = event.creator.email;
-                            const description = event.description || 'No description';
-                            const hangoutLink = event.hangoutLink || 'No link available';
+                        // Determine if the event is recurring
+                        let recurrenceInfo = 'Single event';
+                        if (event.recurrence) {
+                            recurrenceInfo = 'Recurring event';
 
-                            newWindow.document.write(`
-                                <li>
-                                    <strong>Start Time:</strong> ${startTime}<br>
-                                    <strong>End Time:</strong> ${endTime}<br>
-                                    <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                    <strong>Description:</strong> ${description}<br>
-                                    <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a>
-                                </li>
-                            `);
-                        });
+                            // Example: Extracting the number of occurrences (if available)
+                            const recurrenceRule = event.recurrence[0]; // Recurrence rules like 'RRULE:FREQ=WEEKLY;COUNT=10'
+                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                            if (countMatch) {
+                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                            }
 
-                        newWindow.document.write('</ul>');
-                        newWindow.document.write('</body></html>');
-                        newWindow.document.close();
-                    })
-                    .catch(error => {
-                        console.error('Error loading meetings:', error);
-                        alert('There was an error loading the meetings.');
+                            // Extract the recurrence frequency (e.g., daily, weekly, monthly)
+                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                            if (freqMatch) {
+                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                            }
+                        }
+
+                        newWindow.document.write(`
+                            <li>
+                                <strong>Start Time:</strong> ${startTime}<br>
+                                <strong>End Time:</strong> ${endTime}<br>
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
+                                <strong>Description:</strong> ${description}<br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}
+                            </li>
+                        `);
                     });
-                }
-                
-                loadMeetings();
-            } else {
-                alert('Access token or logged-in email is missing.');
+
+                    newWindow.document.write('</ul>');
+                    newWindow.document.write('</body></html>');
+                    newWindow.document.close();
+                })
+                .catch(error => {
+                    console.error('Error loading meetings:', error);
+                    alert('There was an error loading the meetings.');
+                });
             }
-        });
+            
+            loadMeetings();
+        } else {
+            alert('Access token or logged-in email is missing.');
+        }
     });
-   </script>
+});
+</script>
 
 
     
