@@ -264,24 +264,35 @@ document.getElementById("updateinvit").onclick = function() {
     var meetings = [];
     var currentIndex = 0;
 
-    function listMeetings() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/primary/events');
-        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                var response = JSON.parse(xhr.responseText);
-                meetings = response.items.filter(event => event.creator.email === loggedEmail);
+    // Function to load meetings for the logged-in email as the creator
+    function loadMeetings() {
+        if (accessToken && loggedEmail) {
+            fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Filter events where the creator's email matches the logged email
+                meetings = data.items.filter(event => 
+                    event.creator.email === loggedEmail
+                );
+
                 if (meetings.length === 0) {
                     alert('No meetings found');
                 } else {
                     showMeeting(meetings[currentIndex]);
                 }
-            } else {
+            })
+            .catch(error => {
+                console.error('Error fetching meetings:', error);
                 alert('Failed to load meetings');
-            }
-        };
-        xhr.send();
+            });
+        } else {
+            alert('Missing access token or logged-in email');
+        }
     }
 
     function showMeeting(meeting) {
@@ -385,10 +396,10 @@ document.getElementById("updateinvit").onclick = function() {
         };
     }
 
-    listMeetings();
+    loadMeetings();
 };
 
-            </script>
+</script>
     
      <button id="createinvit" style=" height: 35px; 
                 text-align: center;
