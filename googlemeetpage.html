@@ -270,7 +270,7 @@ document.getElementById('updateinvit').addEventListener('click', async function(
     let currentIndex = 0;
     function renderEvent() {
         const event = events[currentIndex];
-        let updateWindow = window.open('', '', 'width=500,height=600');
+        let updateWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
         
         updateWindow.document.write(`
             <html>
