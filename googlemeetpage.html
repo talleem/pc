@@ -304,6 +304,11 @@ document.getElementById("updateinvit").onclick = function() {
         }
 
         var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
+
+        // Clear previous content
+        updateWindow.document.body.innerHTML = '';
+
+        // Write new content
         updateWindow.document.write('<p><strong>Description:</strong> <input type="text" id="description" value="' + (meeting.description || '') + '"></p>');
         updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + (meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
         updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + (meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
@@ -320,6 +325,7 @@ document.getElementById("updateinvit").onclick = function() {
         var deleteAttendeeButton = updateWindow.document.getElementById('deleteAttendee');
 
         // Add existing attendees
+        attendeesList.innerHTML = ''; // Clear previous attendees
         if (meeting.attendees) {
             meeting.attendees.forEach(function(attendee) {
                 var li = updateWindow.document.createElement('li');
@@ -330,7 +336,7 @@ document.getElementById("updateinvit").onclick = function() {
 
         addAttendeeButton.onclick = function() {
             var newAttendee = addAttendeeInput.value.trim();
-            if (newAttendee && !meeting.attendees.some(a => a.email === newAttendee)) {
+            if (newAttendee && !Array.from(attendeesList.children).some(li => li.textContent === newAttendee)) {
                 var li = updateWindow.document.createElement('li');
                 li.textContent = newAttendee;
                 attendeesList.appendChild(li);
@@ -408,6 +414,7 @@ document.getElementById("updateinvit").onclick = function() {
     loadMeetings();
 };
 </script>
+
 
     
      <button id="createinvit" style=" height: 35px; 
