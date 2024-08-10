@@ -258,126 +258,135 @@ document.addEventListener('DOMContentLoaded', function() {
                 /* Additional inline styles here if needed */
             ">Update invit</button>
 <script>
-document.getElementById('updateinvit').addEventListener('click', async function() {
-    const accessToken = localStorage.getItem('accessToken');
-    const loggedEmail = localStorage.getItem('loggedEmail');
-    
-    // Fetch the user's events
-    const eventsResponse = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=10&q=${loggedEmail}&access_token=${accessToken}`);
-    const eventsData = await eventsResponse.json();
-    let events = eventsData.items.filter(event => event.creator.email === loggedEmail);
+document.getElementById("updateinvit").onclick = function() {
+    var accessToken = localStorage.getItem('accessToken');
+    var loggedEmail = localStorage.getItem('loggedEmail');
+    var meetings = [];
+    var currentIndex = 0;
 
-    let currentIndex = 0;
-    function renderEvent() {
-        const event = events[currentIndex];
-        let updateWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-        
-        updateWindow.document.write(`
-            <html>
-            <head><title>Update Meeting</title></head>
-            <body>
-                <label>Start Time: <input type="datetime-local" id="startTime" value="${new Date(event.start.dateTime).toISOString().slice(0, 16)}"></label><br><br>
-                <label>End Time: <input type="datetime-local" id="endTime" value="${new Date(event.end.dateTime).toISOString().slice(0, 16)}"></label><br><br>
-                <label>Description: <input type="text" id="description" value="${event.description || ''}"></label><br><br>
-                <label>Attendees:</label><br>
-                <input type="email" id="newAttendeeEmail" placeholder="Add attendee"><button id="addAttendee">Add Attendee</button><br><br>
-                <ul id="attendees">
-                    ${event.attendees ? event.attendees.map(att => `<li>${att.email}</li>`).join('') : ''}
-                </ul><br>
-                <button id="deleteAttendee">Delete Attendee</button><br><br>
-                <button id="prevEvent">Previous</button>
-                <button id="nextEvent">Next</button><br><br>
-                <button id="updateEvent">Update Meeting</button>
-                <button id="deleteEvent">Delete Meeting</button>
-            </body>
-            </html>
-        `);
-
-        // Handling the add attendee action
-        updateWindow.document.getElementById('addAttendee').addEventListener('click', function() {
-            const newEmail = updateWindow.document.getElementById('newAttendeeEmail').value;
-            const attendeesList = updateWindow.document.getElementById('attendees');
-            if (!newEmail) {
-                alert('Please enter an email.');
-                return;
-            }
-            const existingEmails = Array.from(attendeesList.children).map(li => li.textContent);
-            if (existingEmails.includes(newEmail)) {
-                alert('Attendee already added.');
-            } else {
-                attendeesList.innerHTML += `<li>${newEmail}</li>`;
-            }
-        });
-
-        // Handling the delete attendee action
-        updateWindow.document.getElementById('deleteAttendee').addEventListener('click', function() {
-            const attendeesList = updateWindow.document.getElementById('attendees');
-            attendeesList.removeChild(attendeesList.lastElementChild);
-        });
-
-        // Navigate to previous or next event
-        updateWindow.document.getElementById('prevEvent').addEventListener('click', function() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                renderEvent();
-            }
-        });
-        updateWindow.document.getElementById('nextEvent').addEventListener('click', function() {
-            if (currentIndex < events.length - 1) {
-                currentIndex++;
-                renderEvent();
-            }
-        });
-
-        // Update event
-        updateWindow.document.getElementById('updateEvent').addEventListener('click', async function() {
-            const updatedEvent = {
-                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
-                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
-                description: updateWindow.document.getElementById('description').value,
-                attendees: Array.from(updateWindow.document.getElementById('attendees').children).map(li => ({ email: li.textContent }))
-            };
-
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?access_token=${accessToken}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedEvent)
-            });
-
-            if (response.ok) {
-                alert('Meeting updated successfully.');
-            } else {
-                alert('Failed to update meeting.');
-            }
-        });
-
-        // Delete event
-        updateWindow.document.getElementById('deleteEvent').addEventListener('click', async function() {
-            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?access_token=${accessToken}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                alert('Meeting deleted successfully.');
-                events.splice(currentIndex, 1);
-                if (events.length > 0) {
-                    if (currentIndex >= events.length) currentIndex--;
-                    renderEvent();
+    function listMeetings() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://www.googleapis.com/calendar/v3/calendars/primary/events?access_token=' + accessToken + '&q=creator.email:' + loggedEmail);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = JSON.parse(xhr.responseText);
+                meetings = response.items.filter(event => event.creator.email === loggedEmail);
+                if (meetings.length === 0) {
+                    alert('No meetings found');
                 } else {
-                    updateWindow.close();
+                    showMeeting(meetings[currentIndex]);
                 }
             } else {
-                alert('Failed to delete meeting.');
+                alert('Failed to load meetings');
             }
-        });
+        };
+        xhr.send();
     }
 
-    if (events.length > 0) {
-        renderEvent();
-    } else {
-        alert('No meetings found.');
+    function showMeeting(meeting) {
+        var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
+        updateWindow.document.write('<p><strong>Meeting ID:</strong> ' + meeting.id + '</p>');
+        updateWindow.document.write('<p><strong>Description:</strong> <input type="text" id="description" value="' + (meeting.description || '') + '"></p>');
+        updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + new Date(meeting.start.dateTime).toISOString().slice(0, 16) + '"></p>');
+        updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + new Date(meeting.end.dateTime).toISOString().slice(0, 16) + '"></p>');
+        updateWindow.document.write('<ul id="attendeesList"></ul>');
+        updateWindow.document.write('<input type="text" id="attendeeEmail" placeholder="Add Attendee">');
+        updateWindow.document.write('<button id="addAttendee">Add Attendee</button>');
+        updateWindow.document.write('<button id="deleteAttendee">Delete Attendee</button>');
+        updateWindow.document.write('<button id="previous">Previous</button><button id="next">Next</button>');
+        updateWindow.document.write('<button id="updateMeeting">Update Meeting</button><button id="deleteMeeting">Delete Meeting</button>');
+
+        var attendeesList = updateWindow.document.getElementById('attendeesList');
+        var addAttendeeInput = updateWindow.document.getElementById('attendeeEmail');
+        var addAttendeeButton = updateWindow.document.getElementById('addAttendee');
+        var deleteAttendeeButton = updateWindow.document.getElementById('deleteAttendee');
+
+        meeting.attendees.forEach(function(attendee) {
+            var li = updateWindow.document.createElement('li');
+            li.textContent = attendee.email;
+            attendeesList.appendChild(li);
+        });
+
+        addAttendeeButton.onclick = function() {
+            var newAttendee = addAttendeeInput.value.trim();
+            if (newAttendee && !meeting.attendees.some(a => a.email === newAttendee)) {
+                var li = updateWindow.document.createElement('li');
+                li.textContent = newAttendee;
+                attendeesList.appendChild(li);
+                meeting.attendees.push({ email: newAttendee });
+            } else {
+                alert('Attendee already added or email is empty');
+            }
+        };
+
+        deleteAttendeeButton.onclick = function() {
+            var selectedAttendee = updateWindow.document.querySelector('ul#attendeesList li.selected');
+            if (selectedAttendee) {
+                meeting.attendees = meeting.attendees.filter(function(att) {
+                    return att.email !== selectedAttendee.textContent;
+                });
+                attendeesList.removeChild(selectedAttendee);
+            } else {
+                alert('Please select an attendee to delete');
+            }
+        };
+
+        updateWindow.document.getElementById('next').onclick = function() {
+            currentIndex = (currentIndex + 1) % meetings.length;
+            showMeeting(meetings[currentIndex]);
+        };
+
+        updateWindow.document.getElementById('previous').onclick = function() {
+            currentIndex = (currentIndex - 1 + meetings.length) % meetings.length;
+            showMeeting(meetings[currentIndex]);
+        };
+
+        updateWindow.document.getElementById('updateMeeting').onclick = function() {
+            var updatedMeeting = {
+                summary: meeting.summary,
+                description: updateWindow.document.getElementById('description').value,
+                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
+                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
+                attendees: meeting.attendees
+            };
+
+            var xhrUpdate = new XMLHttpRequest();
+            xhrUpdate.open('PUT', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
+            xhrUpdate.setRequestHeader('Content-Type', 'application/json');
+            xhrUpdate.onload = function() {
+                if (xhrUpdate.status === 200) {
+                    alert('Meeting updated: ' + JSON.stringify(updatedMeeting));
+                } else {
+                    alert('Failed to update meeting');
+                }
+            };
+            xhrUpdate.send(JSON.stringify(updatedMeeting));
+        };
+
+        updateWindow.document.getElementById('deleteMeeting').onclick = function() {
+            var xhrDelete = new XMLHttpRequest();
+            xhrDelete.open('DELETE', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
+            xhrDelete.onload = function() {
+                if (xhrDelete.status === 204) {
+                    alert('Meeting deleted');
+                    meetings.splice(currentIndex, 1);
+                    if (meetings.length > 0) {
+                        currentIndex = currentIndex % meetings.length;
+                        showMeeting(meetings[currentIndex]);
+                    } else {
+                        updateWindow.close();
+                    }
+                } else {
+                    alert('Failed to delete meeting');
+                }
+            };
+            xhrDelete.send();
+        };
     }
-});
+
+    listMeetings();
+};
+
 
             </script>
     
