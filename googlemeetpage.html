@@ -260,14 +260,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 document.getElementById("updateinvit").onclick = function() {
     var accessToken = localStorage.getItem('accessToken');
-    var loggedEmail = localStorage.getItem('loggedInEmail');
-    console.log(loggedEmail,accessToken);
+    var loggedInEmail = localStorage.getItem('loggedInEmail');
+    console.log(loggedInEmail, accessToken);
     var meetings = [];
     var currentIndex = 0;
 
     // Function to load meetings for the logged-in email as the creator
     function loadMeetings() {
-        if (accessToken && loggedEmail) {
+        if (accessToken && loggedInEmail) {
             fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
                 method: 'GET',
                 headers: {
@@ -278,9 +278,9 @@ document.getElementById("updateinvit").onclick = function() {
             .then(data => {
                 // Filter events where the creator's email matches the logged email
                 meetings = data.items.filter(event => 
-                    event.creator.email === loggedEmail
+                    event.creator.email === loggedInEmail
                 );
-                console.log ('meeting:',meetings);
+                console.log('Meetings:', meetings);
                 if (meetings.length === 0) {
                     alert('No meetings found');
                 } else {
@@ -297,11 +297,17 @@ document.getElementById("updateinvit").onclick = function() {
     }
 
     function showMeeting(meeting) {
+        if (!meeting) {
+            console.error('Meeting data is undefined or null');
+            alert('No meeting data available');
+            return;
+        }
+
         var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
         updateWindow.document.write('<p><strong>Meeting ID:</strong> ' + meeting.id + '</p>');
         updateWindow.document.write('<p><strong>Description:</strong> <input type="text" id="description" value="' + (meeting.description || '') + '"></p>');
-        updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + new Date(meeting.start.dateTime).toISOString().slice(0, 16) + '"></p>');
-        updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + new Date(meeting.end.dateTime).toISOString().slice(0, 16) + '"></p>');
+        updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + (meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
+        updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + (meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
         updateWindow.document.write('<ul id="attendeesList"></ul>');
         updateWindow.document.write('<input type="text" id="attendeeEmail" placeholder="Add Attendee">');
         updateWindow.document.write('<button id="addAttendee">Add Attendee</button>');
@@ -314,11 +320,14 @@ document.getElementById("updateinvit").onclick = function() {
         var addAttendeeButton = updateWindow.document.getElementById('addAttendee');
         var deleteAttendeeButton = updateWindow.document.getElementById('deleteAttendee');
 
-        meeting.attendees.forEach(function(attendee) {
-            var li = updateWindow.document.createElement('li');
-            li.textContent = attendee.email;
-            attendeesList.appendChild(li);
-        });
+        // Add existing attendees
+        if (meeting.attendees) {
+            meeting.attendees.forEach(function(attendee) {
+                var li = updateWindow.document.createElement('li');
+                li.textContent = attendee.email;
+                attendeesList.appendChild(li);
+            });
+        }
 
         addAttendeeButton.onclick = function() {
             var newAttendee = addAttendeeInput.value.trim();
@@ -399,8 +408,8 @@ document.getElementById("updateinvit").onclick = function() {
 
     loadMeetings();
 };
-
 </script>
+
     
      <button id="createinvit" style=" height: 35px; 
                 text-align: center;
