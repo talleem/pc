@@ -261,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.getElementById("updateinvit").onclick = function() {
     var accessToken = localStorage.getItem('accessToken');
     var loggedEmail = localStorage.getItem('loggedEmail');
+    console.log(loggedEmail,accessToken);
     var meetings = [];
     var currentIndex = 0;
 
