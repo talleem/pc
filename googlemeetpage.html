@@ -304,7 +304,6 @@ document.getElementById("updateinvit").onclick = function() {
         }
 
         var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
-        updateWindow.document.write('<p><strong>Meeting ID:</strong> ' + meeting.id + '</p>');
         updateWindow.document.write('<p><strong>Description:</strong> <input type="text" id="description" value="' + (meeting.description || '') + '"></p>');
         updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + (meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
         updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + (meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
