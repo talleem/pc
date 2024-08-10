@@ -280,7 +280,7 @@ document.getElementById("updateinvit").onclick = function() {
                 meetings = data.items.filter(event => 
                     event.creator.email === loggedEmail
                 );
-
+                console.log ('meeting:',meetings);
                 if (meetings.length === 0) {
                     alert('No meetings found');
                 } else {
