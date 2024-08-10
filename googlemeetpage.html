@@ -257,6 +257,130 @@ document.addEventListener('DOMContentLoaded', function() {
                top: 220px;
                 /* Additional inline styles here if needed */
             ">Update invit</button>
+<script>
+document.getElementById('updateinvit').addEventListener('click', async function() {
+    const accessToken = localStorage.getItem('accessToken');
+    const loggedEmail = localStorage.getItem('loggedEmail');
+    
+    // Fetch the user's events
+    const eventsResponse = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=10&q=${loggedEmail}&access_token=${accessToken}`);
+    const eventsData = await eventsResponse.json();
+    let events = eventsData.items.filter(event => event.creator.email === loggedEmail);
+
+    let currentIndex = 0;
+    function renderEvent() {
+        const event = events[currentIndex];
+        let updateWindow = window.open('', '', 'width=500,height=600');
+        
+        updateWindow.document.write(`
+            <html>
+            <head><title>Update Meeting</title></head>
+            <body>
+                <label>Start Time: <input type="datetime-local" id="startTime" value="${new Date(event.start.dateTime).toISOString().slice(0, 16)}"></label><br><br>
+                <label>End Time: <input type="datetime-local" id="endTime" value="${new Date(event.end.dateTime).toISOString().slice(0, 16)}"></label><br><br>
+                <label>Description: <input type="text" id="description" value="${event.description || ''}"></label><br><br>
+                <label>Attendees:</label><br>
+                <input type="email" id="newAttendeeEmail" placeholder="Add attendee"><button id="addAttendee">Add Attendee</button><br><br>
+                <ul id="attendees">
+                    ${event.attendees ? event.attendees.map(att => `<li>${att.email}</li>`).join('') : ''}
+                </ul><br>
+                <button id="deleteAttendee">Delete Attendee</button><br><br>
+                <button id="prevEvent">Previous</button>
+                <button id="nextEvent">Next</button><br><br>
+                <button id="updateEvent">Update Meeting</button>
+                <button id="deleteEvent">Delete Meeting</button>
+            </body>
+            </html>
+        `);
+
+        // Handling the add attendee action
+        updateWindow.document.getElementById('addAttendee').addEventListener('click', function() {
+            const newEmail = updateWindow.document.getElementById('newAttendeeEmail').value;
+            const attendeesList = updateWindow.document.getElementById('attendees');
+            if (!newEmail) {
+                alert('Please enter an email.');
+                return;
+            }
+            const existingEmails = Array.from(attendeesList.children).map(li => li.textContent);
+            if (existingEmails.includes(newEmail)) {
+                alert('Attendee already added.');
+            } else {
+                attendeesList.innerHTML += `<li>${newEmail}</li>`;
+            }
+        });
+
+        // Handling the delete attendee action
+        updateWindow.document.getElementById('deleteAttendee').addEventListener('click', function() {
+            const attendeesList = updateWindow.document.getElementById('attendees');
+            attendeesList.removeChild(attendeesList.lastElementChild);
+        });
+
+        // Navigate to previous or next event
+        updateWindow.document.getElementById('prevEvent').addEventListener('click', function() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderEvent();
+            }
+        });
+        updateWindow.document.getElementById('nextEvent').addEventListener('click', function() {
+            if (currentIndex < events.length - 1) {
+                currentIndex++;
+                renderEvent();
+            }
+        });
+
+        // Update event
+        updateWindow.document.getElementById('updateEvent').addEventListener('click', async function() {
+            const updatedEvent = {
+                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
+                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
+                description: updateWindow.document.getElementById('description').value,
+                attendees: Array.from(updateWindow.document.getElementById('attendees').children).map(li => ({ email: li.textContent }))
+            };
+
+            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?access_token=${accessToken}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedEvent)
+            });
+
+            if (response.ok) {
+                alert('Meeting updated successfully.');
+            } else {
+                alert('Failed to update meeting.');
+            }
+        });
+
+        // Delete event
+        updateWindow.document.getElementById('deleteEvent').addEventListener('click', async function() {
+            const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${event.id}?access_token=${accessToken}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('Meeting deleted successfully.');
+                events.splice(currentIndex, 1);
+                if (events.length > 0) {
+                    if (currentIndex >= events.length) currentIndex--;
+                    renderEvent();
+                } else {
+                    updateWindow.close();
+                }
+            } else {
+                alert('Failed to delete meeting.');
+            }
+        });
+    }
+
+    if (events.length > 0) {
+        renderEvent();
+    } else {
+        alert('No meetings found.');
+    }
+});
+
+            </script>
+    
      <button id="createinvit" style=" height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
