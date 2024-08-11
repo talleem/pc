@@ -257,6 +257,8 @@ document.addEventListener('DOMContentLoaded', function() {
                top: 220px;
                 /* Additional inline styles here if needed */
             ">Update invit</button>
+
+
 <script>
 document.getElementById("updateinvit").onclick = function() {
     var accessToken = localStorage.getItem('accessToken');
@@ -309,15 +311,25 @@ document.getElementById("updateinvit").onclick = function() {
         updateWindow.document.body.innerHTML = '';
 
         // Write new content
-        updateWindow.document.write('<p><strong>Description:</strong> <input type="text" id="description" value="' + (meeting.description || '') + '"></p>');
-        updateWindow.document.write('<p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="' + (meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
-        updateWindow.document.write('<p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="' + (meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : '') + '"></p>');
-        updateWindow.document.write('<ul id="attendeesList"></ul>');
-        updateWindow.document.write('<input type="text" id="attendeeEmail" placeholder="Add Attendee">');
-        updateWindow.document.write('<button id="addAttendee">Add Attendee</button>');
-        updateWindow.document.write('<button id="deleteAttendee">Delete Attendee</button>');
-        updateWindow.document.write('<button id="previous">Previous</button><button id="next">Next</button>');
-        updateWindow.document.write('<button id="updateMeeting">Update Meeting</button><button id="deleteMeeting">Delete Meeting</button>');
+        updateWindow.document.write(`
+            <style>
+                .attendee-item {
+                    cursor: pointer;
+                }
+                .attendee-item.selected {
+                    background-color: #b3d9ff;
+                }
+            </style>
+            <p><strong>Description:</strong> <input type="text" id="description" value="${meeting.description || ''}"></p>
+            <p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="${meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : ''}"></p>
+            <p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="${meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : ''}"></p>
+            <ul id="attendeesList"></ul>
+            <input type="text" id="attendeeEmail" placeholder="Add Attendee">
+            <button id="addAttendee">Add Attendee</button>
+            <button id="deleteAttendee">Delete Attendee</button>
+            <button id="previous">Previous</button><button id="next">Next</button>
+            <button id="updateMeeting">Update Meeting</button><button id="deleteMeeting">Delete Meeting</button>
+        `);
 
         var attendeesList = updateWindow.document.getElementById('attendeesList');
         var addAttendeeInput = updateWindow.document.getElementById('attendeeEmail');
@@ -329,6 +341,7 @@ document.getElementById("updateinvit").onclick = function() {
         if (meeting.attendees) {
             meeting.attendees.forEach(function(attendee) {
                 var li = updateWindow.document.createElement('li');
+                li.className = 'attendee-item';
                 li.textContent = attendee.email;
                 attendeesList.appendChild(li);
             });
@@ -338,6 +351,7 @@ document.getElementById("updateinvit").onclick = function() {
             var newAttendee = addAttendeeInput.value.trim();
             if (newAttendee && !Array.from(attendeesList.children).some(li => li.textContent === newAttendee)) {
                 var li = updateWindow.document.createElement('li');
+                li.className = 'attendee-item';
                 li.textContent = newAttendee;
                 attendeesList.appendChild(li);
                 meeting.attendees.push({ email: newAttendee });
@@ -355,6 +369,17 @@ document.getElementById("updateinvit").onclick = function() {
                 attendeesList.removeChild(selectedAttendee);
             } else {
                 alert('Please select an attendee to delete');
+            }
+        };
+
+        // Make list items selectable
+        attendeesList.onclick = function(event) {
+            if (event.target && event.target.matches("li.attendee-item")) {
+                var selectedItems = updateWindow.document.querySelectorAll('ul#attendeesList li.selected');
+                selectedItems.forEach(function(item) {
+                    item.classList.remove('selected');
+                });
+                event.target.classList.add('selected');
             }
         };
 
@@ -414,7 +439,6 @@ document.getElementById("updateinvit").onclick = function() {
     loadMeetings();
 };
 </script>
-
 
 
     
