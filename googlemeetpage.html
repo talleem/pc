@@ -305,7 +305,7 @@ document.getElementById("updateinvit").onclick = function() {
             return;
         }
 
-        var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
+        var updateWindow = window.open("", "Update Meetings", "width=800,height=400");
 
         // Clear previous content
         updateWindow.document.body.innerHTML = '';
@@ -322,7 +322,7 @@ updateWindow.document.write('<title>Update Meeting Details</title>');
                     background-color: #b3d9ff;
                 }
             </style>
-            <p><strong>Description:</strong> <input type="text" id="description" style="width: 500px; height: 80px; overflow: auto; word-wrap: break-word;" value="${meeting.description || ''}"></p>
+            <p><strong>Description:</strong> <input type="text" id="description" style="width: 500px; height: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" value="${meeting.description || ''}"></p>
             <p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="${meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : ''}"></p>
             <p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="${meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : ''}"></p>
             <ul id="attendeesList"></ul>
