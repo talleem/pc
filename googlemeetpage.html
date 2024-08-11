@@ -306,6 +306,7 @@ document.getElementById("updateinvit").onclick = function() {
         }
 
         var updateWindow = window.open("", "Update Meetings", "width=600,height=400");
+        updateWindow.document.title = "Update Meeting Details";
 
         // Clear previous content
         updateWindow.document.body.innerHTML = '';
