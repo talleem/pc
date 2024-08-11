@@ -394,13 +394,15 @@ document.getElementById("updateinvit").onclick = function() {
         };
 
         updateWindow.document.getElementById('updateMeeting').onclick = function() {
-            var updatedMeeting = {
-                summary: meeting.summary,
-                description: updateWindow.document.getElementById('description').value,
-                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
-                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
-                attendees: meeting.attendees
-            };
+            var filteredAttendees = meeting.attendees.map(attendee => ({ email: attendee.email }));
+           var updatedMeeting = {
+        summary: meeting.summary,
+        description: updateWindow.document.getElementById('description').value,
+        start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
+        end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
+        attendees: filteredAttendees
+    };
+
 
             var xhrUpdate = new XMLHttpRequest();
             xhrUpdate.open('PUT', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
