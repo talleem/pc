@@ -356,7 +356,7 @@ document.getElementById("updateinvit").onclick = function() {
                 attendeesList.appendChild(li);
                 meeting.attendees.push({ email: newAttendee });
             } else {
-                alert('Attendee already added or email is empty');
+                updateWindow.alert('Attendee already added or email is empty');
             }
         };
 
@@ -368,7 +368,7 @@ document.getElementById("updateinvit").onclick = function() {
                 });
                 attendeesList.removeChild(selectedAttendee);
             } else {
-                alert('Please select an attendee to delete');
+                updateWindow.alert('Please select an attendee to delete');
             }
         };
 
@@ -409,9 +409,9 @@ document.getElementById("updateinvit").onclick = function() {
             xhrUpdate.setRequestHeader('Content-Type', 'application/json');
             xhrUpdate.onload = function() {
                 if (xhrUpdate.status === 200) {
-                    alert('Meeting updated: ' + JSON.stringify(updatedMeeting));
+                    updateWindow.alert('Meeting updated: ' + JSON.stringify(updatedMeeting));
                 } else {
-                    alert('Failed to update meeting');
+                    updateWindow.alert('Failed to update meeting');
                 }
             };
             xhrUpdate.send(JSON.stringify(updatedMeeting));
@@ -431,7 +431,7 @@ document.getElementById("updateinvit").onclick = function() {
                         updateWindow.close();
                     }
                 } else {
-                    alert('Failed to delete meeting');
+                    updateWindow.alert('Failed to delete meeting');
                 }
             };
             xhrDelete.send();
