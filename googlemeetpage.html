@@ -311,6 +311,8 @@ document.getElementById("updateinvit").onclick = function() {
         updateWindow.document.body.innerHTML = '';
 
         // Write new content
+        // Set the title of the new window
+updateWindow.document.write('<title>Update Meeting Details</title>');
         updateWindow.document.write(`
             <style>
                 .attendee-item {
