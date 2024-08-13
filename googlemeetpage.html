@@ -145,13 +145,29 @@
             placeholder: "Enter date and time"
         });
     </script>
+    <div style="display: flex; justify-content: flex-end; padding: 20px;">
+        <input 
+            id="repeatevery" 
+            name="repeatevery"  
+            style="
+                height: 30px; 
+                width: 100px; 
+                background-color: #ddfcf7; 
+                text-align: center;
+                font-weight: bold; /* Make font bold */
+                position: fixed; /* Absolute position within .container */
+                right: 20px; /* Distance from the right edge */
+                top: 220px;
+                /* Additional inline styles here if needed */
+            " 
+        >
     <button id="loadinvit" style="
                 height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
                position: fixed; /* Absolute position within .container */
                right: 35px; /* Distance from the right edge */
-               top: 280px;
+               top: 290px;
                 /* Additional inline styles here if needed */
             " 
         >Load invit</button>
@@ -250,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 font-weight: bold; /* Make font bold */
                position: fixed; /* Absolute position within .container */
                right: 120px; /* Distance from the right edge */
-               top: 280px;
+               top: 290px;
                 /* Additional inline styles here if needed */
             ">Update invit</button>
 
@@ -448,7 +464,7 @@ document.getElementById("updateinvit").onclick = function() {
                 font-weight: bold; /* Make font bold */
                position: fixed; /* Absolute position within .container */
                right: 220px; /* Distance from the right edge */
-               top: 280px;
+               top: 290px;
                 /* Additional inline styles here if needed */
             " 
          >Create invit</button>
