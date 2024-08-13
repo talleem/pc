@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const savedValuesList = document.getElementById('savedValuesList');
     const storedEmail = localStorage.getItem('loggedInEmail');
     const createinvit = document.getElementById('createinvit');
-    const updateinvit = document.getElementById('updateinvit');
-    const loadinvit = document.getElementById('loadinvit');
     const endtime = document.getElementById('endtime');
     const starttime = document.getElementById('starttime');
     const meetingid = document.getElementById('meetingid');
@@ -37,9 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Enable or disable the button based on the comparison
         joinMeetingButton.disabled = !shouldEnableButton;
         createinvit.disabled = !shouldEnableButton;
-        updateinvit.disabled = !shouldEnableButton;
         starttime.disabled = !shouldEnableButton;
-        loadinvit.disabled = !shouldEnableButton;
         endtime.disabled = !shouldEnableButton;
         meetingid.disabled = !shouldEnableButton;
     };
