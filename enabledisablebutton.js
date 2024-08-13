@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const joinMeetingButton = document.getElementById('joinmeeting');
     const savedValuesList = document.getElementById('savedValuesList');
     const storedEmail = localStorage.getItem('loggedInEmail');
     const createinvit = document.getElementById('createinvit');
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Enable or disable the button based on the comparison
-        joinMeetingButton.disabled = !shouldEnableButton;
         createinvit.disabled = !shouldEnableButton;
         starttime.disabled = !shouldEnableButton;
         endtime.disabled = !shouldEnableButton;
