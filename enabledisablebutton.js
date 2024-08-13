@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const createinvit = document.getElementById('createinvit');
     const endtime = document.getElementById('endtime');
     const starttime = document.getElementById('starttime');
-    const meetingid = document.getElementById('meetingid');
+    const meetingid = document.getElementById('meetingdesc');
     
 
     // Function to check the list and enable/disable the button
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         createinvit.disabled = !shouldEnableButton;
         starttime.disabled = !shouldEnableButton;
         endtime.disabled = !shouldEnableButton;
-        meetingid.disabled = !shouldEnableButton;
+        meetingdesc.disabled = !shouldEnableButton;
     };
 
     // Call checkList to initialize button state and apply styles
