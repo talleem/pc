@@ -524,49 +524,56 @@ document.getElementById("updateinvit").onclick = function() {
         const savedValuesList = document.getElementById('savedValuesList');
         const startTimeInput = document.getElementById('starttime');
         const endTimeInput = document.getElementById('endtime');
-        const descInput = document.getElementById('meetingdesc'); // Meeting description input
+        const descInput = document.getElementById('meetingdesc');
         const createInvitButton = document.getElementById('createinvit');
+        const repeatEveryInput = document.getElementById('repeatevery');
+        const repeatFrequencyInput = document.getElementById('repeatFrequency');
+        const numOfOccurInput = document.getElementById('numofoccur');
 
         function validateInputs() {
             if (startTimeInput.value === '' || endTimeInput.value === '') {
                 alert("Please enter both start time and end time.");
-                return false; // Return false to stop further execution
+                return false;
             }
-            return true; // Return true if inputs are valid
+            return true;
         }
 
         function generateRequestId() {
             return 'req-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
         }
 
-        // Retrieve the access token from localStorage
         const accessToken = localStorage.getItem('accessToken');
         console.log('access token is:', accessToken);
 
-        // Function to create a recurring meeting event
         function createMeetingEvent() {
             if (savedValuesList.children.length > 0 && accessToken) {
                 const attendees = Array.from(savedValuesList.children).map(item => ({ email: item.textContent }));
                 const startTime = new Date(startTimeInput.value).toISOString();
                 const endTime = new Date(endTimeInput.value).toISOString();
-                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Get the browser's time zone
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
                 const event = {
-                    summary: 'Recurring Meeting',
-                    description: descInput.value, // Add the description to the event
+                    summary: 'Meeting Event',
+                    description: descInput.value,
                     start: { dateTime: startTime, timeZone: timeZone },
                     end: { dateTime: endTime, timeZone: timeZone },
-                    recurrence: ['RRULE:FREQ=DAILY;COUNT=10'], // Example: Daily for 10 occurrences
                     attendees: attendees,
                     conferenceData: {
                         createRequest: {
-                            requestId: generateRequestId(), // Generate a unique request ID
+                            requestId: generateRequestId(),
                             conferenceSolutionKey: {
                                 type: "hangoutsMeet"
                             }
                         }
                     }
                 };
-                console.log('attendees', attendees);
+
+                if (repeatEveryInput.value && repeatFrequencyInput.value && numOfOccurInput.value) {
+                    event.recurrence = [
+                        `RRULE:FREQ=${repeatFrequencyInput.value.toUpperCase()};INTERVAL=${repeatEveryInput.value};COUNT=${numOfOccurInput.value}`
+                    ];
+                }
+
                 fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1', {
                     method: 'POST',
                     headers: {
@@ -581,7 +588,6 @@ document.getElementById("updateinvit").onclick = function() {
                         console.error('Error creating event:', data.error.message);
                     } else {
                         console.log('Event created:', data);
-                        // Extract the necessary information from the response
                         const conferenceId = data.conferenceData.createRequest.conferenceSolutionKey.type;
                         const createdDate = new Date(data.created).toLocaleString();
                         const creatorEmail = data.creator.email;
@@ -591,9 +597,8 @@ document.getElementById("updateinvit").onclick = function() {
                         const recurrence = data.recurrence ? data.recurrence.join(", ") : 'None';
                         const status = data.status;
                         const summary = data.summary;
-                        const description = data.description; // Add the description to the alert
+                        const description = data.description;
 
-                        // Create the alert message
                         const alertMessage = `
                             Creation of the meeting event successful, details:
                             Conference ID: ${conferenceId}
@@ -605,10 +610,9 @@ document.getElementById("updateinvit").onclick = function() {
                             Recurrence: ${recurrence}
                             Status: ${status}
                             Summary: ${summary}
-                            Description: ${description} <!-- Description added to the alert -->
+                            Description: ${description}
                         `;
 
-                        // Display the alert
                         alert(alertMessage);
                     }
                 })
@@ -620,8 +624,7 @@ document.getElementById("updateinvit").onclick = function() {
                 console.error('Access token is missing or no attendees available.');
             }
         }
-        
-        // Add click event listener to the button
+
         createInvitButton.addEventListener('click', function() {
             if (validateInputs()) { 
                 createMeetingEvent();
