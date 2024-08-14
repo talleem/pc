@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const endtime = document.getElementById('endtime');
     const starttime = document.getElementById('starttime');
     const meetingid = document.getElementById('meetingdesc');
+    const repeatevery = document.getElementById('repeatevery');
+    const repeatfrequency = document.getElementById('repeatfrequency');
+    const numofoccur = document.getElementById('numofoccur');
     
 
     // Function to check the list and enable/disable the button
@@ -36,6 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
         starttime.disabled = !shouldEnableButton;
         endtime.disabled = !shouldEnableButton;
         meetingdesc.disabled = !shouldEnableButton;
+        repeatevery.disabled = !shouldEnableButton;
+        repeatfrequency.disabled = !shouldEnableButton;
+        numofoccur.disabled = !shouldEnableButton;
+        
     };
 
     // Call checkList to initialize button state and apply styles
