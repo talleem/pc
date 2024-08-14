@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const starttime = document.getElementById('starttime');
     const meetingid = document.getElementById('meetingdesc');
     const repeatevery = document.getElementById('repeatevery');
-    const repeatfrequency = document.getElementById('repeatfrequency');
+    const repeatfrequency = document.getElementById('repeatFrequency');
     const numofoccur = document.getElementById('numofoccur');
     
 
