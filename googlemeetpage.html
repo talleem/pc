@@ -568,10 +568,22 @@ document.getElementById("updateinvit").onclick = function() {
                     }
                 };
 
+                // Validate and construct the RRULE
                 if (repeatEveryInput.value && repeatFrequencyInput.value && numOfOccurInput.value) {
-                    event.recurrence = [
-                        `RRULE:FREQ=${repeatFrequencyInput.value.toUpperCase()};INTERVAL=${repeatEveryInput.value};COUNT=${numOfOccurInput.value}`
-                    ];
+                    const freq = repeatFrequencyInput.value.toUpperCase(); // Convert to uppercase (e.g., DAILY, WEEKLY)
+                    const interval = parseInt(repeatEveryInput.value); // Convert to an integer
+                    const count = parseInt(numOfOccurInput.value); // Convert to an integer
+
+                    // Check that all values are valid
+                    if (!isNaN(interval) && !isNaN(count) && ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'].includes(freq)) {
+                        event.recurrence = [
+                            `RRULE:FREQ=${freq};INTERVAL=${interval};COUNT=${count}`
+                        ];
+                    } else {
+                        console.error('Invalid recurrence inputs.');
+                        alert('Invalid recurrence inputs.');
+                        return;
+                    }
                 }
 
                 fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1', {
@@ -632,6 +644,7 @@ document.getElementById("updateinvit").onclick = function() {
         });
     });
 </script>
+
 
     
 </body>
