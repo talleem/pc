@@ -508,6 +508,7 @@ document.getElementById("updateinvit").onclick = function() {
                     updateWindow.alert(`Meeting updated:\n${JSON.stringify(updatedMeeting)}\nRecurrence: ${updatedRecurrence}`);
                 } else {
                     updateWindow.alert('Failed to update meeting');
+                    console.error('Error:', xhrUpdate.responseText);
                 }
             };
             xhrUpdate.send(JSON.stringify(updatedMeeting));
