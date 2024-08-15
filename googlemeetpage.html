@@ -41,12 +41,29 @@
     });
   </script>
      
-    <ul id="savedValuesList" style="
-        margin: 0;
-        padding: 20px;
-        list-style-type: none;
-        position: relative;
-    "></ul> 
+   
+    <ul id="savedValuesList" style="margin: 0; padding: 20px; list-style-type: none; position: relative;"></ul>
+
+<script>
+    // Function to handle selection
+    document.getElementById('savedValuesList').addEventListener('click', function(event) {
+        if (event.target && event.target.nodeName === 'LI') {
+            // Remove 'selected' class from all list items
+            Array.from(this.children).forEach(item => item.classList.remove('selected'));
+            // Add 'selected' class to the clicked list item
+            event.target.classList.add('selected');
+        }
+    });
+</script>
+
+<style>
+    /* Add some styling for the selected item */
+    #savedValuesList li.selected {
+        background-color: #b3d9ff;
+        color: #333;
+    }
+</style>
+
     
      <div style="display: flex; justify-content: flex-end; padding: 20px;">
         <h4 
