@@ -320,16 +320,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 /* Additional inline styles here if needed */
             ">Update invit</button>
 
-
-<script>
 document.getElementById("updateinvit").onclick = function() {
     var accessToken = localStorage.getItem('accessToken');
     var loggedInEmail = localStorage.getItem('loggedInEmail');
-    console.log(loggedInEmail, accessToken);
     var meetings = [];
     var currentIndex = 0;
 
-    // Function to load meetings for the logged-in email as the creator
     function loadMeetings() {
         if (accessToken && loggedInEmail) {
             fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
@@ -340,11 +336,9 @@ document.getElementById("updateinvit").onclick = function() {
             })
             .then(response => response.json())
             .then(data => {
-                // Filter events where the creator's email matches the logged email
                 meetings = data.items.filter(event => 
                     event.creator.email === loggedInEmail
                 );
-                console.log('Meetings:', meetings);
                 if (meetings.length === 0) {
                     alert('No meetings found');
                 } else {
@@ -360,20 +354,38 @@ document.getElementById("updateinvit").onclick = function() {
         }
     }
 
+    function parseRecurrenceRule(recurrence) {
+        if (!recurrence || !recurrence[0].startsWith('RRULE:')) return {};
+
+        const rule = recurrence[0].replace('RRULE:', '').split(';');
+        const result = {};
+
+        rule.forEach(part => {
+            const [key, value] = part.split('=');
+            if (key === 'FREQ') {
+                result.frequency = value.toLowerCase();
+            } else if (key === 'INTERVAL') {
+                result.interval = parseInt(value, 10);
+            } else if (key === 'COUNT') {
+                result.count = parseInt(value, 10);
+            }
+        });
+
+        return result;
+    }
+
     function showMeeting(meeting) {
         if (!meeting) {
-            console.error('Meeting data is undefined or null');
             alert('No meeting data available');
             return;
         }
 
-        var updateWindow = window.open("", "Update Meetings", "width=800,height=400");
+        var updateWindow = window.open("", "Update Meetings", "width=800,height=600");
 
-        // Clear previous content
         updateWindow.document.body.innerHTML = '';
 
-        // Write new content
-        // Set the title of the new window
+        const recurrenceDetails = parseRecurrenceRule(meeting.recurrence);
+
         updateWindow.document.write('<title>Update Meeting Details</title>');
         updateWindow.document.write('<h2>Update Meetings</h2>');
         updateWindow.document.write(`
@@ -385,9 +397,20 @@ document.getElementById("updateinvit").onclick = function() {
                     background-color: #b3d9ff;
                 }
             </style>
-            <p><strong>Description:</strong> <input type="text" id="description" style="width: 500px; height: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" value="${meeting.description || ''}"></p>
+            <p><strong>Description:</strong> <input type="text" id="description" style="width: 500px; height: 80px;" value="${meeting.description || ''}"></p>
             <p><strong>Start Time:</strong> <input type="datetime-local" id="startTime" value="${meeting.start.dateTime ? new Date(meeting.start.dateTime).toISOString().slice(0, 16) : ''}"></p>
             <p><strong>End Time:</strong> <input type="datetime-local" id="endTime" value="${meeting.end.dateTime ? new Date(meeting.end.dateTime).toISOString().slice(0, 16) : ''}"></p>
+            <p><strong>Repeat Every:</strong> <input type="number" id="repeatevery" value="${recurrenceDetails.interval || ''}" style="width: 60px;"></p>
+            <p><strong>Repeat Frequency:</strong>
+                <select id="repeatFrequency">
+                    <option value="null"></option>
+                    <option value="daily" ${recurrenceDetails.frequency === 'daily' ? 'selected' : ''}>Daily</option>
+                    <option value="weekly" ${recurrenceDetails.frequency === 'weekly' ? 'selected' : ''}>Weekly</option>
+                    <option value="monthly" ${recurrenceDetails.frequency === 'monthly' ? 'selected' : ''}>Monthly</option>
+                    <option value="yearly" ${recurrenceDetails.frequency === 'yearly' ? 'selected' : ''}>Yearly</option>
+                </select>
+            </p>
+            <p><strong>Number of Occurrences:</strong> <input type="number" id="numofoccur" value="${recurrenceDetails.count || ''}" style="width: 60px;"></p>
             <ul id="attendeesList"></ul>
             <input type="text" id="attendeeEmail" placeholder="Add Attendee">
             <button id="addAttendee">Add Attendee</button>
@@ -401,8 +424,7 @@ document.getElementById("updateinvit").onclick = function() {
         var addAttendeeButton = updateWindow.document.getElementById('addAttendee');
         var deleteAttendeeButton = updateWindow.document.getElementById('deleteAttendee');
 
-        // Add existing attendees
-        attendeesList.innerHTML = ''; // Clear previous attendees
+        attendeesList.innerHTML = '';
         if (meeting.attendees) {
             meeting.attendees.forEach(function(attendee) {
                 var li = updateWindow.document.createElement('li');
@@ -437,7 +459,6 @@ document.getElementById("updateinvit").onclick = function() {
             }
         };
 
-        // Make list items selectable
         attendeesList.onclick = function(event) {
             if (event.target && event.target.matches("li.attendee-item")) {
                 var selectedItems = updateWindow.document.querySelectorAll('ul#attendeesList li.selected');
@@ -460,21 +481,31 @@ document.getElementById("updateinvit").onclick = function() {
 
         updateWindow.document.getElementById('updateMeeting').onclick = function() {
             var filteredAttendees = meeting.attendees.map(attendee => ({ email: attendee.email }));
-           var updatedMeeting = {
-        summary: meeting.summary,
-        description: updateWindow.document.getElementById('description').value,
-        start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
-        end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
-        attendees: filteredAttendees
-    };
+            var updatedMeeting = {
+                summary: meeting.summary,
+                description: updateWindow.document.getElementById('description').value,
+                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
+                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
+                attendees: filteredAttendees
+            };
 
+            var repeatEvery = updateWindow.document.getElementById('repeatevery').value;
+            var repeatFrequency = updateWindow.document.getElementById('repeatFrequency').value.toUpperCase();
+            var numOfOccur = updateWindow.document.getElementById('numofoccur').value;
+
+            if (repeatEvery && repeatFrequency && numOfOccur) {
+                updatedMeeting.recurrence = [
+                    `RRULE:FREQ=${repeatFrequency};INTERVAL=${repeatEvery};COUNT=${numOfOccur}`
+                ];
+            }
 
             var xhrUpdate = new XMLHttpRequest();
             xhrUpdate.open('PUT', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
             xhrUpdate.setRequestHeader('Content-Type', 'application/json');
             xhrUpdate.onload = function() {
                 if (xhrUpdate.status === 200) {
-                    updateWindow.alert('Meeting updated: ' + JSON.stringify(updatedMeeting));
+                    var updatedRecurrence = updatedMeeting.recurrence ? updatedMeeting.recurrence.join(", ") : 'None';
+                    updateWindow.alert(`Meeting updated:\n${JSON.stringify(updatedMeeting)}\nRecurrence: ${updatedRecurrence}`);
                 } else {
                     updateWindow.alert('Failed to update meeting');
                 }
@@ -487,14 +518,9 @@ document.getElementById("updateinvit").onclick = function() {
             xhrDelete.open('DELETE', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
             xhrDelete.onload = function() {
                 if (xhrDelete.status === 204) {
-                    alert('Meeting deleted');
-                    meetings.splice(currentIndex, 1);
-                    if (meetings.length > 0) {
-                        currentIndex = currentIndex % meetings.length;
-                        showMeeting(meetings[currentIndex]);
-                    } else {
-                        updateWindow.close();
-                    }
+                    updateWindow.alert('Meeting deleted');
+                    currentIndex = (currentIndex + 1) % meetings.length;
+                    showMeeting(meetings[currentIndex]);
                 } else {
                     updateWindow.alert('Failed to delete meeting');
                 }
@@ -505,7 +531,6 @@ document.getElementById("updateinvit").onclick = function() {
 
     loadMeetings();
 };
-</script>
 
 
     
