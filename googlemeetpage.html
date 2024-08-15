@@ -479,40 +479,47 @@ document.getElementById("updateinvit").onclick = function() {
             showMeeting(meetings[currentIndex]);
         };
 
-        updateWindow.document.getElementById('updateMeeting').onclick = function() {
-            var filteredAttendees = meeting.attendees.map(attendee => ({ email: attendee.email }));
-            var updatedMeeting = {
-                summary: meeting.summary,
-                description: updateWindow.document.getElementById('description').value,
-                start: { dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString() },
-                end: { dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString() },
-                attendees: filteredAttendees
-            };
+       updateWindow.document.getElementById('updateMeeting').onclick = function() {
+    var filteredAttendees = meeting.attendees.map(attendee => ({ email: attendee.email }));
+    var updatedMeeting = {
+        summary: meeting.summary,
+        description: updateWindow.document.getElementById('description').value,
+        start: { 
+            dateTime: new Date(updateWindow.document.getElementById('startTime').value).toISOString(),
+            timeZone: "Asia/Baghdad" // Include the Baghdad time zone
+        },
+        end: { 
+            dateTime: new Date(updateWindow.document.getElementById('endTime').value).toISOString(),
+            timeZone: "Asia/Baghdad" // Include the Baghdad time zone
+        },
+        attendees: filteredAttendees
+    };
 
-            var repeatEvery = updateWindow.document.getElementById('repeatevery').value;
-            var repeatFrequency = updateWindow.document.getElementById('repeatFrequency').value.toUpperCase();
-            var numOfOccur = updateWindow.document.getElementById('numofoccur').value;
+    var repeatEvery = updateWindow.document.getElementById('repeatevery').value;
+    var repeatFrequency = updateWindow.document.getElementById('repeatFrequency').value.toUpperCase();
+    var numOfOccur = updateWindow.document.getElementById('numofoccur').value;
 
-            if (repeatEvery && repeatFrequency && numOfOccur) {
-                updatedMeeting.recurrence = [
-                    `RRULE:FREQ=${repeatFrequency};INTERVAL=${repeatEvery};COUNT=${numOfOccur}`
-                ];
-            }
+    if (repeatEvery && repeatFrequency && numOfOccur) {
+        updatedMeeting.recurrence = [
+            `RRULE:FREQ=${repeatFrequency};INTERVAL=${repeatEvery};COUNT=${numOfOccur}`
+        ];
+    }
 
-            var xhrUpdate = new XMLHttpRequest();
-            xhrUpdate.open('PUT', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
-            xhrUpdate.setRequestHeader('Content-Type', 'application/json');
-            xhrUpdate.onload = function() {
-                if (xhrUpdate.status === 200) {
-                    var updatedRecurrence = updatedMeeting.recurrence ? updatedMeeting.recurrence.join(", ") : 'None';
-                    updateWindow.alert(`Meeting updated:\n${JSON.stringify(updatedMeeting)}\nRecurrence: ${updatedRecurrence}`);
-                } else {
-                    updateWindow.alert('Failed to update meeting');
-                    console.error('Error:', xhrUpdate.responseText);
-                }
-            };
-            xhrUpdate.send(JSON.stringify(updatedMeeting));
-        };
+    var xhrUpdate = new XMLHttpRequest();
+    xhrUpdate.open('PUT', 'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + meeting.id + '?access_token=' + accessToken);
+    xhrUpdate.setRequestHeader('Content-Type', 'application/json');
+    xhrUpdate.onload = function() {
+        if (xhrUpdate.status === 200) {
+            var updatedRecurrence = updatedMeeting.recurrence ? updatedMeeting.recurrence.join(", ") : 'None';
+            updateWindow.alert(`Meeting updated:\n${JSON.stringify(updatedMeeting)}\nRecurrence: ${updatedRecurrence}`);
+        } else {
+            updateWindow.alert('Failed to update meeting');
+            console.error('Error:', xhrUpdate.responseText);
+        }
+    };
+    xhrUpdate.send(JSON.stringify(updatedMeeting));
+};
+
 
         updateWindow.document.getElementById('deleteMeeting').onclick = function() {
             var xhrDelete = new XMLHttpRequest();
