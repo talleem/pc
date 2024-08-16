@@ -35,35 +35,23 @@ firebase.apps.length);
 
     let loggedInEmail = '';
 
- // 
-
-Function to handle Google Sign-In
+ // Function to handle Google Sign-In
         function signInWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            
-
 auth.signInWithPopup(provider)
                 .then(result => {
                     const user = result.user;
                     if (user.emailVerified) {
-    
-
                     loggedInEmail = user.email;
                         console.log('Logged in as:', loggedInEmail);
-                        // Proceed with 
-
-allowing user to access the application
+                        // Proceed with allowing user to access the application
                     } else {
                         console.log('Email not verified.');
-                        alert
-
-('Please verify your email before logging in.');
+                        alert('Please verify your email before logging in.');
                         auth.signOut();
                     }
                 })
-                .catch(error 
-
-=> {
+                .catch(error => {
                     console.error('Error signing in:', error);
                     alert('Error signing in: ' + error.message);
                 });
@@ -79,9 +67,7 @@ allowing user to access the application
 {
             querySnapshot.forEach((doc) => {
                 const storedValue = doc.data().value;
-                const listItem = document.createElement
-
-('li');
+                const listItem = document.createElement('li');
                 listItem.textContent = storedValue;
                 
                 // Style the list item if it matches the stored email
@@ -95,8 +81,6 @@ if (storedValue === storedEmail) {
 listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             }
                 savedValuesList.appendChild(listItem);
-                
-
 checkList();
             });
         })
@@ -104,9 +88,7 @@ checkList();
             console.error('Error getting documents: ', error);
         });
 
-    // Check if the 
-
-value is unique
+    // Check if the value is unique
     const isUnique = (value) => {
         const listItems = savedValuesList.getElementsByTagName('li');
         for (let item of listItems) {
@@ -119,9 +101,7 @@ value is unique
         return true;
     };
 
-    // Save the value to Firestore 
-
-when the button is clicked
+    // Save the value to Firestore when the button is clicked
     saveButton.addEventListener('click', () => {
         const value = inputField.value.trim(); // Trim any extra whitespace
 
@@ -132,14 +112,10 @@ if (value === '') {
             return; // Do not proceed if the value is empty
         }
 
-        if (isUnique
-
-(value)) {
+        if (isUnique(value)) {
             db.collection('attendees').add({
                 value: value,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp
-
-()
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then((docRef) => {
                 console.log('Value successfully saved!');
@@ -154,9 +130,7 @@ inputField.value = ''; // Clear the input field
                 checkList();
             })
             .catch((error) => {
-                console.error('Error 
-
-saving document: ', error);
+                console.error('Error saving document: ', error);
             });
         } else {
             alert('This email has already been added.');
