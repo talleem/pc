@@ -1,4 +1,6 @@
-document.getElementById('sendinvit');
+document.addEventListener('DOMContentLoaded', (event) => {
+    const inputField = document.getElementById('attendeeEmail');
+    const saveButton = document.getElementById('sendinvit');
     const savedValue = document.getElementById('savedValuesList');
     // Get the stored email from localStorage
 const storedEmail = localStorage.getItem('loggedInEmail');
