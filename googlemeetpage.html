@@ -41,12 +41,14 @@
     });
   </script>
      
-  <br> 
- <div id="container" style="display: flex; align-items: flex-start;">
-    <ul id="savedValuesList" style="margin: 0; padding: 25px; list-style-type: none; position: relative;"></ul>
-    <button id="deleteattendee1" style="margin-left: 27px; height: 35px;">Delete Attendee</button>
+<div style="margin-top: 20px;">
+    <h3 style="margin-bottom: 10px;">Attendees</h3>
+    <div id="container" style="display: flex; align-items: flex-start;">
+        <ul id="savedValuesList" style="margin: 0; padding: 25px; list-style-type: none; position: relative;"></ul>
+        <button id="deleteattendee1" style="margin-left: 27px; height: 35px;">Delete Attendee</button>
+    </div>
 </div>
-    
+
 <script>
     // Function to handle selection
     document.getElementById('savedValuesList').addEventListener('click', function(event) {
@@ -69,6 +71,7 @@
         box-sizing: border-box; /* Ensure padding is included within the width */
     }
 </style>
+
     
      <div style="display: flex; justify-content: flex-end; padding: 20px;">
         <h4 
