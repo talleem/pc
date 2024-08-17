@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
-    const savedValue = document.getElementById('savedValuesList');
-    // Get the stored email from localStorage
-const storedEmail = localStorage.getItem('loggedInEmail');
-    console.log(storedEmail);
+    const savedValuesList = document.getElementById('savedValuesList');
 
-    // Firebase configuration
+    // Get the stored email from localStorage
+    const storedEmail = localStorage.getItem('loggedInEmail');
+    console.log('Stored email:', storedEmail);
+
+    // Initialize Firebase
     const firebaseConfig = {
-apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
+        apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
         authDomain: "engineerr1983meet.firebaseapp.com",
         projectId: "engineerr1983meet",
         storageBucket: "engineerr1983meet.appspot.com",
@@ -16,72 +17,54 @@ apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
         appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
         measurementId: "G-X22VZ2TVWT"
     };
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    console.log('Firebase initialized:', firebase.apps.length);
-    // Initialize Firestore
+    
     const db = firebase.firestore();
-     const auth = firebase.auth();
+    const auth = firebase.auth();
     let loggedInEmail = '';
- // Function to handle Google Sign-In
-        function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-auth.signInWithPopup(provider)
-                .then(result => {
-                    const user = result.user;
-                    if (user.emailVerified) {
+
+    // Function to handle Google Sign-In and email verification
+    function signInWithGoogle() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+            .then(result => {
+                const user = result.user;
+                if (user.emailVerified) {
                     loggedInEmail = user.email;
-                        console.log('Logged in as:', loggedInEmail);
-                        // Proceed with allowing user to access the application
-                    } else {
-                        console.log('Email not verified.');
-                        alert('Please verify your email before logging in.');
-                        auth.signOut();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error signing in:', error);
-                    alert('Error signing in: ' + error.message);
-                });
-}
-  // Load saved values from Firestore and display them in the list
-    db.collection('attendees').orderBy('timestamp').get()
-        .then((querySnapshot) => 
-{
-            querySnapshot.forEach((doc) => {
-                const storedValue = doc.data().value;
-                const listItem = document.createElement('li');
-                listItem.textContent = storedValue;
-                // Style the list item if it matches the stored email
-if (storedValue === storedEmail) {
-                listItem.style.color = 'blue';
-                listItem.style.fontWeight = 'bold';
-listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
-            }
-                savedValuesList.appendChild(listItem);
-checkList();
+                    console.log('Logged in as:', loggedInEmail);
+                    // Proceed with allowing the user to add emails to the list
+                } else {
+                    console.log('Email not verified.');
+                    alert('Please verify your email before logging in.');
+                    auth.signOut();
+                }
+            })
+            .catch(error => {
+                console.error('Error signing in:', error);
+                alert('Error signing in: ' + error.message);
             });
-        })
-        .catch((error) => {
-            console.error('Error getting documents: ', error);
-        });
-    // Check if the value is unique
+    }
+
+    // Check if the email is unique in the list
     const isUnique = (value) => {
         const listItems = savedValuesList.getElementsByTagName('li');
         for (let item of listItems) {
-         if (item.textContent === value) {
+            if (item.textContent === value) {
                 return false;
             }
         }
         return true;
     };
-    // Save the value to Firestore when the button is clicked
+
+    // Save the value to Firestore and the list when the button is clicked
     saveButton.addEventListener('click', () => {
         const value = inputField.value.trim(); // Trim any extra whitespace
-if (value === '') {
+
+        if (value === '') {
             alert('Please enter a value.');
             return; // Do not proceed if the value is empty
         }
+
         if (isUnique(value)) {
             db.collection('attendees').add({
                 value: value,
@@ -91,9 +74,16 @@ if (value === '') {
                 console.log('Value successfully saved!');
                 const listItem = document.createElement('li');
                 listItem.textContent = value;
+                
+                // Style the new list item if it matches the stored email
+                if (value === storedEmail) {
+                    listItem.style.color = 'blue';
+                    listItem.style.fontWeight = 'bold';
+                    listItem.style.fontSize = '1.5em';
+                }
+
                 savedValuesList.appendChild(listItem);
-inputField.value = ''; // Clear the input field
-                checkList();
+                inputField.value = ''; // Clear the input field
             })
             .catch((error) => {
                 console.error('Error saving document: ', error);
