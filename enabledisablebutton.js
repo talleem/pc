@@ -22,17 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (childValue === storedEmail) {
                 console.log('Match found:', childValue, storedEmail);
                 shouldEnableButton = true;
-
-                // Apply styles to the matching list item
-                listItem.style.color = 'blue';
-                listItem.style.fontWeight = 'bold';
-                listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             } else {
                  console.log('No Match found:', childValue, storedEmail);
-                // Optional: Reset styles for non-matching items
-                listItem.style.color = '';
-                listItem.style.fontWeight = '';
-                listItem.style.fontSize = '';
             }
         }
 
