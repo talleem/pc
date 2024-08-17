@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         repeatevery.disabled = !shouldEnableButton;
         repeatfrequency.disabled = !shouldEnableButton;
         numofoccur.disabled = !shouldEnableButton;
+        console.log('test:', childValue, storedEmail);
     };
 
     // Call checkList to initialize button state and apply styles
