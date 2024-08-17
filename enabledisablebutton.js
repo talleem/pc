@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const repeatfrequency = document.getElementById('repeatFrequency');
     const numofoccur = document.getElementById('numofoccur');
     console.log('enabledisable', storedEmail);
+    console.log('length',savedValuesList.children.length);
 
     // Function to check the list and enable/disable the button
     window.checkList = function() {
