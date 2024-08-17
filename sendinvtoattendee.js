@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', (event) => {
+// Function to handle button click and perform actions
+function handleButtonClick() {
     const inputField = document.getElementById('attendeeEmail');
     const saveButton = document.getElementById('sendinvit');
     const savedValuesList = document.getElementById('savedValuesList');
@@ -57,39 +58,40 @@ document.addEventListener('DOMContentLoaded', (event) => {
     };
 
     // Save the value to Firestore and the list when the button is clicked
-    saveButton.addEventListener('click', () => {
-        const value = inputField.value.trim(); // Trim any extra whitespace
+    const value = inputField.value.trim(); // Trim any extra whitespace
 
-        if (value === '') {
-            alert('Please enter a value.');
-            return; // Do not proceed if the value is empty
-        }
+    if (value === '') {
+        alert('Please enter a value.');
+        return; // Do not proceed if the value is empty
+    }
 
-        if (isUnique(value)) {
-            db.collection('attendees').add({
-                value: value,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-            .then((docRef) => {
-                console.log('Value successfully saved!');
-                const listItem = document.createElement('li');
-                listItem.textContent = value;
-                
-                // Style the new list item if it matches the stored email
-                if (value === storedEmail) {
-                    listItem.style.color = 'blue';
-                    listItem.style.fontWeight = 'bold';
-                    listItem.style.fontSize = '1.5em';
-                }
+    if (isUnique(value)) {
+        db.collection('attendees').add({
+            value: value,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then((docRef) => {
+            console.log('Value successfully saved!');
+            const listItem = document.createElement('li');
+            listItem.textContent = value;
+            
+            // Style the new list item if it matches the stored email
+            if (value === storedEmail) {
+                listItem.style.color = 'blue';
+                listItem.style.fontWeight = 'bold';
+                listItem.style.fontSize = '1.5em';
+            }
 
-                savedValuesList.appendChild(listItem);
-                inputField.value = ''; // Clear the input field
-            })
-            .catch((error) => {
-                console.error('Error saving document: ', error);
-            });
-        } else {
-            alert('This email has already been added.');
-        }
-    });
-});
+            savedValuesList.appendChild(listItem);
+            inputField.value = ''; // Clear the input field
+        })
+        .catch((error) => {
+            console.error('Error saving document: ', error);
+        });
+    } else {
+        alert('This email has already been added.');
+    }
+}
+
+// Add event listener to the button to handle click
+document.getElementById('sendinvit').addEventListener('click', handleButtonClick);
