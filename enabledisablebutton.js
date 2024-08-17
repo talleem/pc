@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 listItem.style.fontWeight = 'bold';
                 listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             } else {
+                 console.log('No Match found:', childValue, storedEmail);
                 // Optional: Reset styles for non-matching items
                 listItem.style.color = '';
                 listItem.style.fontWeight = '';
