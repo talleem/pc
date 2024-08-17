@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const createinvit = document.getElementById('createinvit');
     const endtime = document.getElementById('endtime');
     const starttime = document.getElementById('starttime');
-    const meetingid = document.getElementById('meetingdesc');
+    const meetingdesc = document.getElementById('meetingdesc');
     const repeatevery = document.getElementById('repeatevery');
     const repeatfrequency = document.getElementById('repeatFrequency');
     const numofoccur = document.getElementById('numofoccur');
-     console.log('enable',storedEmail);
+    console.log('Stored Email:', storedEmail);
 
     // Function to check the list and enable/disable the button
     window.checkList = function() {
@@ -20,39 +20,31 @@ document.addEventListener('DOMContentLoaded', function() {
             const childValue = listItem.textContent.trim();
 
             if (childValue === storedEmail) {
-                console.log('equal',childValuestoredEmail);
+                console.log('Match found:', childValue, storedEmail);
                 shouldEnableButton = true;
-                  // Enable or disable the button based on the comparison
-        createinvit.disabled = shouldEnableButton;
-        starttime.disabled = shouldEnableButton;
-        endtime.disabled = shouldEnableButton;
-        meetingdesc.disabled = shouldEnableButton;
-        repeatevery.disabled = shouldEnableButton;
-        repeatfrequency.disabled = shouldEnableButton;
-        numofoccur.disabled = shouldEnableButton;
 
                 // Apply styles to the matching list item
                 listItem.style.color = 'blue';
                 listItem.style.fontWeight = 'bold';
                 listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             } else {
-                console.log('notequaequal',childValuestoredEmail);
                 // Optional: Reset styles for non-matching items
                 listItem.style.color = '';
                 listItem.style.fontWeight = '';
                 listItem.style.fontSize = '';
-                  // Enable or disable the button based on the comparison
-        createinvit.disabled = shouldEnableButton;
-        starttime.disabled = shouldEnableButton;
-        endtime.disabled = shouldEnableButton;
-        meetingdesc.disabled = shouldEnableButton;
-        repeatevery.disabled = shouldEnableButton;
-        repeatfrequency.disabled = shouldEnableButton;
-        numofoccur.disabled = shouldEnableButton;
             }
         }
-        
+
+        // Enable or disable the button based on the comparison
+        createinvit.disabled = !shouldEnableButton;
+        starttime.disabled = !shouldEnableButton;
+        endtime.disabled = !shouldEnableButton;
+        meetingdesc.disabled = !shouldEnableButton;
+        repeatevery.disabled = !shouldEnableButton;
+        repeatfrequency.disabled = !shouldEnableButton;
+        numofoccur.disabled = !shouldEnableButton;
     };
+
     // Call checkList to initialize button state and apply styles
     checkList();
 });
