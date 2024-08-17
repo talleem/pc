@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const childValue = listItem.textContent.trim();
 
             if (childValue === storedEmail) {
+                console.log('equal',childValuestoredEmail);
                 shouldEnableButton = true;
                   // Enable or disable the button based on the comparison
         createinvit.disabled = shouldEnableButton;
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 listItem.style.fontWeight = 'bold';
                 listItem.style.fontSize = '1.5em'; // Equivalent to h4 font size
             } else {
+                console.log('notequaequal',childValuestoredEmail);
                 // Optional: Reset styles for non-matching items
                 listItem.style.color = '';
                 listItem.style.fontWeight = '';
