@@ -15,25 +15,36 @@
     <button class="tablink" onclick="openTab(event, 'tab3')" style="background-color: #00ffff;">Tab 3</button>
     <button class="tablink" onclick="openTab(event, 'tab4')" style="background-color: #00ffff;">Tab 4</button>
 
-   <div id="tab1" class="tabcontent">
-        <!-- Content of Tab 1 -->
-        <iframe src="googlemeetpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab2" class="tabcontent">
-        <!-- Content of Tab 2 -->
-        <iframe src="googlemapspage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab3" class="tabcontent">
-        <!-- Content of Tab 3 -->
-        <iframe src="googledrivepage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab4" class="tabcontent">
-        <!-- Content of Tab 4 -->
-        <iframe src="googlecalendarpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
+    <div id="tab1" class="tabcontent"></div>
+    <div id="tab2" class="tabcontent"></div>
+    <div id="tab3" class="tabcontent"></div>
+    <div id="tab4" class="tabcontent"></div>
    
 </div>
 
 <script src="scripts.js"></script>
+<script>
+function openTab(evt, tabId) {
+    // Hide all tab contents
+    const tabContents = document.getElementsByClassName('tabcontent');
+    for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].style.display = 'none';
+    }
+
+    // Show the selected tab
+    document.getElementById(tabId).style.display = 'block';
+
+    // Load the iframe content dynamically
+    const tabContentDiv = document.getElementById(tabId);
+    if (!tabContentDiv.hasChildNodes()) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `${tabId}.html`; // Load the corresponding minor page
+        iframe.width = "100%";
+        iframe.height = "600";
+        iframe.frameBorder = "0";
+        tabContentDiv.appendChild(iframe);
+    }
+}
+</script>
 </body>
 </html>
