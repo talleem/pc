@@ -92,6 +92,3 @@ function handleButtonClick() {
         alert('This email has already been added.');
     }
 }
-
-// Add event listener to the button to handle click
-document.getElementById('sendinvit').addEventListener('click', handleButtonClick);
