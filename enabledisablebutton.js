@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (childValue === storedEmail) {
                 shouldEnableButton = true;
+                  // Enable or disable the button based on the comparison
+        createinvit.disabled = shouldEnableButton;
+        starttime.disabled = shouldEnableButton;
+        endtime.disabled = shouldEnableButton;
+        meetingdesc.disabled = shouldEnableButton;
+        repeatevery.disabled = shouldEnableButton;
+        repeatfrequency.disabled = shouldEnableButton;
+        numofoccur.disabled = shouldEnableButton;
 
                 // Apply styles to the matching list item
                 listItem.style.color = 'blue';
@@ -31,20 +39,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 listItem.style.color = '';
                 listItem.style.fontWeight = '';
                 listItem.style.fontSize = '';
+                  // Enable or disable the button based on the comparison
+        createinvit.disabled = shouldEnableButton;
+        starttime.disabled = shouldEnableButton;
+        endtime.disabled = shouldEnableButton;
+        meetingdesc.disabled = shouldEnableButton;
+        repeatevery.disabled = shouldEnableButton;
+        repeatfrequency.disabled = shouldEnableButton;
+        numofoccur.disabled = shouldEnableButton;
             }
         }
-
-        // Enable or disable the button based on the comparison
-        createinvit.disabled = !shouldEnableButton;
-        starttime.disabled = !shouldEnableButton;
-        endtime.disabled = !shouldEnableButton;
-        meetingdesc.disabled = !shouldEnableButton;
-        repeatevery.disabled = !shouldEnableButton;
-        repeatfrequency.disabled = !shouldEnableButton;
-        numofoccur.disabled = !shouldEnableButton;
         
     };
-
     // Call checkList to initialize button state and apply styles
     checkList();
 });
