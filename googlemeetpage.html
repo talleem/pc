@@ -124,7 +124,7 @@
             onclick="checkList()"
         >
     </div>
-<div style="display: flex; justify-content: flex-end; padding: 20px;" onclick="checkList()">
+<div style="display: flex; justify-content: flex-end; padding: 20px;" id="checkListTrigger">
         <input 
             type="datetime-local" 
             id="starttime" 
@@ -144,6 +144,14 @@
             required
         >
     </div>
+    
+      <script>
+        // Add event listener to trigger the checkList function on click
+        document.getElementById('checkListTrigger').addEventListener('click', function() {
+            checkList();
+        });
+    </script>
+    
      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         flatpickr("#starttime", {
