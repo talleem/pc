@@ -25,8 +25,60 @@
       .catch(console.error);
 </script>
      <script src="loadattendeailfromfirestore.js"></script> 
-     <script src="enabledisablebutton1.js"></script> 
 
+    
+  <!-- Define the checkList script in the head section -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedValuesList = document.getElementById('savedValuesList');
+            const storedEmail = localStorage.getItem('loggedInEmail');
+            const createinvit = document.getElementById('createinvit');
+            const endtime = document.getElementById('endtime');
+            const starttime = document.getElementById('starttime');
+            const meetingdesc = document.getElementById('meetingdesc');
+            const repeatevery = document.getElementById('repeatevery');
+            const repeatfrequency = document.getElementById('repeatFrequency');
+            const numofoccur = document.getElementById('numofoccur');
+            console.log('enabledisable', storedEmail);
+            console.log('length', savedValuesList.children.length);
+
+        
+            // Function to check the list and enable/disable the button
+            function checkList() {
+                let shouldEnableButton = false;
+
+                // Iterate through each child and compare with storedEmail
+                for (let i = 0; i < savedValuesList.children.length; i++) {
+                    const listItem = savedValuesList.children[i];
+                    const childValue = listItem.textContent.trim();
+
+                    if (childValue === storedEmail) {
+                        console.log('Match found:', childValue, storedEmail);
+                        shouldEnableButton = true;
+                    } else {
+                        console.log('No Match found:', childValue, storedEmail);
+                    }
+                }
+
+                // Enable or disable the button based on the comparison
+                createinvit.disabled = !shouldEnableButton;
+                starttime.disabled = !shouldEnableButton;
+                endtime.disabled = !shouldEnableButton;
+                meetingdesc.disabled = !shouldEnableButton;
+                repeatevery.disabled = !shouldEnableButton;
+                repeatfrequency.disabled = !shouldEnableButton;
+                numofoccur.disabled = !shouldEnableButton;
+                console.log('test:', shouldEnableButton, storedEmail);
+            }
+
+            // Attach the event listener to trigger the checkList function
+            document.getElementById('meetingdesc').addEventListener('click', function() {
+                checkList();
+            });
+        });
+    </script>
+    
+    
 </head>
 <body>
    <h4 style="font-weight:bold;color:#0000ff;">Enter:Google Meet list of attendees emails with the</h4>
@@ -104,7 +156,7 @@
         </h4>
     </div>
     
-    <div style="display: flex; justify-content: flex-end; padding: 20px;"  onclick="checkList()">
+    <div style="display: flex; justify-content: flex-end; padding: 20px;" id="checkListTrigger"">
         <input 
             id="meetingdesc" 
             name="meetingdesc" 
@@ -121,9 +173,16 @@
                 /* Additional inline styles here if needed */
             " 
             required
-            onclick="checkList()"
-        >
+            >
     </div>
+
+      <script>
+        // Add event listener to trigger the checkList function on click
+        document.getElementById('checkListTrigger').addEventListener('click', function() {
+            checkList();
+        });
+    </script>
+    
 <div style="display: flex; justify-content: flex-end; padding: 20px;" id="checkListTrigger">
         <input 
             type="datetime-local" 
@@ -160,7 +219,7 @@
             placeholder: "Enter date and time"
         });
     </script>
-    <div style="display: flex; justify-content: flex-end; padding: 20px;"  onclick="checkList()">
+    <div style="display: flex; justify-content: flex-end; padding: 20px;">
         <input 
             type="datetime-local" 
             id="endtime" 
