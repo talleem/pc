@@ -14,23 +14,27 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 // Function to handle Google Sign-In and email verification
-function signInWithGoogle(callback) {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-        .then(result => {
-            const user = result.user;
-            if (user.emailVerified) {
-                callback(user.email); // Proceed with callback if email is verified
-            } else {
-                console.log('Email not verified.');
-                alert('Please verify your email before logging in.');
-                auth.signOut();
-            }
-        })
-        .catch(error => {
-            console.error('Error signing in:', error);
-            alert('Error signing in: ' + error.message);
-        });
+function signInWithGoogle() {
+    return new Promise((resolve, reject) => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+            .then(result => {
+                const user = result.user;
+                if (user.emailVerified) {
+                    resolve(user.email); // Resolve with verified email
+                } else {
+                    console.log('Email not verified.');
+                    alert('Please verify your email before logging in.');
+                    auth.signOut();
+                    reject(new Error('Email not verified.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error signing in:', error);
+                alert('Error signing in: ' + error.message);
+                reject(error);
+            });
+    });
 }
 
 // Function to check if the email is unique in the list
@@ -52,7 +56,7 @@ function saveToFirestoreAndList(value) {
             value: value,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         })
-        .then((docRef) => {
+        .then(() => {
             console.log('Value successfully saved!');
             const listItem = document.createElement('li');
             listItem.textContent = value;
@@ -86,10 +90,14 @@ function handleButtonClick() {
     }
 
     // Sign in and handle saving only if verified
-    signInWithGoogle(function(loggedInEmail) {
-        // If login is successful and email is verified, proceed with saving
-        saveToFirestoreAndList(value);
-    });
+    signInWithGoogle()
+        .then((loggedInEmail) => {
+            // If login is successful and email is verified, proceed with saving
+            saveToFirestoreAndList(value);
+        })
+        .catch((error) => {
+            console.error('Error during verification or saving:', error);
+        });
 }
 
 // Add event listener to the button to handle click
