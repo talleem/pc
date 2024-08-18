@@ -38,7 +38,4 @@ document.addEventListener('DOMContentLoaded', function() {
         numofoccur.disabled = !shouldEnableButton;
         console.log('test:',shouldEnableButton, storedEmail);
     };
-
-    // Call checkList to initialize button state and apply styles
-    checkList();
 });
