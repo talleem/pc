@@ -156,7 +156,7 @@
         </h4>
     </div>
     
-    <div style="display: flex; justify-content: flex-end; padding: 20px;">
+    <div style="display: flex; justify-content: flex-end; padding: 20px;" class="checkListTrigger">
         <input 
             id="meetingdesc" 
             name="meetingdesc" 
@@ -176,7 +176,7 @@
             >
     </div>
     
-<div style="display: flex; justify-content: flex-end; padding: 20px;" id="checkListTrigger1">
+<div style="display: flex; justify-content: flex-end; padding: 20px;" class="checkListTrigger">
         <input 
             type="datetime-local" 
             id="starttime" 
@@ -196,18 +196,6 @@
             required
         >
     </div>
-     <script>
-        // Add event listener to trigger the checkList function on click
-       // document.getElementById('checkListTrigger').addEventListener('click', function() {
-           // checkList();
-      //  });
-    </script>
-      <script>
-        // Add event listener to trigger the checkList function on click
-        document.getElementById('checkListTrigger1').addEventListener('click', function() {
-            checkList();
-        });
-    </script>
     
      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -217,7 +205,7 @@
             placeholder: "Enter date and time"
         });
     </script>
-    <div style="display: flex; justify-content: flex-end; padding: 20px;">
+    <div style="display: flex; justify-content: flex-end; padding: 20px;" class="checkListTrigger">
         <input 
             type="datetime-local" 
             id="endtime" 
@@ -237,6 +225,16 @@
             required
         >
     </div>
+
+    <script>
+    // Attach event listeners to all elements with class "checkListTrigger"
+    document.querySelectorAll('.checkListTrigger').forEach(function(element) {
+        element.addEventListener('click', function() {
+            checkList();
+        });
+    });
+</script>
+    
      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         flatpickr("#endtime", {
