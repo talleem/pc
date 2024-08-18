@@ -38,4 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         numofoccur.disabled = !shouldEnableButton;
         console.log('test:',shouldEnableButton, storedEmail);
     };
+    // Initialize the function to check the list on page load
+    checkList();
 });
