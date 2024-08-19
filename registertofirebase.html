@@ -39,7 +39,13 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
 
-            // First, check if the email is already in the Firestore users_tbl
+            // Check if the email ends with '@gmail.com'
+            if (!email.endsWith('@gmail.com')) {
+                alert('Please enter a valid Gmail address ending with "@gmail.com".');
+                return;
+            }
+
+            // Check if the email is already in the Firestore users_tbl
             firestore.collection('users_tbl').where('email', '==', email)
                 .get()
                 .then(querySnapshot => {
@@ -48,31 +54,19 @@
                         return;
                     }
 
-                    // Next, check if the email is able to sign in to Google
-                    auth.fetchSignInMethodsForEmail(email)
-                        .then(signInMethods => {
-                            if (signInMethods.length > 0) {
-                                // Save email and password to Firestore
-                                firestore.collection('users_tbl').add({
-                                    email: email,
-                                    password: password
-                                })
-                                .then(() => {
-                                    console.log('User data saved to Firestore.');
-                                    alert('Registration successful!');
-                                })
-                                .catch((error) => {
-                                    console.error('Error saving user data to Firestore:', error.message);
-                                    alert('Error saving user data to Firestore: ' + error.message);
-                                });
-                            } else {
-                                alert('This email does not exist as a Google account.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error checking email with Google:', error.message);
-                            alert('Error checking email with Google: ' + error.message);
-                        });
+                    // Save email and password to Firestore
+                    firestore.collection('users_tbl').add({
+                        email: email,
+                        password: password
+                    })
+                    .then(() => {
+                        console.log('User data saved to Firestore.');
+                        alert('Registration successful!');
+                    })
+                    .catch((error) => {
+                        console.error('Error saving user data to Firestore:', error.message);
+                        alert('Error saving user data to Firestore: ' + error.message);
+                    });
                 })
                 .catch(error => {
                     console.error('Error checking existing email:', error.message);
