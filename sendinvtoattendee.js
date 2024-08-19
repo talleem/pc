@@ -13,30 +13,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// Function to handle Google Sign-In and email verification
-function signInWithGoogle() {
-    return new Promise((resolve, reject) => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        auth.signInWithPopup(provider)
-            .then(result => {
-                const user = result.user;
-                if (user.emailVerified) {
-                    resolve(user.email); // Resolve with verified email
-                } else {
-                    console.log('Email not verified.');
-                    alert('Please verify your email before logging in.');
-                    auth.signOut();
-                    reject(new Error('Email not verified.'));
-                }
-            })
-            .catch(error => {
-                console.error('Error signing in:', error);
-                alert('Error signing in: ' + error.message);
-                reject(error);
-            });
-    });
-}
-
 // Function to check if the email is unique in the list
 const isUnique = (value) => {
     const listItems = savedValuesList.getElementsByTagName('li');
@@ -89,14 +65,26 @@ function handleButtonClick() {
         return; // Do not proceed if the value is empty
     }
 
-    // Sign in and handle saving only if verified
-    signInWithGoogle()
-        .then((loggedInEmail) => {
-            // If login is successful and email is verified, proceed with saving
-            saveToFirestoreAndList(value);
+    // Check if the email contains the suffix @gmail.com
+    if (!value.endsWith('@gmail.com')) {
+        alert('Please enter a valid Gmail address.');
+        return; // Do not proceed if the email does not contain @gmail.com
+    }
+
+    // Check if the email exists in the users_tbl collection
+    db.collection('users_tbl').where('email', '==', value)
+        .get()
+        .then(querySnapshot => {
+            if (querySnapshot.empty) {
+                alert('This email is not registered.');
+            } else {
+                // If the email exists, proceed with saving
+                saveToFirestoreAndList(value);
+            }
         })
-        .catch((error) => {
-            console.error('Error during verification or saving:', error);
+        .catch(error => {
+            console.error('Error checking email in users_tbl:', error.message);
+            alert('Error checking email: ' + error.message);
         });
 }
 
