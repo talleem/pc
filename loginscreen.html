@@ -17,6 +17,9 @@
         <input type="password" id="loginPassword" placeholder="Password" style="width:225px; height: 31px;" required>
         <button type="submit" style="width:75px; height: 35px;">Sign In</button>
     </form>
+    <br>
+    <button id="adminSignIn" style="width:225px; height: 35px;">Admin Sign In</button>
+
     <script>
         // Your Firebase configuration
         const firebaseConfig = {
@@ -70,11 +73,21 @@
                     alert('Error logging in: ' + error.message);
                 });
         });
+
+        // Admin sign-in button handler
+        document.getElementById('adminSignIn').addEventListener('click', function () {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email === 'engineerr1983@gmail.com' && password === 'engineer07808201494') {
+                // Redirect to the admin page
+                window.location.href = 'registertofirebase.html';
+            } else {
+                alert('Admin sign in failed. Please check your credentials.');
+            }
+        });
     </script>
 
-              <img src="G.gif" alt="GIF Image" style="width: 25%;height:auto;align-items: right;position: absolute; bottom: 20px; right: 20px;"> 
-   
-    
-    
+    <img src="G.gif" alt="GIF Image" style="width: 25%;height:auto;align-items: right;position: absolute; bottom: 20px; right: 20px;"> 
 </body>
 </html>
