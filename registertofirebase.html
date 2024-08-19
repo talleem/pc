@@ -6,7 +6,7 @@
     <title>Registration</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <h1>Register</h1>
@@ -18,13 +18,13 @@
     <script>
         // Your Firebase configuration
         const firebaseConfig = {
-               apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
-        authDomain: "engineerr1983meet.firebaseapp.com",
-        projectId: "engineerr1983meet",
-        storageBucket: "engineerr1983meet.appspot.com",
-        messagingSenderId: "308801516934",
-        appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
-        measurementId: "G-X22VZ2TVWT"
+            apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
+            authDomain: "engineerr1983meet.firebaseapp.com",
+            projectId: "engineerr1983meet",
+            storageBucket: "engineerr1983meet.appspot.com",
+            messagingSenderId: "308801516934",
+            appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
+            measurementId: "G-X22VZ2TVWT"
         };
 
         // Initialize Firebase
@@ -39,33 +39,44 @@
             const email = document.getElementById('registerEmail').value;
             const password = document.getElementById('registerPassword').value;
 
-           
-            auth.createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Signed up successfully
-                    const user = userCredential.user;
+            // First, check if the email is already in the Firestore users_tbl
+            firestore.collection('users_tbl').where('email', '==', email)
+                .get()
+                .then(querySnapshot => {
+                    if (!querySnapshot.empty) {
+                        alert('This email is already registered.');
+                        return;
+                    }
 
-                    // Save email and password to Firestore
-                    firestore.collection('users_tbl').add({
-                        email: email,
-                        password: password
-                    })
-                    .then(() => {
-                        console.log('User data saved to Firestore.');
-                    })
-                    .catch((error) => {
-                        console.error('Error saving user data to Firestore:', error.message);
-                    });
-
-                    // Send email verification
-                    user.sendEmailVerification()
-                        .then(() => {
-                            console.log('Verification email sent.');
-                            alert('Verification email sent. Please check your inbox.');
+                    // Next, check if the email is able to sign in to Google
+                    auth.fetchSignInMethodsForEmail(email)
+                        .then(signInMethods => {
+                            if (signInMethods.length > 0) {
+                                // Save email and password to Firestore
+                                firestore.collection('users_tbl').add({
+                                    email: email,
+                                    password: password
+                                })
+                                .then(() => {
+                                    console.log('User data saved to Firestore.');
+                                    alert('Registration successful!');
+                                })
+                                .catch((error) => {
+                                    console.error('Error saving user data to Firestore:', error.message);
+                                    alert('Error saving user data to Firestore: ' + error.message);
+                                });
+                            } else {
+                                alert('This email does not exist as a Google account.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking email with Google:', error.message);
+                            alert('Error checking email with Google: ' + error.message);
                         });
                 })
-                .catch((error) => {
-                    console.error('Error during sign up:', error.message);
+                .catch(error => {
+                    console.error('Error checking existing email:', error.message);
+                    alert('Error checking existing email: ' + error.message);
                 });
         });
     </script>
