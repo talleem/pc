@@ -384,6 +384,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         `);
                     });
 
+                    // Add the button to the new window
+                    newWindow.document.write('<button id="recordmeet">Start Recording</button>');
                     newWindow.document.write('</ul>');
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
@@ -427,8 +429,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-    
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
