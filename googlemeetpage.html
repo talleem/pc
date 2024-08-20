@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.write('</ul>');
                     
-                    // Add the button with styles in the script to prevent interference
+                    // Add the record button with styles
                     const recordButton = newWindow.document.createElement('button');
                     recordButton.id = 'recordmeet';
                     recordButton.textContent = 'Start Recording';
@@ -426,6 +426,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log(`Creator's email (${creatorEmail}) has been stored.`);
                         });
                     });
+
+                    // Add event listener to the record button
+                    recordButton.addEventListener('click', function() {
+                        const creatorEmail = localStorage.getItem('creatorEmail');
+                        const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+                        if (creatorEmail === loggedInEmail) {
+                            alert('There is a match!');
+                        } else {
+                            alert('There is no match.');
+                        }
+                    });
+
                 })
                 .catch(error => {
                     console.error('Error loading meetings:', error);
@@ -440,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 
 
 
