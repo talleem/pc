@@ -350,7 +350,7 @@
                             newWindow.document.write('<html><head><title>Meetings</title></head><body>');
                             newWindow.document.write('<h2>Meetings</h2>');
                             newWindow.document.write('<ul>');
-                            
+
                             // Add the recordmeet button to the new window
                             newWindow.document.write(`
                                 <button id="recordmeet" style="
@@ -364,10 +364,10 @@
                                     border: none;
                                     border-radius: 5px;
                                     cursor: not-allowed;
-                                    display: none; /* Initially hidden */
+                                    display: inline; /* Initially visible */
                                 ">Record Meeting</button>
                             `);
-                            
+
                             filteredEvents.forEach(event => {
                                 const startTime = new Date(event.start.dateTime).toLocaleString();
                                 const endTime = new Date(event.end.dateTime).toLocaleString();
@@ -423,9 +423,9 @@
                                     if (condition1 && condition2 && condition3) {
                                         const recordmeetButton = newWindow.document.getElementById('recordmeet');
                                         if (recordmeetButton) {
-                                            recordmeetButton.style.display = 'inline'; // Show the button
                                             recordmeetButton.style.cursor = 'pointer'; // Change cursor to pointer
                                             recordmeetButton.disabled = false; // Enable the button
+                                            recordmeetButton.style.backgroundColor = '#4CAF50'; // Ensure the button is green
                                         }
                                     }
                                 }
