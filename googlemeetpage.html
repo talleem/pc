@@ -311,18 +311,18 @@
                 /* Additional inline styles here if needed */
             " 
         >   
-    <button id="loadinvit" style="
-                height: 35px; 
-                text-align: center;
-                font-weight: bold; /* Make font bold */
-               position: fixed; /* Absolute position within .container */
-               right: 35px; /* Distance from the right edge */
-               top: 305px;
-                /* Additional inline styles here if needed */
-            " 
-        >Load invit</button>
+  <button id="loadinvit" style="
+    height: 35px; 
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    right: 35px;
+    top: 305px;
+">
+    Load invit
+</button>
 
-     <script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
     
@@ -365,14 +365,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (event.recurrence) {
                             recurrenceInfo = 'Recurring event';
 
-                            // Example: Extracting the number of occurrences (if available)
-                            const recurrenceRule = event.recurrence[0]; // Recurrence rules like 'RRULE:FREQ=WEEKLY;COUNT=10'
+                            const recurrenceRule = event.recurrence[0];
                             const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
                             if (countMatch) {
                                 recurrenceInfo += `, Occurs ${countMatch[1]} times`;
                             }
 
-                            // Extract the recurrence frequency (e.g., daily, weekly, monthly)
                             const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
                             if (freqMatch) {
                                 recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
@@ -385,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <strong>End Time:</strong> ${endTime}<br>
                                 <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                 <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" target="_blank">${hangoutLink}</a><br>
                                 <strong>Meeting Type:</strong> ${recurrenceInfo}
                             </li>
                         `);
@@ -394,6 +392,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.write('</ul>');
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
+
+                    // Add event listeners to all meeting links in the new window
+                    const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                    meetingLinks.forEach(link => {
+                        link.addEventListener('click', function(event) {
+                            event.preventDefault(); // Prevent the default action of opening the link
+                            alert("test"); // Alert "test"
+                            window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                        });
+                    });
                 })
                 .catch(error => {
                     console.error('Error loading meetings:', error);
