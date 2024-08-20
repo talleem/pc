@@ -405,9 +405,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                 // Check if the logged-in email matches the creator's email
                                 const storedEmail = localStorage.getItem('loggedInEmail');
+                                   console.log('match',storedEmail,creatorEmail);
                                 if (storedEmail === creatorEmail) {
                                     // Enable the button when the condition is met
-                                    console.log('match',storedEmail,creatorEmail);
                                     const recordButton = newWindow.document.getElementById('recordmeet');
                                     if (recordButton) {
                                         recordButton.disabled = false;
