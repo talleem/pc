@@ -314,11 +314,13 @@
 <button id="loadinvit" style="
     height: 35px; 
     text-align: center;
-    font-weight: bold; 
+    font-weight: bold;
     position: fixed;
     right: 35px;
     top: 305px;
-">Load invit</button>
+">
+    Load invit
+</button>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -354,69 +356,60 @@ document.addEventListener('DOMContentLoaded', function() {
                         const description = event.description || 'No description';
                         const hangoutLink = event.hangoutLink || 'No link available';
                         
+                        let recurrenceInfo = 'Single event';
+                        if (event.recurrence) {
+                            recurrenceInfo = 'Recurring event';
+
+                            const recurrenceRule = event.recurrence[0];
+                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                            if (countMatch) {
+                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                            }
+
+                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                            if (freqMatch) {
+                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                            }
+                        }
+
                         newWindow.document.write(`
                             <li>
                                 <strong>Start Time:</strong> ${startTime}<br>
                                 <strong>End Time:</strong> ${endTime}<br>
                                 <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                 <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank" class="meeting-link">${hangoutLink}</a><br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}
                             </li>
                         `);
                     });
 
-                    // Add the button to the new window
-                    newWindow.document.write('<button id="recordmeet" disabled>Start Recording</button>');
+                    newWindow.document.write('</ul>');
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
 
-                    newWindow.addEventListener('load', function() {
-                        // Add CSS styles for the button
-                        const buttonStyle = `
-                            <style>
-                                #recordmeet {
-                                    position: fixed;
-                                    top: 10px;
-                                    right: 10px;
-                                    height: 35px;
-                                    font-weight: bold;
-                                    background-color: #4CAF50;
-                                    color: white;
-                                    border: none;
-                                    border-radius: 5px;
-                                    cursor: pointer;
-                                }
-                                #recordmeet:disabled {
-                                    background-color: #d3d3d3;
-                                    cursor: not-allowed;
-                                }
-                            </style>
-                        `;
-                        newWindow.document.head.insertAdjacentHTML('beforeend', buttonStyle);
-
-                        // Handle link clicks and condition checks
-                        const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
-                        meetingLinks.forEach(link => {
-                            link.addEventListener('click', function(event) {
-                                event.preventDefault(); // Prevent the default action of the link
-
-                                // Extract the creator email from the event data
-                                const creatorEmail = event.target.textContent;
-
-                                // Check if the logged-in email matches the creator's email
-                                const storedEmail = localStorage.getItem('loggedInEmail');
-                                   console.log('match',storedEmail,creatorEmail);
-                                if (storedEmail === creatorEmail) {
-                                    // Enable the button when the condition is met
-                                    const recordButton = newWindow.document.getElementById('recordmeet');
-                                    if (recordButton) {
-                                        recordButton.disabled = false;
-                                    }
-                                }
-
-                                // Redirect to the meeting link after the check
-                                window.location.href = hangoutLink;
-                            });
+                    const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                    meetingLinks.forEach(link => {
+                        link.addEventListener('click', function(event) {
+                            const creatorEmail = this.getAttribute('data-creator-email');
+                            const storedEmail = localStorage.getItem('loggedInEmail');
+                            
+                            if (storedEmail === creatorEmail) {
+                                navigator.mediaDevices.getUserMedia({ video: true })
+                                    .then((stream) => {
+                                        if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                            event.preventDefault(); // Prevent the default action of opening the link
+                                            alert("test"); // Alert "test"
+                                            window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                                        } else {
+                                            alert("Camera is not turned on.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error accessing the camera:", error);
+                                        alert("Unable to access the camera.");
+                                    });
+                            }
                         });
                     });
                 })
