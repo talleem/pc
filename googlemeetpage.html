@@ -378,42 +378,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <strong>End Time:</strong> ${endTime}<br>
                                 <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                 <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
                                 <strong>Meeting Type:</strong> ${recurrenceInfo}
                             </li>
                         `);
                     });
 
-                    // Add the button to the new window
-                    newWindow.document.write('<button id="recordmeet">Start Recording</button>');
                     newWindow.document.write('</ul>');
+
+                    // Add the button to the new window
+                    newWindow.document.write('<button id="recordmeet" style="background-color: green; color: white;">Start Recording</button>');
+                    
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
-
-                    const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
-                    meetingLinks.forEach(link => {
-                        link.addEventListener('click', function(event) {
-                            const creatorEmail = this.getAttribute('data-creator-email');
-                            const storedEmail = localStorage.getItem('loggedInEmail');
-                            
-                            if (storedEmail === creatorEmail) {
-                                navigator.mediaDevices.getUserMedia({ video: true })
-                                    .then((stream) => {
-                                        if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                                            event.preventDefault(); // Prevent the default action of opening the link
-                                            alert("test"); // Alert "test"
-                                            window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
-                                        } else {
-                                            alert("Camera is not turned on.");
-                                        }
-                                    })
-                                    .catch((error) => {
-                                        console.error("Error accessing the camera:", error);
-                                        alert("Unable to access the camera.");
-                                    });
-                            }
-                        });
-                    });
                 })
                 .catch(error => {
                     console.error('Error loading meetings:', error);
@@ -428,6 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
