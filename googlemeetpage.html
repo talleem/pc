@@ -311,26 +311,24 @@
                 /* Additional inline styles here if needed */
             " 
         >   
- <button id="loadinvit" style="
+  <button id="loadinvit" style="
         height: 35px; 
         text-align: center;
-        font-weight: bold; /* Make font bold */
-        position: fixed; /* Absolute position within .container */
-        right: 35px; /* Distance from the right edge */
+        font-weight: bold; 
+        position: fixed;
+        right: 35px;
         top: 305px;
     ">Load invit</button>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loadInvitButton = document.getElementById('loadinvit');
-
+            
             loadInvitButton.addEventListener('click', function() {
-                // Retrieve the access token and logged-in email from localStorage
                 const accessToken = localStorage.getItem('accessToken');
                 const loggedInEmail = localStorage.getItem('loggedInEmail');
-
+                
                 if (accessToken && loggedInEmail) {
-                    // Function to load meetings for the logged-in email
                     function loadMeetings() {
                         fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
                             method: 'GET',
@@ -340,34 +338,15 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            // Filter events to include only those where the logged-in email is an attendee
                             const filteredEvents = data.items.filter(event => 
                                 event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
                             );
 
-                            // Create a new window and display the meeting data
                             const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
                             newWindow.document.write('<html><head><title>Meetings</title></head><body>');
                             newWindow.document.write('<h2>Meetings</h2>');
                             newWindow.document.write('<ul>');
-
-                            // Add the recordmeet button to the new window
-                            newWindow.document.write(`
-                                <button id="recordmeet" style="
-                                    position: fixed;
-                                    top: 10px;
-                                    right: 10px;
-                                    height: 35px;
-                                    width: 150px;
-                                    background-color: #4CAF50; /* Green */
-                                    color: white;
-                                    border: none;
-                                    border-radius: 5px;
-                                    cursor: not-allowed;
-                                    display: inline; /* Initially visible */
-                                ">Record Meeting</button>
-                            `);
-
+                            
                             filteredEvents.forEach(event => {
                                 const startTime = new Date(event.start.dateTime).toLocaleString();
                                 const endTime = new Date(event.end.dateTime).toLocaleString();
@@ -375,60 +354,70 @@
                                 const description = event.description || 'No description';
                                 const hangoutLink = event.hangoutLink || 'No link available';
                                 
-                                // Determine if the event is recurring
-                                let recurrenceInfo = 'Single event';
-                                if (event.recurrence) {
-                                    recurrenceInfo = 'Recurring event';
-
-                                    // Example: Extracting the number of occurrences (if available)
-                                    const recurrenceRule = event.recurrence[0]; // Recurrence rules like 'RRULE:FREQ=WEEKLY;COUNT=10'
-                                    const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
-                                    if (countMatch) {
-                                        recurrenceInfo += `, Occurs ${countMatch[1]} times`;
-                                    }
-
-                                    // Extract the recurrence frequency (e.g., daily, weekly, monthly)
-                                    const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
-                                    if (freqMatch) {
-                                        recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
-                                    }
-                                }
-
                                 newWindow.document.write(`
                                     <li>
                                         <strong>Start Time:</strong> ${startTime}<br>
                                         <strong>End Time:</strong> ${endTime}<br>
                                         <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                         <strong>Description:</strong> ${description}<br>
-                                        <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
-                                        <strong>Meeting Type:</strong> ${recurrenceInfo}
+                                        <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank" class="meeting-link">${hangoutLink}</a><br>
                                     </li>
                                 `);
                             });
 
-                            newWindow.document.write('</ul>');
+                            // Add the button to the new window
+                            newWindow.document.write('<button id="recordmeet" disabled>Start Recording</button>');
                             newWindow.document.write('</body></html>');
                             newWindow.document.close();
 
-                            // Function to handle link clicks and enable the recordmeet button
-                            newWindow.document.addEventListener('click', function(e) {
-                                if (e.target.tagName === 'A' && e.target.href.includes('hangout')) {
-                                    const creatorEmail = localStorage.getItem('loggedInEmail');
-                                    
-                                    // Example of checking the conditions
-                                    const condition1 = true; // Replace with actual condition for meeting creator email
-                                    const condition2 = true; // Replace with actual condition for camera status
-                                    const condition3 = true; // Replace with actual condition for attendee status
-                                    
-                                    if (condition1 && condition2 && condition3) {
-                                        const recordmeetButton = newWindow.document.getElementById('recordmeet');
-                                        if (recordmeetButton) {
-                                            recordmeetButton.style.cursor = 'pointer'; // Change cursor to pointer
-                                            recordmeetButton.disabled = false; // Enable the button
-                                            recordmeetButton.style.backgroundColor = '#4CAF50'; // Ensure the button is green
+                            newWindow.addEventListener('load', function() {
+                                // Add CSS styles for the button
+                                const buttonStyle = `
+                                    <style>
+                                        #recordmeet {
+                                            position: fixed;
+                                            top: 10px;
+                                            right: 10px;
+                                            height: 35px;
+                                            font-weight: bold;
+                                            background-color: #4CAF50;
+                                            color: white;
+                                            border: none;
+                                            border-radius: 5px;
+                                            cursor: pointer;
                                         }
-                                    }
-                                }
+                                        #recordmeet:disabled {
+                                            background-color: #d3d3d3;
+                                            cursor: not-allowed;
+                                        }
+                                    </style>
+                                `;
+                                newWindow.document.head.insertAdjacentHTML('beforeend', buttonStyle);
+
+                                // Handle link clicks and condition checks
+                                const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                                meetingLinks.forEach(link => {
+                                    link.addEventListener('click', function(event) {
+                                        event.preventDefault(); // Prevent the default action of the link
+
+                                        // Extract the creator email from the link's context (for demonstration)
+                                        const creatorEmail = event.target.textContent;
+
+                                        // Placeholder for camera status check
+                                        const isCameraStarted = true; // Assume camera is started for this example
+
+                                        if (isCameraStarted) {
+                                            const storedEmail = localStorage.getItem('loggedInEmail');
+                                            if (storedEmail === creatorEmail) {
+                                                // Enable the button when all conditions are met
+                                                const recordButton = newWindow.document.getElementById('recordmeet');
+                                                if (recordButton) {
+                                                    recordButton.disabled = false;
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
                             });
                         })
                         .catch(error => {
