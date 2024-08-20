@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.write('</ul>');
                     
-                    // Add the record button with styles
+                    // Add the button with styles in the script to prevent interference
                     const recordButton = newWindow.document.createElement('button');
                     recordButton.id = 'recordmeet';
                     recordButton.textContent = 'Start Recording';
@@ -414,6 +414,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.style.transform = 'translateY(0px)';
                     });
 
+                    // Add event listener to the button to check the camera status
+                    recordButton.addEventListener('click', function() {
+                        const creatorEmail = localStorage.getItem('creatorEmail');
+                        const loggedInEmail = localStorage.getItem('loggedInEmail');
+                        
+                        if (creatorEmail === loggedInEmail) {
+                            navigator.mediaDevices.getUserMedia({ video: true })
+                                .then((stream) => {
+                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                        alert("Cam is started");
+                                    } else {
+                                        alert("Camera is not started.");
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error("Error accessing the camera:", error);
+                                    alert("Unable to access the camera.");
+                                });
+                        } else {
+                            alert("Creator's email does not match the logged-in email.");
+                        }
+                    });
+
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.close();
 
@@ -426,19 +449,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log(`Creator's email (${creatorEmail}) has been stored.`);
                         });
                     });
-
-                    // Add event listener to the record button
-                    recordButton.addEventListener('click', function() {
-                        const creatorEmail = localStorage.getItem('creatorEmail');
-                        const loggedInEmail = localStorage.getItem('loggedInEmail');
-
-                        if (creatorEmail === loggedInEmail) {
-                            alert('There is a match!');
-                        } else {
-                            alert('There is no match.');
-                        }
-                    });
-
                 })
                 .catch(error => {
                     console.error('Error loading meetings:', error);
@@ -453,8 +463,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-
 
 
      <button id="updateinvit" style=" height: 35px; 
