@@ -327,12 +327,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
     
     loadInvitButton.addEventListener('click', function() {
-        // Retrieve the access token and logged-in email from localStorage
         const accessToken = localStorage.getItem('accessToken');
         const loggedInEmail = localStorage.getItem('loggedInEmail');
         
         if (accessToken && loggedInEmail) {
-            // Function to load meetings for the logged-in email
             function loadMeetings() {
                 fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
                     method: 'GET',
@@ -342,12 +340,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // Filter events to include only those where the logged-in email is an attendee
                     const filteredEvents = data.items.filter(event => 
                         event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
                     );
 
-                    // Create a new window and display the meeting data
                     const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
                     newWindow.document.write('<html><head><title>Meetings</title></head><body>');
                     newWindow.document.write('<h2>Meetings</h2>');
@@ -360,7 +356,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const description = event.description || 'No description';
                         const hangoutLink = event.hangoutLink || 'No link available';
                         
-                        // Determine if the event is recurring
                         let recurrenceInfo = 'Single event';
                         if (event.recurrence) {
                             recurrenceInfo = 'Recurring event';
@@ -393,18 +388,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
 
-                    // Add event listeners to all meeting links in the new window
                     const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
                     meetingLinks.forEach(link => {
                         link.addEventListener('click', function(event) {
                             const creatorEmail = this.getAttribute('data-creator-email');
                             const storedEmail = localStorage.getItem('loggedInEmail');
                             
-                            // Check if the logged-in email matches the creator's email
                             if (storedEmail === creatorEmail) {
-                                event.preventDefault(); // Prevent the default action of opening the link
-                                alert("test"); // Alert "test"
-                                window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                                navigator.mediaDevices.getUserMedia({ video: true })
+                                    .then((stream) => {
+                                        if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                            event.preventDefault(); // Prevent the default action of opening the link
+                                            alert("test"); // Alert "test"
+                                            window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                                        } else {
+                                            alert("Camera is not turned on.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error accessing the camera:", error);
+                                        alert("Unable to access the camera.");
+                                    });
                             }
                         });
                     });
