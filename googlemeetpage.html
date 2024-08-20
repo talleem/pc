@@ -394,34 +394,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         `;
                         newWindow.document.head.insertAdjacentHTML('beforeend', buttonStyle);
 
-                        // Check if the camera is active
-                        function checkCameraStatus() {
-                            return navigator.mediaDevices.enumerateDevices()
-                                .then(devices => {
-                                    // Check if there is at least one video input device
-                                    const videoInputDevices = devices.filter(device => device.kind === 'videoinput');
-                                    return videoInputDevices.length > 0; // Return true if there are video devices
-                                })
-                                .catch(error => {
-                                    console.error('Error accessing media devices:', error);
-                                    return false; // Return false if there's an error
-                                });
-                        }
+                        // Handle link clicks and condition checks
+                        const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                        meetingLinks.forEach(link => {
+                            link.addEventListener('click', function(event) {
+                                event.preventDefault(); // Prevent the default action of the link
 
-                        // Example usage to enable the button
-                        checkCameraStatus().then(isCameraActive => {
-                            const recordButton = newWindow.document.getElementById('recordmeet');
-                            if (recordButton) {
-                                if (isCameraActive) {
-                                    const storedEmail = localStorage.getItem('loggedInEmail');
-                                    const creatorEmail = filteredEvents[0]?.creator.email; // Get the creator email from the first event for demo
+                                // Extract the creator email from the event data
+                                const creatorEmail = event.target.textContent;
 
-                                    if (storedEmail === creatorEmail) {
-                                        // Enable the button when all conditions are met
+                                // Check if the logged-in email matches the creator's email
+                                const storedEmail = localStorage.getItem('loggedInEmail');
+                                if (storedEmail === creatorEmail) {
+                                    // Enable the button when the condition is met
+                                    const recordButton = newWindow.document.getElementById('recordmeet');
+                                    if (recordButton) {
                                         recordButton.disabled = false;
                                     }
                                 }
-                            }
+
+                                // Redirect to the meeting link after the check
+                                window.location.href = hangoutLink;
+                            });
                         });
                     });
                 })
@@ -438,6 +432,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 
     
      <button id="updateinvit" style=" height: 35px; 
