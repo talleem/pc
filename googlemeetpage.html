@@ -378,42 +378,54 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <strong>End Time:</strong> ${endTime}<br>
                                 <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                 <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
                                 <strong>Meeting Type:</strong> ${recurrenceInfo}
                             </li>
                         `);
                     });
 
                     newWindow.document.write('</ul>');
-
-                    // Add the button to the new window with styles
-                    newWindow.document.write(`
-                        <button id="recordmeet" style="
-                            background-color: green;
-                            color: white;
-                            position: fixed;
-                            top: 10px;
-                            right: 10px;
-                            padding: 10px 20px;
-                            font-weight: bold;
-                            border: none;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            box-shadow: 0 4px #999;
-                        ">
-                            Start Recording
-                        </button>
-                        <style>
-                            #recordmeet:active {
-                                background-color: #3e8e41;
-                                box-shadow: 0 2px #666;
-                                transform: translateY(2px);
-                            }
-                        </style>
-                    `);
                     
-                    newWindow.document.write('</body></html>');
+                    // Add the button with styles in the script to prevent interference
+                    const recordButton = newWindow.document.createElement('button');
+                    recordButton.id = 'recordmeet';
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.style.backgroundColor = 'green';
+                    recordButton.style.color = 'white';
+                    recordButton.style.position = 'fixed';
+                    recordButton.style.top = '10px';
+                    recordButton.style.right = '10px';
+                    recordButton.style.padding = '10px 20px';
+                    recordButton.style.fontWeight = 'bold';
+                    recordButton.style.border = 'none';
+                    recordButton.style.borderRadius = '5px';
+                    recordButton.style.cursor = 'pointer';
+                    recordButton.style.boxShadow = '0 4px #999';
+
+                    recordButton.addEventListener('mousedown', function() {
+                        this.style.backgroundColor = '#3e8e41';
+                        this.style.boxShadow = '0 2px #666';
+                        this.style.transform = 'translateY(2px)';
+                    });
+
+                    recordButton.addEventListener('mouseup', function() {
+                        this.style.backgroundColor = 'green';
+                        this.style.boxShadow = '0 4px #999';
+                        this.style.transform = 'translateY(0px)';
+                    });
+
+                    newWindow.document.body.appendChild(recordButton);
                     newWindow.document.close();
+
+                    // Add event listeners to meeting links to store the creator's email when clicked
+                    const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                    meetingLinks.forEach(link => {
+                        link.addEventListener('click', function(event) {
+                            const creatorEmail = this.getAttribute('data-creator-email');
+                            localStorage.setItem('creatorEmail', creatorEmail);
+                            console.log(`Creator's email (${creatorEmail}) has been stored.`);
+                        });
+                    });
                 })
                 .catch(error => {
                     console.error('Error loading meetings:', error);
