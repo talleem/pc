@@ -311,7 +311,7 @@
                 /* Additional inline styles here if needed */
             " 
         >   
-  <button id="loadinvit" style="
+<button id="loadinvit" style="
     height: 35px; 
     text-align: center;
     font-weight: bold;
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <strong>End Time:</strong> ${endTime}<br>
                                 <strong>Creator's Email:</strong> ${creatorEmail}<br>
                                 <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
                                 <strong>Meeting Type:</strong> ${recurrenceInfo}
                             </li>
                         `);
@@ -397,9 +397,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
                     meetingLinks.forEach(link => {
                         link.addEventListener('click', function(event) {
-                            event.preventDefault(); // Prevent the default action of opening the link
-                            alert("test"); // Alert "test"
-                            window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                            const creatorEmail = this.getAttribute('data-creator-email');
+                            const storedEmail = localStorage.getItem('loggedInEmail');
+                            
+                            // Check if the logged-in email matches the creator's email
+                            if (storedEmail === creatorEmail) {
+                                event.preventDefault(); // Prevent the default action of opening the link
+                                alert("test"); // Alert "test"
+                                window.open(this.href, '_blank'); // Open the meeting link in a new window/tab
+                            }
                         });
                     });
                 })
@@ -416,7 +422,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 
     
      <button id="updateinvit" style=" height: 35px; 
