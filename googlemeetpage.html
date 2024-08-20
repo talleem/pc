@@ -386,8 +386,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.write('</ul>');
 
-                    // Add the button to the new window
-                    newWindow.document.write('<button id="recordmeet" style="background-color: green; color: white;">Start Recording</button>');
+                    // Add the button to the new window with styles
+                    newWindow.document.write(`
+                        <button id="recordmeet" style="
+                            background-color: green;
+                            color: white;
+                            position: fixed;
+                            top: 10px;
+                            right: 10px;
+                            padding: 10px 20px;
+                            font-weight: bold;
+                            border: none;
+                            border-radius: 5px;
+                            cursor: pointer;
+                            box-shadow: 0 4px #999;
+                        ">
+                            Start Recording
+                        </button>
+                        <style>
+                            #recordmeet:active {
+                                background-color: #3e8e41;
+                                box-shadow: 0 2px #666;
+                                transform: translateY(2px);
+                            }
+                        </style>
+                    `);
                     
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
