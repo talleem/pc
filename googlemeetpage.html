@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.style.transform = 'translateY(0px)';
                     });
 
-                    // Add event listener to the button to check the camera status
+                    // Add event listener to the button to check the camera status and start recording if conditions met
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -424,6 +424,35 @@ document.addEventListener('DOMContentLoaded', function() {
                                 .then((stream) => {
                                     if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
                                         newWindow.alert("Cam is started");
+
+                                        // Start recording the video stream
+                                        const mediaRecorder = new MediaRecorder(stream);
+                                        const chunks = [];
+
+                                        mediaRecorder.ondataavailable = function(e) {
+                                            chunks.push(e.data);
+                                        };
+
+                                        mediaRecorder.onstop = function() {
+                                            const blob = new Blob(chunks, { type: 'video/webm' });
+                                            const url = URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                                            a.style.display = 'none';
+                                            a.href = url;
+                                            a.download = 'meeting_recording.webm';
+                                            document.body.appendChild(a);
+                                            a.click();
+                                            URL.revokeObjectURL(url);
+                                        };
+
+                                        mediaRecorder.start();
+
+                                        // Stop recording when the camera is stopped
+                                        stream.getVideoTracks()[0].onended = () => {
+                                            mediaRecorder.stop();
+                                            newWindow.alert('Recording stopped and saved to Videos folder.');
+                                        };
+
                                     } else {
                                         alert("Camera is not started.");
                                     }
