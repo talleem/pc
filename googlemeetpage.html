@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             navigator.mediaDevices.getUserMedia({ video: true })
                                 .then((stream) => {
                                     if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                                        alert("Cam is started");
+                                        newWindow.alert("Cam is started");
                                     } else {
                                         alert("Camera is not started.");
                                     }
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     alert("Unable to access the camera.");
                                 });
                         } else {
-                            alert("No match");
+                            newWindow.alert("No match");
                         }
                     });
 
