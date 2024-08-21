@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.write('</ul>');
                     
-                    // Add the button with styles in the script to prevent interference
+                    // Add the Start Recording button
                     const recordButton = newWindow.document.createElement('button');
                     recordButton.id = 'recordmeet';
                     recordButton.textContent = 'Start Recording';
@@ -414,60 +414,92 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.style.transform = 'translateY(0px)';
                     });
 
-                    // Add event listener to the button to check the camera status and start recording if conditions met
-                  recordButton.addEventListener('click', function() {
-    const creatorEmail = localStorage.getItem('creatorEmail');
-    const loggedInEmail = localStorage.getItem('loggedInEmail');
+                    // Add the Stop Recording button
+                    const stopButton = newWindow.document.createElement('button');
+                    stopButton.id = 'stoprecord';
+                    stopButton.textContent = 'Stop Recording';
+                    stopButton.style.backgroundColor = 'red';
+                    stopButton.style.color = 'white';
+                    stopButton.style.position = 'fixed';
+                    stopButton.style.top = '50px';
+                    stopButton.style.right = '10px';
+                    stopButton.style.padding = '10px 20px';
+                    stopButton.style.fontWeight = 'bold';
+                    stopButton.style.border = 'none';
+                    stopButton.style.borderRadius = '5px';
+                    stopButton.style.cursor = 'pointer';
+                    stopButton.style.boxShadow = '0 4px #999';
+                    stopButton.disabled = true; // Initially disabled
 
-    if (creatorEmail === loggedInEmail) {
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                    console.log("Cam is started");
+                    let mediaRecorder;
+                    let stream;
 
-                    // Start recording the video
-                    const options = { mimeType: 'video/webm; codecs=vp9' };
-                    const mediaRecorder = new MediaRecorder(stream, options);
-                    const chunks = [];
+                    recordButton.addEventListener('click', function() {
+                        const creatorEmail = localStorage.getItem('creatorEmail');
+                        const loggedInEmail = localStorage.getItem('loggedInEmail');
 
-                    mediaRecorder.ondataavailable = function(event) {
-                        if (event.data.size > 0) {
-                            chunks.push(event.data);
+                        if (creatorEmail === loggedInEmail) {
+                            navigator.mediaDevices.getUserMedia({ video: true })
+                                .then((mediaStream) => {
+                                    stream = mediaStream;
+
+                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                        console.log("Cam is started");
+
+                                        // Start recording the video
+                                        const options = { mimeType: 'video/webm; codecs=vp9' };
+                                        mediaRecorder = new MediaRecorder(stream, options);
+                                        const chunks = [];
+
+                                        mediaRecorder.ondataavailable = function(event) {
+                                            if (event.data.size > 0) {
+                                                chunks.push(event.data);
+                                            }
+                                        };
+
+                                        mediaRecorder.onstop = function() {
+                                            const blob = new Blob(chunks, { type: 'video/webm' });
+                                            const url = URL.createObjectURL(blob);
+                                            const a = newWindow.document.createElement('a');
+                                            a.style.display = 'none';
+                                            a.href = url;
+                                            a.download = 'meeting_recording.webm';
+                                            newWindow.document.body.appendChild(a);
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                            console.log("Recording stopped");
+                                        };
+
+                                        mediaRecorder.start();
+                                        console.log("Cam is recording");
+
+                                        // Enable the stop button
+                                        stopButton.disabled = false;
+
+                                    } else {
+                                        console.log("Camera is not started.");
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error("Error accessing the camera:", error);
+                                });
+                        } else {
+                            console.log("No match");
                         }
-                    };
+                    });
 
-                    mediaRecorder.onstop = function() {
-                        const blob = new Blob(chunks, { type: 'video/webm' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = 'meeting_recording.webm';
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    };
-
-                    mediaRecorder.start();
-                       console.log("cam is Recording");
-                    // Stop recording when the camera stops
-                    stream.getVideoTracks()[0].onended = function() {
-                        mediaRecorder.stop();
-                        console.log("Recording stopped");
-                    };
-                } else {
-                    console.log("Camera is not started.");
-                }
-            })
-            .catch((error) => {
-                console.error("Error accessing the camera:", error);
-            });
-    } else {
-        console.log("No match");
-    }
-});
+                    // Stop recording when the stop button is clicked
+                    stopButton.addEventListener('click', function() {
+                        if (mediaRecorder && mediaRecorder.state === "recording") {
+                            mediaRecorder.stop();
+                            stream.getVideoTracks().forEach(track => track.stop()); // Stop the camera stream
+                            stopButton.disabled = true; // Disable the stop button
+                            console.log("Recording stopped manually");
+                        }
+                    });
 
                     newWindow.document.body.appendChild(recordButton);
+                    newWindow.document.body.appendChild(stopButton);
                     newWindow.document.close();
 
                     // Add event listeners to meeting links to store the creator's email when clicked
@@ -493,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
