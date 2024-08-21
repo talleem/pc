@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     };
 
                     mediaRecorder.start();
-
+                       console.log("cam is Recording");
                     // Stop recording when the camera stops
                     stream.getVideoTracks()[0].onended = function() {
                         mediaRecorder.stop();
