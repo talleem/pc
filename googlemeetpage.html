@@ -415,56 +415,57 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
 
                     // Add event listener to the button to check the camera status and start recording if conditions met
-                    recordButton.addEventListener('click', function() {
-                        const creatorEmail = localStorage.getItem('creatorEmail');
-                        const loggedInEmail = localStorage.getItem('loggedInEmail');
-                        
-                        if (creatorEmail === loggedInEmail) {
-                            navigator.mediaDevices.getUserMedia({ video: true })
-                                .then((stream) => {
-                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                                        newWindow.alert("Cam is started");
+                  recordButton.addEventListener('click', function() {
+    const creatorEmail = localStorage.getItem('creatorEmail');
+    const loggedInEmail = localStorage.getItem('loggedInEmail');
 
-                                        // Start recording the video stream
-                                        const mediaRecorder = new MediaRecorder(stream);
-                                        const chunks = [];
+    if (creatorEmail === loggedInEmail) {
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                    console.log("Cam is started");
 
-                                        mediaRecorder.ondataavailable = function(e) {
-                                            chunks.push(e.data);
-                                        };
+                    // Start recording the video
+                    const options = { mimeType: 'video/webm; codecs=vp9' };
+                    const mediaRecorder = new MediaRecorder(stream, options);
+                    const chunks = [];
 
-                                        mediaRecorder.onstop = function() {
-                                            const blob = new Blob(chunks, { type: 'video/webm' });
-                                            const url = URL.createObjectURL(blob);
-                                            const a = document.createElement('a');
-                                            a.style.display = 'none';
-                                            a.href = url;
-                                            a.download = 'meeting_recording.webm';
-                                            document.body.appendChild(a);
-                                            a.click();
-                                            URL.revokeObjectURL(url);
-                                        };
-
-                                        mediaRecorder.start();
-
-                                        // Stop recording when the camera is stopped
-                                        stream.getVideoTracks()[0].onended = () => {
-                                            mediaRecorder.stop();
-                                            newWindow.alert('Recording stopped and saved to Videos folder.');
-                                        };
-
-                                    } else {
-                                        alert("Camera is not started.");
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error("Error accessing the camera:", error);
-                                    alert("Unable to access the camera.");
-                                });
-                        } else {
-                            newWindow.alert("No match");
+                    mediaRecorder.ondataavailable = function(event) {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
                         }
-                    });
+                    };
+
+                    mediaRecorder.onstop = function() {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = 'meeting_recording.webm';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    };
+
+                    mediaRecorder.start();
+
+                    // Stop recording when the camera stops
+                    stream.getVideoTracks()[0].onended = function() {
+                        mediaRecorder.stop();
+                        console.log("Recording stopped");
+                    };
+                } else {
+                    console.log("Camera is not started.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error accessing the camera:", error);
+            });
+    } else {
+        console.log("No match");
+    }
+});
 
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.close();
