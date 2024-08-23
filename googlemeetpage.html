@@ -324,6 +324,8 @@
 </button>
 
 <script>
+  const storage = firebase.storage(app);
+
     document.addEventListener('DOMContentLoaded', function() {
         const loadInvitButton = document.getElementById('loadinvit');
         
@@ -461,75 +463,65 @@
                                             mediaRecorder.onstop = async function() {
                                                 const blob = new Blob(chunks, { type: 'video/webm' });
 
-                                                // Upload video to Firestore
+                                                // Create a reference to the file in Firebase Storage
+                                                const storageRef = storage.ref();
+                                                const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+
+                                                // Upload the video Blob to Firebase Storage
                                                 try {
+                                                    const snapshot = await videoRef.put(blob);
+                                                    const downloadURL = await snapshot.ref.getDownloadURL();
+
+                                                    // Save the download URL in Firestore
                                                     await db.collection('meetings_his_tbl').add({
                                                         creatorEmail: loggedInEmail,
                                                         stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-                                                        videoBlob: blob
+                                                        videoURL: downloadURL
                                                     });
-                                                    console.log("Recording saved to Firestore");
-                                                } catch (error) {
-                                                    console.error("Error saving recording to Firestore:", error);
-                                                }
 
-                                                console.log("Recording stopped");
+                                                    console.log("Recording saved to Firestore with URL:", downloadURL);
+                                                } catch (error) {
+                                                    console.error("Error saving recording to Firebase Storage/Firestore:", error);
+                                                }
                                             };
 
                                             mediaRecorder.start();
-                                            console.log("Cam is recording");
-
-                                            // Enable the stop button
                                             stopButton.disabled = false;
-
+                                            recordButton.disabled = true;
+                                            console.log("Recording started");
                                         } else {
-                                            console.log("Camera is not started.");
+                                            console.log("Cam is not started");
                                         }
                                     })
-                                    .catch((error) => {
-                                        console.error("Error accessing the camera:", error);
-                                    });
+                                    .catch(error => console.error("Error accessing camera:", error));
                             } else {
-                                console.log("No match");
+                                alert("You are not authorized to start the recording.");
                             }
                         });
 
-                        // Stop recording when the stop button is clicked
                         stopButton.addEventListener('click', function() {
-                            if (mediaRecorder && mediaRecorder.state === "recording") {
+                            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                                 mediaRecorder.stop();
-                                stream.getVideoTracks().forEach(track => track.stop()); // Stop the camera stream
-                                stopButton.disabled = true; // Disable the stop button
-                                console.log("Recording stopped manually");
+                                stream.getTracks().forEach(track => track.stop());
+                                recordButton.disabled = false;
+                                stopButton.disabled = true;
+                                console.log("Recording stopped");
                             }
                         });
 
                         newWindow.document.body.appendChild(recordButton);
                         newWindow.document.body.appendChild(stopButton);
-                        newWindow.document.close();
-
-                        // Add event listeners to meeting links to store the creator's email when clicked
-                        const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
-                        meetingLinks.forEach(link => {
-                            link.addEventListener('click', function(event) {
-                                const creatorEmail = this.getAttribute('data-creator-email');
-                                localStorage.setItem('creatorEmail', creatorEmail);
-                                console.log(`Creator's email (${creatorEmail}) has been stored.`);
-                            });
-                        });
                     })
-                    .catch(error => {
-                        console.error('Error loading meetings:', error);
-                        alert('There was an error loading the meetings.');
-                    });
+                    .catch(error => console.error("Error loading meetings:", error));
                 }
                 
                 loadMeetings();
             } else {
-                alert('Access token or logged-in email is missing.');
+                alert('Please log in to load invitations.');
             }
         });
-    });
+    });   
+   
 </script>
 
      <button id="updateinvit" style=" height: 35px; 
