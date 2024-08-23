@@ -322,208 +322,232 @@
     Load invit
 </button>
 
+<!-- Add Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const loadInvitButton = document.getElementById('loadinvit');
-    
-    loadInvitButton.addEventListener('click', function() {
-        const accessToken = localStorage.getItem('accessToken');
-        const loggedInEmail = localStorage.getItem('loggedInEmail');
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID",
+        measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore(app);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadInvitButton = document.getElementById('loadinvit');
         
-        if (accessToken && loggedInEmail) {
-            function loadMeetings() {
-                fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const filteredEvents = data.items.filter(event => 
-                        event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
-                    );
-
-                    const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-                    newWindow.document.write('<html><head><title>Meetings</title></head><body>');
-                    newWindow.document.write('<h2>Meetings</h2>');
-                    newWindow.document.write('<ul>');
-                    
-                    filteredEvents.forEach(event => {
-                        const startTime = new Date(event.start.dateTime).toLocaleString();
-                        const endTime = new Date(event.end.dateTime).toLocaleString();
-                        const creatorEmail = event.creator.email;
-                        const description = event.description || 'No description';
-                        const hangoutLink = event.hangoutLink || 'No link available';
-                        
-                        let recurrenceInfo = 'Single event';
-                        if (event.recurrence) {
-                            recurrenceInfo = 'Recurring event';
-
-                            const recurrenceRule = event.recurrence[0];
-                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
-                            if (countMatch) {
-                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
-                            }
-
-                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
-                            if (freqMatch) {
-                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
-                            }
-                        }
-
-                        newWindow.document.write(`
-                            <li>
-                                <strong>Start Time:</strong> ${startTime}<br>
-                                <strong>End Time:</strong> ${endTime}<br>
-                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                                <strong>Meeting Type:</strong> ${recurrenceInfo}
-                            </li>
-                        `);
-                    });
-
-                    newWindow.document.write('</ul>');
-                    
-                    // Add the Start Recording button
-                    const recordButton = newWindow.document.createElement('button');
-                    recordButton.id = 'recordmeet';
-                    recordButton.textContent = 'Start Recording';
-                    recordButton.style.backgroundColor = 'green';
-                    recordButton.style.color = 'white';
-                    recordButton.style.position = 'fixed';
-                    recordButton.style.top = '10px';
-                    recordButton.style.right = '10px';
-                    recordButton.style.padding = '10px 20px';
-                    recordButton.style.fontWeight = 'bold';
-                    recordButton.style.border = 'none';
-                    recordButton.style.borderRadius = '5px';
-                    recordButton.style.cursor = 'pointer';
-                    recordButton.style.boxShadow = '0 4px #999';
-
-                    recordButton.addEventListener('mousedown', function() {
-                        this.style.backgroundColor = '#3e8e41';
-                        this.style.boxShadow = '0 2px #666';
-                        this.style.transform = 'translateY(2px)';
-                    });
-
-                    recordButton.addEventListener('mouseup', function() {
-                        this.style.backgroundColor = 'green';
-                        this.style.boxShadow = '0 4px #999';
-                        this.style.transform = 'translateY(0px)';
-                    });
-
-                    // Add the Stop Recording button
-                    const stopButton = newWindow.document.createElement('button');
-                    stopButton.id = 'stoprecord';
-                    stopButton.textContent = 'Stop Recording';
-                    stopButton.style.backgroundColor = 'red';
-                    stopButton.style.color = 'white';
-                    stopButton.style.position = 'fixed';
-                    stopButton.style.top = '50px';
-                    stopButton.style.right = '10px';
-                    stopButton.style.padding = '10px 20px';
-                    stopButton.style.fontWeight = 'bold';
-                    stopButton.style.border = 'none';
-                    stopButton.style.borderRadius = '5px';
-                    stopButton.style.cursor = 'pointer';
-                    stopButton.style.boxShadow = '0 4px #999';
-                    stopButton.disabled = true; // Initially disabled
-
-                    let mediaRecorder;
-                    let stream;
-
-                    recordButton.addEventListener('click', function() {
-                        const creatorEmail = localStorage.getItem('creatorEmail');
-                        const loggedInEmail = localStorage.getItem('loggedInEmail');
-
-                        if (creatorEmail === loggedInEmail) {
-                            navigator.mediaDevices.getUserMedia({ video: true })
-                                .then((mediaStream) => {
-                                    stream = mediaStream;
-
-                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                                        console.log("Cam is started");
-
-                                        // Start recording the video
-                                        const options = { mimeType: 'video/webm; codecs=vp9' };
-                                        mediaRecorder = new MediaRecorder(stream, options);
-                                        const chunks = [];
-
-                                        mediaRecorder.ondataavailable = function(event) {
-                                            if (event.data.size > 0) {
-                                                chunks.push(event.data);
-                                            }
-                                        };
-
-                                        mediaRecorder.onstop = function() {
-                                            const blob = new Blob(chunks, { type: 'video/webm' });
-                                            const url = URL.createObjectURL(blob);
-                                            const a = newWindow.document.createElement('a');
-                                            a.style.display = 'none';
-                                            a.href = url;
-                                            a.download = 'meeting_recording.webm';
-                                            newWindow.document.body.appendChild(a);
-                                            a.click();
-                                            window.URL.revokeObjectURL(url);
-                                            console.log("Recording stopped");
-                                        };
-
-                                        mediaRecorder.start();
-                                        console.log("Cam is recording");
-
-                                        // Enable the stop button
-                                        stopButton.disabled = false;
-
-                                    } else {
-                                        console.log("Camera is not started.");
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error("Error accessing the camera:", error);
-                                });
-                        } else {
-                            console.log("No match");
-                        }
-                    });
-
-                    // Stop recording when the stop button is clicked
-                    stopButton.addEventListener('click', function() {
-                        if (mediaRecorder && mediaRecorder.state === "recording") {
-                            mediaRecorder.stop();
-                            stream.getVideoTracks().forEach(track => track.stop()); // Stop the camera stream
-                            stopButton.disabled = true; // Disable the stop button
-                            console.log("Recording stopped manually");
-                        }
-                    });
-
-                    newWindow.document.body.appendChild(recordButton);
-                    newWindow.document.body.appendChild(stopButton);
-                    newWindow.document.close();
-
-                    // Add event listeners to meeting links to store the creator's email when clicked
-                    const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
-                    meetingLinks.forEach(link => {
-                        link.addEventListener('click', function(event) {
-                            const creatorEmail = this.getAttribute('data-creator-email');
-                            localStorage.setItem('creatorEmail', creatorEmail);
-                            console.log(`Creator's email (${creatorEmail}) has been stored.`);
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading meetings:', error);
-                    alert('There was an error loading the meetings.');
-                });
-            }
+        loadInvitButton.addEventListener('click', function() {
+            const accessToken = localStorage.getItem('accessToken');
+            const loggedInEmail = localStorage.getItem('loggedInEmail');
             
-            loadMeetings();
-        } else {
-            alert('Access token or logged-in email is missing.');
-        }
+            if (accessToken && loggedInEmail) {
+                function loadMeetings() {
+                    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const filteredEvents = data.items.filter(event => 
+                            event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
+                        );
+
+                        const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
+                        newWindow.document.write('<html><head><title>Meetings</title></head><body>');
+                        newWindow.document.write('<h2>Meetings</h2>');
+                        newWindow.document.write('<ul>');
+                        
+                        filteredEvents.forEach(event => {
+                            const startTime = new Date(event.start.dateTime).toLocaleString();
+                            const endTime = new Date(event.end.dateTime).toLocaleString();
+                            const creatorEmail = event.creator.email;
+                            const description = event.description || 'No description';
+                            const hangoutLink = event.hangoutLink || 'No link available';
+                            
+                            let recurrenceInfo = 'Single event';
+                            if (event.recurrence) {
+                                recurrenceInfo = 'Recurring event';
+
+                                const recurrenceRule = event.recurrence[0];
+                                const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                                if (countMatch) {
+                                    recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                                }
+
+                                const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                                if (freqMatch) {
+                                    recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                                }
+                            }
+
+                            newWindow.document.write(`
+                                <li>
+                                    <strong>Start Time:</strong> ${startTime}<br>
+                                    <strong>End Time:</strong> ${endTime}<br>
+                                    <strong>Creator's Email:</strong> ${creatorEmail}<br>
+                                    <strong>Description:</strong> ${description}<br>
+                                    <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                    <strong>Meeting Type:</strong> ${recurrenceInfo}
+                                </li>
+                            `);
+                        });
+
+                        newWindow.document.write('</ul>');
+                        
+                        // Add the Start Recording button
+                        const recordButton = newWindow.document.createElement('button');
+                        recordButton.id = 'recordmeet';
+                        recordButton.textContent = 'Start Recording';
+                        recordButton.style.backgroundColor = 'green';
+                        recordButton.style.color = 'white';
+                        recordButton.style.position = 'fixed';
+                        recordButton.style.top = '10px';
+                        recordButton.style.right = '10px';
+                        recordButton.style.padding = '10px 20px';
+                        recordButton.style.fontWeight = 'bold';
+                        recordButton.style.border = 'none';
+                        recordButton.style.borderRadius = '5px';
+                        recordButton.style.cursor = 'pointer';
+                        recordButton.style.boxShadow = '0 4px #999';
+
+                        recordButton.addEventListener('mousedown', function() {
+                            this.style.backgroundColor = '#3e8e41';
+                            this.style.boxShadow = '0 2px #666';
+                            this.style.transform = 'translateY(2px)';
+                        });
+
+                        recordButton.addEventListener('mouseup', function() {
+                            this.style.backgroundColor = 'green';
+                            this.style.boxShadow = '0 4px #999';
+                            this.style.transform = 'translateY(0px)';
+                        });
+
+                        // Add the Stop Recording button
+                        const stopButton = newWindow.document.createElement('button');
+                        stopButton.id = 'stoprecord';
+                        stopButton.textContent = 'Stop Recording';
+                        stopButton.style.backgroundColor = 'red';
+                        stopButton.style.color = 'white';
+                        stopButton.style.position = 'fixed';
+                        stopButton.style.top = '50px';
+                        stopButton.style.right = '10px';
+                        stopButton.style.padding = '10px 20px';
+                        stopButton.style.fontWeight = 'bold';
+                        stopButton.style.border = 'none';
+                        stopButton.style.borderRadius = '5px';
+                        stopButton.style.cursor = 'pointer';
+                        stopButton.style.boxShadow = '0 4px #999';
+                        stopButton.disabled = true; // Initially disabled
+
+                        let mediaRecorder;
+                        let stream;
+
+                        recordButton.addEventListener('click', function() {
+                            const creatorEmail = localStorage.getItem('creatorEmail');
+                            const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+                            if (creatorEmail === loggedInEmail) {
+                                navigator.mediaDevices.getUserMedia({ video: true })
+                                    .then((mediaStream) => {
+                                        stream = mediaStream;
+
+                                        if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                            console.log("Cam is started");
+
+                                            // Start recording the video
+                                            const options = { mimeType: 'video/webm; codecs=vp9' };
+                                            mediaRecorder = new MediaRecorder(stream, options);
+                                            const chunks = [];
+
+                                            mediaRecorder.ondataavailable = function(event) {
+                                                if (event.data.size > 0) {
+                                                    chunks.push(event.data);
+                                                }
+                                            };
+
+                                            mediaRecorder.onstop = async function() {
+                                                const blob = new Blob(chunks, { type: 'video/webm' });
+
+                                                // Upload video to Firestore
+                                                try {
+                                                    await db.collection('meetings_his_tbl').add({
+                                                        creatorEmail: loggedInEmail,
+                                                        stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                                        videoBlob: blob
+                                                    });
+                                                    console.log("Recording saved to Firestore");
+                                                } catch (error) {
+                                                    console.error("Error saving recording to Firestore:", error);
+                                                }
+
+                                                console.log("Recording stopped");
+                                            };
+
+                                            mediaRecorder.start();
+                                            console.log("Cam is recording");
+
+                                            // Enable the stop button
+                                            stopButton.disabled = false;
+
+                                        } else {
+                                            console.log("Camera is not started.");
+                                        }
+                                    })
+                                    .catch((error) => {
+                                        console.error("Error accessing the camera:", error);
+                                    });
+                            } else {
+                                console.log("No match");
+                            }
+                        });
+
+                        // Stop recording when the stop button is clicked
+                        stopButton.addEventListener('click', function() {
+                            if (mediaRecorder && mediaRecorder.state === "recording") {
+                                mediaRecorder.stop();
+                                stream.getVideoTracks().forEach(track => track.stop()); // Stop the camera stream
+                                stopButton.disabled = true; // Disable the stop button
+                                console.log("Recording stopped manually");
+                            }
+                        });
+
+                        newWindow.document.body.appendChild(recordButton);
+                        newWindow.document.body.appendChild(stopButton);
+                        newWindow.document.close();
+
+                        // Add event listeners to meeting links to store the creator's email when clicked
+                        const meetingLinks = newWindow.document.querySelectorAll('.meeting-link');
+                        meetingLinks.forEach(link => {
+                            link.addEventListener('click', function(event) {
+                                const creatorEmail = this.getAttribute('data-creator-email');
+                                localStorage.setItem('creatorEmail', creatorEmail);
+                                console.log(`Creator's email (${creatorEmail}) has been stored.`);
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading meetings:', error);
+                        alert('There was an error loading the meetings.');
+                    });
+                }
+                
+                loadMeetings();
+            } else {
+                alert('Access token or logged-in email is missing.');
+            }
+        });
     });
-});
 </script>
 
      <button id="updateinvit" style=" height: 35px; 
