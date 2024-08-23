@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Initialize Firestore
     const db = firebase.firestore();
+     const storage = firebase.storage();
     
     // Reference to the savedValuesList element
     const savedValuesList = document.getElementById('savedValuesList');
