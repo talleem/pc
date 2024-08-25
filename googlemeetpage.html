@@ -332,6 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadInvitButton.addEventListener('click', function() {
         const accessToken = localStorage.getItem('accessToken');
         const loggedInEmail = localStorage.getItem('loggedInEmail');
+        console.log(loggedInEmail);
 
         if (accessToken && loggedInEmail) {
             function loadMeetings() {
@@ -440,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
+                        comsole.log(loggedInEmail);
 
                         if (creatorEmail === loggedInEmail) {
                             navigator.mediaDevices.getUserMedia({ video: true })
