@@ -357,6 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const startTime = new Date(event.start.dateTime).toLocaleString();
                         const endTime = new Date(event.end.dateTime).toLocaleString();
                         const creatorEmail = event.creator.email;
+                        localStorage.setItem('creatorEmail', creatorEmail);
                         const description = event.description || 'No description';
                         const hangoutLink = event.hangoutLink || 'No link available';
 
