@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
-                        comsole.log(loggedInEmail);
+                        console.log(loggedInEmail);
 
                         if (creatorEmail === loggedInEmail) {
                             navigator.mediaDevices.getUserMedia({ video: true })
