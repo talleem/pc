@@ -496,6 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 .catch(error => console.error("Error accessing camera:", error));
                         } else {
                             alert("You are not authorized to start the recording.");
+                            console.log(creatorEmail,loggedInEmail);
                         }
                     });
 
