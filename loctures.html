@@ -30,7 +30,7 @@
             const db = firebase.firestore();
             const lecturesTableBody = document.querySelector('#lectures-table tbody');
 
-            function loadLectures() {
+           function loadLectures() {
                 db.collection('meetings_his_tbl').get()
                     .then(querySnapshot => {
                         querySnapshot.forEach(doc => {
@@ -45,10 +45,11 @@
 
                             const linkCell = document.createElement('td');
                             const link = document.createElement('a');
-                            link.href = "#";
+                            link.href = lecture.videoURL; // Direct link to the video URL
                             link.textContent = "Display the lecture";
                             link.classList.add('video-link');
                             link.setAttribute('data-url', lecture.videoURL);
+                            link.setAttribute('target', '_blank'); // Open in new tab
                             linkCell.appendChild(link);
 
                             row.appendChild(lecturerCell);
@@ -56,18 +57,19 @@
                             row.appendChild(linkCell);
 
                             row.addEventListener('click', function() {
-    // Remove shadow from any previously selected row
-    const previouslySelected = document.querySelector('.selected-row');
-    if (previouslySelected) {
-        previouslySelected.classList.remove('selected-row');
-        previouslySelected.style.backgroundColor = ''; // Reset background color
-    }
+                                // Remove shadow from any previously selected row
+                                const previouslySelected = document.querySelector('.selected-row');
+                                if (previouslySelected) {
+                                    previouslySelected.classList.remove('selected-row');
+                                    previouslySelected.style.backgroundColor = ''; // Reset background color
+                                }
 
-    // Add shadow to the clicked row
-    row.classList.add('selected-row');
-    row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
-});
-                  lecturesTableBody.appendChild(row);
+                                // Add shadow to the clicked row
+                                row.classList.add('selected-row');
+                                row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+                            });
+
+                            lecturesTableBody.appendChild(row);
                         });
                     })
                     .catch(error => console.error("Error loading lectures:", error));
