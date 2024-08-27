@@ -1,36 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lectures' Videos</title>
+    <!-- Firebase initialization script -->
+    <script src="loadattendeailfromfirestore.js"></script>
 </head>
 <body>
     <h3>Lectures' Videos</h3>
     <ul id="lectures-list"></ul>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             const db = firebase.firestore();
             const lecturesList = document.getElementById('lectures-list');
 
-            // Function to load lectures' videos from Firestore
             function loadLectures() {
                 db.collection('meetings_his_tbl').get()
                     .then(querySnapshot => {
                         querySnapshot.forEach(doc => {
                             const lecture = doc.data();
                             const listItem = document.createElement('li');
-
-                            // Set the inner HTML for the list item
                             listItem.innerHTML = `
                                 <strong>Lecturer:</strong> ${lecture.creatorEmail}<br>
                                 <strong>Last updated:</strong> ${new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString()}<br>
                                 <strong><a href="#" class="video-link" data-url="${lecture.videoURL}">Display the lecture</a></strong>
                             `;
-
-                            // Add event listener to handle selection
                             listItem.addEventListener('click', function() {
                                 const selected = lecturesList.querySelector('.selected');
                                 if (selected) {
@@ -40,13 +36,11 @@
                                 listItem.classList.add('selected');
                                 listItem.style.boxShadow = '0 0 10px blue';
                             });
-
                             lecturesList.appendChild(listItem);
                         });
                     })
                     .catch(error => console.error("Error loading lectures:", error));
             }
-
             loadLectures();
         });
     </script>
