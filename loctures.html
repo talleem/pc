@@ -10,8 +10,9 @@
     <ul id="lectures-list"></ul>
 
     <script>
-   const db = firebase.firestore();
+
         document.addEventListener('DOMContentLoaded', function() {
+            const db = firebase.firestore();
             const lecturesList = document.getElementById('lectures-list');
 
             // Function to load lectures' videos from Firestore
