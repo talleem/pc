@@ -12,38 +12,65 @@
 </head>
 <body>
     <h3>Lectures' Videos</h3>
-    <ul id="lectures-list"></ul>
+    <table id="lectures-table" border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Lecturer</th>
+                <th>Last Updated</th>
+                <th>Display the Lecture</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added here dynamically -->
+        </tbody>
+    </table>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const db = firebase.firestore();
-            const lecturesList = document.getElementById('lectures-list');
+            const lecturesTableBody = document.querySelector('#lectures-table tbody');
 
             function loadLectures() {
                 db.collection('meetings_his_tbl').get()
                     .then(querySnapshot => {
                         querySnapshot.forEach(doc => {
                             const lecture = doc.data();
-                            const listItem = document.createElement('li');
-                            listItem.innerHTML = `
-                                <strong>Lecturer:</strong> ${lecture.creatorEmail}<br>
-                                <strong>Last updated:</strong> ${new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString()}<br>
-                                <strong><a href="#" class="video-link" data-url="${lecture.videoURL}">Display the lecture</a></strong>
-                            `;
-                            listItem.addEventListener('click', function() {
-                                const selected = lecturesList.querySelector('.selected');
+                            const row = document.createElement('tr');
+
+                            const lecturerCell = document.createElement('td');
+                            lecturerCell.textContent = lecture.creatorEmail;
+
+                            const updatedCell = document.createElement('td');
+                            updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+
+                            const linkCell = document.createElement('td');
+                            const link = document.createElement('a');
+                            link.href = "#";
+                            link.textContent = "Display the lecture";
+                            link.classList.add('video-link');
+                            link.setAttribute('data-url', lecture.videoURL);
+                            linkCell.appendChild(link);
+
+                            row.appendChild(lecturerCell);
+                            row.appendChild(updatedCell);
+                            row.appendChild(linkCell);
+
+                            row.addEventListener('click', function() {
+                                const selected = lecturesTableBody.querySelector('.selected');
                                 if (selected) {
                                     selected.classList.remove('selected');
                                     selected.style.boxShadow = '';
                                 }
-                                listItem.classList.add('selected');
-                                listItem.style.boxShadow = '0 0 10px blue';
+                                row.classList.add('selected');
+                                row.style.boxShadow = '0 0 10px blue';
                             });
-                            lecturesList.appendChild(listItem);
+
+                            lecturesTableBody.appendChild(row);
                         });
                     })
                     .catch(error => console.error("Error loading lectures:", error));
             }
+
             loadLectures();
         });
     </script>
