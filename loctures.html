@@ -56,16 +56,18 @@
                             row.appendChild(linkCell);
 
                             row.addEventListener('click', function() {
-                                const selected = lecturesTableBody.querySelector('.selected');
-                                if (selected) {
-                                    selected.classList.remove('selected');
-                                    selected.style.boxShadow = '';
-                                }
-                                row.classList.add('selected');
-                                row.style.boxShadow = '0 0 10px blue';
-                            });
+    // Remove shadow from any previously selected row
+    const previouslySelected = document.querySelector('.selected-row');
+    if (previouslySelected) {
+        previouslySelected.classList.remove('selected-row');
+        previouslySelected.style.backgroundColor = ''; // Reset background color
+    }
 
-                            lecturesTableBody.appendChild(row);
+    // Add shadow to the clicked row
+    row.classList.add('selected-row');
+    row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+});
+                  lecturesTableBody.appendChild(row);
                         });
                     })
                     .catch(error => console.error("Error loading lectures:", error));
