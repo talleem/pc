@@ -52,7 +52,7 @@
             const lecturerEmailSelect = document.getElementById('lecturer-email');
             const lectureTimeSelect = document.getElementById('lecture-time');
 
-            function loadLectures() {
+           function loadLectures() {
                 const uniqueEmails = new Set();
                 const uniqueTimes = new Set();
 
@@ -102,15 +102,15 @@
                             lecturesTableBody.appendChild(row);
                         });
 
-                        // Populate the combo boxes with unique values
-                        uniqueEmails.forEach(email => {
+                        // Sort and populate the combo boxes with unique values
+                        [...uniqueEmails].sort().forEach(email => {
                             const option = document.createElement('option');
                             option.value = email;
                             option.textContent = email;
                             lecturerEmailSelect.appendChild(option);
                         });
 
-                        uniqueTimes.forEach(time => {
+                        [...uniqueTimes].sort().forEach(time => {
                             const option = document.createElement('option');
                             option.value = time;
                             option.textContent = time;
