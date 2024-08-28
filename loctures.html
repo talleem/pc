@@ -46,16 +46,26 @@
         </div>
     </div>
 
-    <script>
+     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const db = firebase.firestore();
             const lecturesTableBody = document.querySelector('#lectures-table tbody');
+            const lecturerEmailSelect = document.getElementById('lecturer-email');
+            const lectureTimeSelect = document.getElementById('lecture-time');
 
-           function loadLectures() {
+            function loadLectures() {
+                const uniqueEmails = new Set();
+                const uniqueTimes = new Set();
+
                 db.collection('meetings_his_tbl').get()
                     .then(querySnapshot => {
                         querySnapshot.forEach(doc => {
                             const lecture = doc.data();
+
+                            // Add unique values to sets
+                            uniqueEmails.add(lecture.creatorEmail);
+                            uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString());
+
                             const row = document.createElement('tr');
 
                             const lecturerCell = document.createElement('td');
@@ -91,6 +101,21 @@
                             });
 
                             lecturesTableBody.appendChild(row);
+                        });
+
+                        // Populate the combo boxes with unique values
+                        uniqueEmails.forEach(email => {
+                            const option = document.createElement('option');
+                            option.value = email;
+                            option.textContent = email;
+                            lecturerEmailSelect.appendChild(option);
+                        });
+
+                        uniqueTimes.forEach(time => {
+                            const option = document.createElement('option');
+                            option.value = time;
+                            option.textContent = time;
+                            lectureTimeSelect.appendChild(option);
                         });
                     })
                     .catch(error => console.error("Error loading lectures:", error));
