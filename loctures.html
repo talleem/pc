@@ -61,6 +61,8 @@
             const lecturesTableBody = document.querySelector('#lectures-table tbody');
             const lecturerEmailSelect = document.getElementById('lecturer-email');
             const lectureTimeSelect = document.getElementById('lecture-time');
+            const deleteButton = document.getElementById('deleteVideo');
+            let selectedDocumentId = null;
 
             function loadLectures(creatorEmail = null, stopRecordingDate = null) {
                 let query = db.collection('meetings_his_tbl');
@@ -118,6 +120,9 @@
                                 // Add shadow to the clicked row
                                 row.classList.add('selected-row');
                                 row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+                                
+                                // Set the selected document ID for deletion
+                                selectedDocumentId = doc.id;
                             });
 
                             lecturesTableBody.appendChild(row);
@@ -166,6 +171,43 @@
                     .catch(error => console.error("Error populating combo boxes:", error));
             }
 
+            function deleteSelectedLecture() {
+                if (selectedDocumentId) {
+                    // Get the document reference
+                    const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+
+                    // Get the document data to find the video URL
+                    docRef.get().then(doc => {
+                        if (doc.exists) {
+                            const lecture = doc.data();
+                            const videoURL = lecture.videoURL;
+
+                            // Delete the video from Firebase Storage
+                            const storageRef = storage.refFromURL(videoURL);
+                            storageRef.delete().then(() => {
+                                console.log('Video deleted successfully from storage.');
+
+                                // Delete the document from Firestore
+                                docRef.delete().then(() => {
+                                    console.log('Document deleted successfully from Firestore.');
+
+                                    // Remove the selected row from the table
+                                    const selectedRow = document.querySelector('.selected-row');
+                                    if (selectedRow) {
+                                        selectedRow.remove();
+                                    }
+
+                                    // Reset selectedDocumentId
+                                    selectedDocumentId = null;
+                                }).catch(error => console.error('Error deleting document:', error));
+                            }).catch(error => console.error('Error deleting video from storage:', error));
+                        }
+                    }).catch(error => console.error('Error fetching document:', error));
+                } else {
+                    alert('Please select a lecture to delete.');
+                }
+            }
+
             // Event listeners for combo boxes to trigger filtering
             lecturerEmailSelect.addEventListener('change', () => {
                 const selectedEmail = lecturerEmailSelect.value;
@@ -178,6 +220,9 @@
                 const selectedDate = lectureTimeSelect.value;
                 loadLectures(selectedEmail, selectedDate);
             });
+
+            // Event listener for delete button
+            deleteButton.addEventListener('click', deleteSelectedLecture);
 
             // Initial load
             populateComboBoxes();
