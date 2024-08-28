@@ -45,26 +45,12 @@
         </div>
     </div>
 
-    <script>
+   <script>
     document.addEventListener('DOMContentLoaded', function() {
         const db = firebase.firestore();
         const lecturesTableBody = document.querySelector('#lectures-table tbody');
         const lecturerEmailSelect = document.getElementById('lecturer-email');
         const lectureTimeSelect = document.getElementById('lecture-time');
-
-        function parseDateString(dateString) {
-            // Adjust this regex to match the date format you are using
-            const regex = /(\w+ \d+, \d+) at (\d{1,2}:\d{2}:\d{2}) (AM|PM) UTC([+-]\d{1,2})/;
-            const match = dateString.match(regex);
-
-            if (match) {
-                const [, datePart, timePart, period, offset] = match;
-                const date = new Date(`${datePart} ${timePart} ${period}`);
-                return new Date(date.getTime() - parseInt(offset) * 3600000); // Adjust for UTC offset
-            }
-
-            return null; // Return null if parsing fails
-        }
 
         function loadLectures(creatorEmail = null, stopRecordingTime = null) {
             let query = db.collection('meetings_his_tbl');
@@ -75,13 +61,9 @@
             }
 
             if (stopRecordingTime && stopRecordingTime !== 'null') {
-                const selectedDate = parseDateString(stopRecordingTime);
-                if (selectedDate) {
-                    const timestamp = firebase.firestore.Timestamp.fromDate(selectedDate);
-                    query = query.where('stopRecordingTime', '==', timestamp);
-                } else {
-                    console.error('Invalid date format for stopRecordingTime.');
-                }
+                const selectedDate = new Date(stopRecordingTime);
+                const timestamp = firebase.firestore.Timestamp.fromDate(selectedDate);
+                query = query.where('stopRecordingTime', '==', timestamp);
             }
 
             // Clear the current table rows
@@ -142,7 +124,7 @@
 
                         // Add unique values to sets
                         uniqueEmails.add(lecture.creatorEmail);
-                        uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString());
+                        uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toISOString());
                     });
 
                     // Convert sets to sorted arrays
@@ -185,6 +167,7 @@
         loadLectures();
     });
 </script>
+
 
 </body>
 </html>
