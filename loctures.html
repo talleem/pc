@@ -187,7 +187,7 @@
                             // Delete the video from Firebase Storage
                             const storageRef = storage.refFromURL(videoURL);
                             storageRef.delete().then(() => {
-                                console.log('Video deleted successfully from storage.');
+                                alert('Video deleted successfully from storage.');
 
                                 // Delete the document from Firestore
                                 docRef.delete().then(() => {
