@@ -59,6 +59,7 @@
 <script>
         document.addEventListener('DOMContentLoaded', function() {
             const db = firebase.firestore();
+            const storage = firebase.storage();
             const lecturesTableBody = document.querySelector('#lectures-table tbody');
             const lecturerEmailSelect = document.getElementById('lecturer-email');
             const lectureTimeSelect = document.getElementById('lecture-time');
