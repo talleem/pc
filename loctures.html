@@ -44,135 +44,132 @@
             <select id="lecture-time" style="width: 250px; height: 30px;"><option value="null"></option></select>
         </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const db = firebase.firestore();
+    const lecturesTableBody = document.querySelector('#lectures-table tbody');
+    const lecturerEmailSelect = document.getElementById('lecturer-email');
+    const lectureTimeSelect = document.getElementById('lecture-time');
 
- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const db = firebase.firestore();
-            const lecturesTableBody = document.querySelector('#lectures-table tbody');
-            const lecturerEmailSelect = document.getElementById('lecturer-email');
-            const lectureTimeSelect = document.getElementById('lecture-time');
+    function loadLectures(creatorEmail = null, stopRecordingDate = null) {
+        let query = db.collection('meetings_his_tbl');
 
-            function loadLectures(creatorEmail = null, stopRecordingDate = null) {
-                let query = db.collection('meetings_his_tbl');
+        if (creatorEmail && creatorEmail !== 'null') {
+            query = query.where('creatorEmail', '==', creatorEmail);
+        }
 
-                // Apply filters based on the combo box values
-                if (creatorEmail && creatorEmail !== 'null') {
-                    query = query.where('creatorEmail', '==', creatorEmail);
-                }
+        if (stopRecordingDate && stopRecordingDate !== 'null') {
+            const startOfDay = new Date(stopRecordingDate);
+            startOfDay.setHours(0, 0, 0, 0);
 
-                if (stopRecordingDate && stopRecordingDate !== 'null') {
-                    const startDate = new Date(stopRecordingDate);
-                    const endDate = new Date(startDate);
-                    endDate.setDate(endDate.getDate() + 1); // End of the day
+            const endOfDay = new Date(stopRecordingDate);
+            endOfDay.setHours(23, 59, 59, 999);
 
-                    query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-                                 .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
-                }
+            query = query
+                .where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startOfDay))
+                .where('stopRecordingTime', '<=', firebase.firestore.Timestamp.fromDate(endOfDay));
+        }
 
-                // Clear the current table rows
-                lecturesTableBody.innerHTML = '';
+        lecturesTableBody.innerHTML = '';
 
-                query.get()
-                    .then(querySnapshot => {
-                        querySnapshot.forEach(doc => {
-                            const lecture = doc.data();
-                            const row = document.createElement('tr');
+        query.get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    const lecture = doc.data();
+                    const row = document.createElement('tr');
 
-                            const lecturerCell = document.createElement('td');
-                            lecturerCell.textContent = lecture.creatorEmail;
+                    // Add the snapshot image to the first column
+                    const snapshotCell = document.createElement('td');
+                    const snapshotImg = document.createElement('img');
+                    snapshotImg.src = lecture.snapshotURL; // Assuming the snapshot URL is stored in the Firestore document
+                    snapshotImg.alt = "Snapshot";
+                    snapshotImg.style.width = "100px"; // Set the size of the image
+                    snapshotImg.style.height = "auto";
+                    snapshotCell.appendChild(snapshotImg);
+                    row.appendChild(snapshotCell);
 
-                            const updatedCell = document.createElement('td');
-                            updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+                    const lecturerCell = document.createElement('td');
+                    lecturerCell.textContent = lecture.creatorEmail;
+                    row.appendChild(lecturerCell);
 
-                            const linkCell = document.createElement('td');
-                            const link = document.createElement('a');
-                            link.href = lecture.videoURL; // Direct link to the video URL
-                            link.textContent = "Display the lecture";
-                            link.classList.add('video-link');
-                            link.setAttribute('data-url', lecture.videoURL);
-                            link.setAttribute('target', '_blank'); // Open in new tab
-                            linkCell.appendChild(link);
+                    const updatedCell = document.createElement('td');
+                    updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+                    row.appendChild(updatedCell);
 
-                            row.appendChild(lecturerCell);
-                            row.appendChild(updatedCell);
-                            row.appendChild(linkCell);
+                    const linkCell = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = lecture.videoURL;
+                    link.textContent = "Display the lecture";
+                    link.setAttribute('target', '_blank'); // Open in new tab
+                    linkCell.appendChild(link);
+                    row.appendChild(linkCell);
 
-                            row.addEventListener('click', function() {
-                                // Remove shadow from any previously selected row
-                                const previouslySelected = document.querySelector('.selected-row');
-                                if (previouslySelected) {
-                                    previouslySelected.classList.remove('selected-row');
-                                    previouslySelected.style.backgroundColor = ''; // Reset background color
-                                }
+                    row.addEventListener('click', function() {
+                        const previouslySelected = document.querySelector('.selected-row');
+                        if (previouslySelected) {
+                            previouslySelected.classList.remove('selected-row');
+                            previouslySelected.style.backgroundColor = ''; // Reset background color
+                        }
 
-                                // Add shadow to the clicked row
-                                row.classList.add('selected-row');
-                                row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
-                            });
+                        row.classList.add('selected-row');
+                        row.style.backgroundColor = 'lightblue';
+                    });
 
-                            lecturesTableBody.appendChild(row);
-                        });
-                    })
-                    .catch(error => console.error("Error loading lectures:", error));
-            }
+                    lecturesTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error loading lectures:", error));
+    }
 
-            function populateComboBoxes() {
-                const uniqueEmails = new Set();
-                const uniqueDates = new Set();
+    function populateComboBoxes() {
+        const uniqueEmails = new Set();
+        const uniqueDates = new Set();
 
-                db.collection('meetings_his_tbl').get()
-                    .then(querySnapshot => {
-                        querySnapshot.forEach(doc => {
-                            const lecture = doc.data();
+        db.collection('meetings_his_tbl').get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    const lecture = doc.data();
 
-                            // Add unique values to sets
-                            uniqueEmails.add(lecture.creatorEmail);
+                    uniqueEmails.add(lecture.creatorEmail);
+                    const date = new Date(lecture.stopRecordingTime.seconds * 1000);
+                    uniqueDates.add(date.toDateString()); // Only add the date part
+                });
 
-                            // Extract the date part only
-                            const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
-                            const dateString = lectureDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-                            uniqueDates.add(dateString);
-                        });
+                const sortedEmails = Array.from(uniqueEmails).sort();
+                const sortedDates = Array.from(uniqueDates).sort();
 
-                        // Convert sets to sorted arrays
-                        const sortedEmails = Array.from(uniqueEmails).sort();
-                        const sortedDates = Array.from(uniqueDates).sort();
+                sortedEmails.forEach(email => {
+                    const option = document.createElement('option');
+                    option.value = email;
+                    option.textContent = email;
+                    lecturerEmailSelect.appendChild(option);
+                });
 
-                        // Populate the combo boxes with unique and sorted values
-                        sortedEmails.forEach(email => {
-                            const option = document.createElement('option');
-                            option.value = email;
-                            option.textContent = email;
-                            lecturerEmailSelect.appendChild(option);
-                        });
+                sortedDates.forEach(date => {
+                    const option = document.createElement('option');
+                    option.value = date;
+                    option.textContent = date;
+                    lectureTimeSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error populating combo boxes:", error));
+    }
 
-                        sortedDates.forEach(date => {
-                            const option = document.createElement('option');
-                            option.value = date;
-                            option.textContent = date;
-                            lectureTimeSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error("Error populating combo boxes:", error));
-            }
+    lecturerEmailSelect.addEventListener('change', () => {
+        const selectedEmail = lecturerEmailSelect.value;
+        const selectedDate = lectureTimeSelect.value;
+        loadLectures(selectedEmail, selectedDate);
+    });
 
-            // Event listeners for combo boxes to trigger filtering
-            lecturerEmailSelect.addEventListener('change', () => {
-                const selectedEmail = lecturerEmailSelect.value;
-                const selectedDate = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedDate);
-            });
+    lectureTimeSelect.addEventListener('change', () => {
+        const selectedEmail = lecturerEmailSelect.value;
+        const selectedDate = lectureTimeSelect.value;
+        loadLectures(selectedEmail, selectedDate);
+    });
 
-            lectureTimeSelect.addEventListener('change', () => {
-                const selectedEmail = lecturerEmailSelect.value;
-                const selectedDate = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedDate);
-            });
-
-            // Initial load
-            populateComboBoxes();
-            loadLectures();
-        });
-    </script>
+    populateComboBoxes();
+    loadLectures();
+});
+</script>
 </body>
 </html>
