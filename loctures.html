@@ -52,19 +52,26 @@
             const lecturerEmailSelect = document.getElementById('lecturer-email');
             const lectureTimeSelect = document.getElementById('lecture-time');
 
-           function loadLectures() {
-                const uniqueEmails = new Set();
-                const uniqueTimes = new Set();
+           function loadLectures(creatorEmail = null, stopRecordingTime = null) {
+                let query = db.collection('meetings_his_tbl');
 
-                db.collection('meetings_his_tbl').get()
+                // Apply filters based on the combo box values
+                if (creatorEmail && creatorEmail !== 'null') {
+                    query = query.where('creatorEmail', '==', creatorEmail);
+                }
+
+                if (stopRecordingTime && stopRecordingTime !== 'null') {
+                    const timeInSeconds = new Date(stopRecordingTime).getTime() / 1000;
+                    query = query.where('stopRecordingTime.seconds', '==', timeInSeconds);
+                }
+
+                // Clear the current table rows
+                lecturesTableBody.innerHTML = '';
+
+                query.get()
                     .then(querySnapshot => {
                         querySnapshot.forEach(doc => {
                             const lecture = doc.data();
-
-                            // Add unique values to sets
-                            uniqueEmails.add(lecture.creatorEmail);
-                            uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString());
-
                             const row = document.createElement('tr');
 
                             const lecturerCell = document.createElement('td');
@@ -101,25 +108,57 @@
 
                             lecturesTableBody.appendChild(row);
                         });
+                    })
+                    .catch(error => console.error("Error loading lectures:", error));
+            }
+
+            function populateComboBoxes() {
+                const uniqueEmails = new Set();
+                const uniqueTimes = new Set();
+
+                db.collection('meetings_his_tbl').get()
+                    .then(querySnapshot => {
+                        querySnapshot.forEach(doc => {
+                            const lecture = doc.data();
+
+                            // Add unique values to sets
+                            uniqueEmails.add(lecture.creatorEmail);
+                            uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString());
+                        });
 
                         // Sort and populate the combo boxes with unique values
-                        [...uniqueEmails].sort().forEach(email => {
+                        uniqueEmails.forEach(email => {
                             const option = document.createElement('option');
                             option.value = email;
                             option.textContent = email;
                             lecturerEmailSelect.appendChild(option);
                         });
 
-                        [...uniqueTimes].sort().forEach(time => {
+                        uniqueTimes.forEach(time => {
                             const option = document.createElement('option');
                             option.value = time;
                             option.textContent = time;
                             lectureTimeSelect.appendChild(option);
                         });
                     })
-                    .catch(error => console.error("Error loading lectures:", error));
+                    .catch(error => console.error("Error populating combo boxes:", error));
             }
 
+            // Event listeners for combo boxes to trigger filtering
+            lecturerEmailSelect.addEventListener('change', () => {
+                const selectedEmail = lecturerEmailSelect.value;
+                const selectedTime = lectureTimeSelect.value;
+                loadLectures(selectedEmail, selectedTime);
+            });
+
+            lectureTimeSelect.addEventListener('change', () => {
+                const selectedEmail = lecturerEmailSelect.value;
+                const selectedTime = lectureTimeSelect.value;
+                loadLectures(selectedEmail, selectedTime);
+            });
+
+            // Initial load
+            populateComboBoxes();
             loadLectures();
         });
     </script>
