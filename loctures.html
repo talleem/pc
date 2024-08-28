@@ -18,6 +18,16 @@
             display: flex;
             flex-direction: column;
         }
+        .delete-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: lightgray;
+            border: none;
+            cursor: pointer;
+        }
+        .delete-button:hover {
+            background-color: darkgray;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +52,7 @@
             <select id="lecturer-email" style="width: 250px; height: 30px;"><option value="null"></option></select>
             <label for="lecture-time"><h3>Lecture Time</h3></label>
             <select id="lecture-time" style="width: 250px; height: 30px;"><option value="null"></option></select>
+             <button class="delete-button" id="deleteVideo">Delete Selected Video</button>
         </div>
     </div>
 <script>
