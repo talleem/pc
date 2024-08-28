@@ -60,9 +60,9 @@
                     query = query.where('creatorEmail', '==', creatorEmail);
                 }
 
-                if (stopRecordingTime && stopRecordingTime !== 'null') {
-                    const timeInSeconds = new Date(stopRecordingTime).getTime() / 1000;
-                    query = query.where('stopRecordingTime.seconds', '==', timeInSeconds);
+               if (stopRecordingTime && stopRecordingTime !== 'null') {
+                    const timestamp = firebase.firestore.Timestamp.fromDate(new Date(stopRecordingTime));
+                    query = query.where('stopRecordingTime', '==', timestamp);
                 }
 
                 // Clear the current table rows
@@ -126,15 +126,19 @@
                             uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString());
                         });
 
-                        // Sort and populate the combo boxes with unique values
-                        uniqueEmails.forEach(email => {
+                        // Convert sets to sorted arrays
+                        const sortedEmails = Array.from(uniqueEmails).sort();
+                        const sortedTimes = Array.from(uniqueTimes).sort();
+
+                        // Populate the combo boxes with unique and sorted values
+                        sortedEmails.forEach(email => {
                             const option = document.createElement('option');
                             option.value = email;
                             option.textContent = email;
                             lecturerEmailSelect.appendChild(option);
                         });
 
-                        uniqueTimes.forEach(time => {
+                        sortedTimes.forEach(time => {
                             const option = document.createElement('option');
                             option.value = time;
                             option.textContent = time;
