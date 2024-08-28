@@ -45,14 +45,14 @@
         </div>
     </div>
 
-  <script>
+ <script>
         document.addEventListener('DOMContentLoaded', function() {
             const db = firebase.firestore();
             const lecturesTableBody = document.querySelector('#lectures-table tbody');
             const lecturerEmailSelect = document.getElementById('lecturer-email');
             const lectureTimeSelect = document.getElementById('lecture-time');
 
-            function loadLectures(creatorEmail = null, stopRecordingTime = null) {
+            function loadLectures(creatorEmail = null, stopRecordingDate = null) {
                 let query = db.collection('meetings_his_tbl');
 
                 // Apply filters based on the combo box values
@@ -60,9 +60,13 @@
                     query = query.where('creatorEmail', '==', creatorEmail);
                 }
 
-                if (stopRecordingTime && stopRecordingTime !== 'null') {
-                    const timestamp = firebase.firestore.Timestamp.fromDate(new Date(stopRecordingTime));
-                    query = query.where('stopRecordingTime', '==', timestamp);
+                if (stopRecordingDate && stopRecordingDate !== 'null') {
+                    const startDate = new Date(stopRecordingDate);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 1); // End of the day
+
+                    query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
+                                 .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
                 }
 
                 // Clear the current table rows
@@ -114,7 +118,7 @@
 
             function populateComboBoxes() {
                 const uniqueEmails = new Set();
-                const uniqueTimes = new Set();
+                const uniqueDates = new Set();
 
                 db.collection('meetings_his_tbl').get()
                     .then(querySnapshot => {
@@ -123,21 +127,29 @@
 
                             // Add unique values to sets
                             uniqueEmails.add(lecture.creatorEmail);
-                            uniqueTimes.add(new Date(lecture.stopRecordingTime.seconds * 1000).toISOString()); // Store ISO strings
+
+                            // Extract the date part only
+                            const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
+                            const dateString = lectureDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+                            uniqueDates.add(dateString);
                         });
 
-                        // Populate the combo boxes with unique values
-                        uniqueEmails.forEach(email => {
+                        // Convert sets to sorted arrays
+                        const sortedEmails = Array.from(uniqueEmails).sort();
+                        const sortedDates = Array.from(uniqueDates).sort();
+
+                        // Populate the combo boxes with unique and sorted values
+                        sortedEmails.forEach(email => {
                             const option = document.createElement('option');
                             option.value = email;
                             option.textContent = email;
                             lecturerEmailSelect.appendChild(option);
                         });
 
-                        uniqueTimes.forEach(time => {
+                        sortedDates.forEach(date => {
                             const option = document.createElement('option');
-                            option.value = time;
-                            option.textContent = time;
+                            option.value = date;
+                            option.textContent = date;
                             lectureTimeSelect.appendChild(option);
                         });
                     })
@@ -147,14 +159,14 @@
             // Event listeners for combo boxes to trigger filtering
             lecturerEmailSelect.addEventListener('change', () => {
                 const selectedEmail = lecturerEmailSelect.value;
-                const selectedTime = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedTime);
+                const selectedDate = lectureTimeSelect.value;
+                loadLectures(selectedEmail, selectedDate);
             });
 
             lectureTimeSelect.addEventListener('change', () => {
                 const selectedEmail = lecturerEmailSelect.value;
-                const selectedTime = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedTime);
+                const selectedDate = lectureTimeSelect.value;
+                loadLectures(selectedEmail, selectedDate);
             });
 
             // Initial load
@@ -162,6 +174,5 @@
             loadLectures();
         });
     </script>
-
 </body>
 </html>
