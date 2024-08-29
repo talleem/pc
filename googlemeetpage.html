@@ -438,7 +438,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     let mediaRecorder;
                     let stream;
-
+                     // Attach click event to meeting links
+                    newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
+                        link.addEventListener('click', function(event) {
+                            const clickedCreatorEmail = this.getAttribute('data-creator-email');
+                            localStorage.setItem('creatorEmail', clickedCreatorEmail);
+                        });
+                    });
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
