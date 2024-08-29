@@ -173,38 +173,50 @@
                     .catch(error => console.error("Error populating combo boxes:", error));
             }
 
-           function deleteSelectedLecture() {
-            const loggedInEmail = localStorage.getItem('loggedInEmail');
-            if (selectedDocumentId && loggedInEmail === selectedLecturerEmail) {
-                const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+          function deleteSelectedLecture() {
+    if (selectedDocumentId) {
+        // Get the lecturer's email from the selected row
+        const selectedRow = document.querySelector('.selected-row');
+        const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
 
-                docRef.get().then(doc => {
-                    if (doc.exists) {
-                        const lecture = doc.data();
-                        const videoURL = lecture.videoURL;
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
 
-                        const storageRef = storage.refFromURL(videoURL);
-                        storageRef.delete().then(() => {
-                            alert('Video deleted successfully from storage.');
+        if (loggedInEmail === selectedLecturerEmail) {
+            // Proceed with deletion
+            const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
 
-                            docRef.delete().then(() => {
-                                console.log('Document deleted successfully from Firestore.');
+            docRef.get().then(doc => {
+                if (doc.exists) {
+                    const lecture = doc.data();
+                    const videoURL = lecture.videoURL;
 
-                                const selectedRow = document.querySelector('.selected-row');
-                                if (selectedRow) {
-                                    selectedRow.remove();
-                                }
+                    // Delete the video from Firebase Storage
+                    const storageRef = storage.refFromURL(videoURL);
+                    storageRef.delete().then(() => {
+                        alert('Video deleted successfully from storage.');
 
-                                selectedDocumentId = null;
-                                selectedLecturerEmail = null;
-                            }).catch(error => console.error('Error deleting document:', error));
-                        }).catch(error => console.error('Error deleting video from storage:', error));
-                    }
-                }).catch(error => console.error('Error fetching document:', error));
-            } else {
-                alert('Only the meeting event creator is authorized to delete the video.');
-            }
+                        // Delete the document from Firestore
+                        docRef.delete().then(() => {
+                            console.log('Document deleted successfully from Firestore.');
+
+                            // Remove the selected row from the table
+                            if (selectedRow) {
+                                selectedRow.remove();
+                            }
+
+                            // Reset selectedDocumentId
+                            selectedDocumentId = null;
+                        }).catch(error => console.error('Error deleting document:', error));
+                    }).catch(error => console.error('Error deleting video from storage:', error));
+                }
+            }).catch(error => console.error('Error fetching document:', error));
+        } else {
+            alert('Only the meeting event creator is authorized to delete the video.');
         }
+    } else {
+        alert('Please select a lecture to delete.');
+    }
+}
 
             // Event listeners for combo boxes to trigger filtering
             lecturerEmailSelect.addEventListener('change', () => {
