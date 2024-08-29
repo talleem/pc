@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 });
 
                                                 console.log("Recording saved to Firestore with URL:", downloadURL);
-                                                newWindow.alert("Recording saved to Firestore with URL:", downloadURL);
+                                                newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
                                             } catch (error) {
                                                 console.error("Error saving recording to Firebase Storage/Firestore:", error);
                                             }
