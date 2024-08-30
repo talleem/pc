@@ -136,9 +136,9 @@ function loadLectures(creatorEmail = null, stopRecordingDate = null) {
                 const fileExtension = getFileExtension(lecture.videoURL);
                 let displayText = '';
 
-                if (['mp4', 'webm'].includes(fileExtension)) {
+                if (['mp4', 'webm','wmv','mov'].includes(fileExtension)) {
                     displayText = 'Display the lecture';
-                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
                     displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
                 } else {
                     displayText = 'Display file';
