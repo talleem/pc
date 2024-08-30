@@ -135,10 +135,8 @@
                         displayText = 'Display the lecture';
                     } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
                         displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
-                    } else {
-                        displayText = 'Display file';
-                    }
-
+                    } 
+                    
                     link.textContent = displayText;
                     link.classList.add('video-link');
                     link.setAttribute('data-url', lecture.videoURL);
