@@ -90,82 +90,86 @@
             const deleteButton = document.getElementById('deleteVideo');
             let selectedDocumentId = null;
 
-function loadLectures(creatorEmail = null, stopRecordingDate = null) {
-    let query = db.collection('meetings_his_tbl');
+ function loadLectures(creatorEmail = null, stopRecordingDate = null) {
+        let query = db.collection('meetings_his_tbl');
 
-    // Apply filters based on the combo box values
-    if (creatorEmail && creatorEmail !== 'null') {
-        query = query.where('creatorEmail', '==', creatorEmail);
-    }
+        // Apply filters based on the combo box values
+        if (creatorEmail && creatorEmail !== 'null') {
+            query = query.where('creatorEmail', '==', creatorEmail);
+        }
 
-    if (stopRecordingDate && stopRecordingDate !== 'null') {
-        const startDate = new Date(stopRecordingDate);
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 1); // End of the day
+        if (stopRecordingDate && stopRecordingDate !== 'null') {
+            const startDate = new Date(stopRecordingDate);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 1); // End of the day
 
-        query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-                     .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
-    }
+            query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
+                         .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
+        }
 
-    // Clear the current table rows
-    lecturesTableBody.innerHTML = '';
+        // Clear the current table rows
+        lecturesTableBody.innerHTML = '';
 
-    query.get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                const lecture = doc.data();
-                const row = document.createElement('tr');
+        query.get()
+            .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    const lecture = doc.data();
+                    const row = document.createElement('tr');
 
-                const lecturerCell = document.createElement('td');
-                lecturerCell.textContent = lecture.creatorEmail;
+                    const lecturerCell = document.createElement('td');
+                    lecturerCell.textContent = lecture.creatorEmail;
 
-                const updatedCell = document.createElement('td');
-                updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+                    const updatedCell = document.createElement('td');
+                    updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
 
-                const linkCell = document.createElement('td');
-                const link = document.createElement('a');
-                link.href = lecture.videoURL; // Direct link to the video URL
-                
-                // Determine the file type based on the URL or file name
-                const fileType = lecture.videoURL.split('.').pop().toLowerCase(); // Extract file extension
-                
-                // Set the link text based on file type
-                if (['mp4', 'avi', 'mov', 'mkv'].includes(fileType)) {
-                    link.textContent = "Display the lecture";
-                } else {
-                    link.textContent = `Display uploaded ${fileType} file`;
-                }
-                
-                link.classList.add('video-link');
-                link.setAttribute('data-url', lecture.videoURL);
-                link.setAttribute('target', '_blank'); // Open in new tab
-                linkCell.appendChild(link);
-
-                row.appendChild(lecturerCell);
-                row.appendChild(updatedCell);
-                row.appendChild(linkCell);
-
-                row.addEventListener('click', function() {
-                    // Remove shadow from any previously selected row
-                    const previouslySelected = document.querySelector('.selected-row');
-                    if (previouslySelected) {
-                        previouslySelected.classList.remove('selected-row');
-                        previouslySelected.style.backgroundColor = ''; // Reset background color
+                    const linkCell = document.createElement('td');
+                    const link = document.createElement('a');
+                    link.href = lecture.videoURL; // Direct link to the video URL
+                    link.setAttribute('target', '_blank'); // Open in new tab
+                    
+                    // Determine file type and set link text accordingly
+                    const fileExtension = lecture.videoURL.split('.').pop().toLowerCase();
+                    let displayText = '';
+                    
+                    if (['mp4', 'webm'].includes(fileExtension)) {
+                        displayText = 'Display the lecture';
+                    } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                        displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
+                    } else {
+                        displayText = 'Display file';
                     }
 
-                    // Add shadow to the clicked row
-                    row.classList.add('selected-row');
-                    row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+                    link.textContent = displayText;
+                    link.classList.add('video-link');
+                    link.setAttribute('data-url', lecture.videoURL);
                     
-                    // Set the selected document ID for deletion
-                    selectedDocumentId = doc.id;
-                });
+                    linkCell.appendChild(link);
 
-                lecturesTableBody.appendChild(row);
-            });
-        })
-        .catch(error => console.error("Error loading lectures:", error));
-}
+                    row.appendChild(lecturerCell);
+                    row.appendChild(updatedCell);
+                    row.appendChild(linkCell);
+
+                    row.addEventListener('click', function() {
+                        // Remove shadow from any previously selected row
+                        const previouslySelected = document.querySelector('.selected-row');
+                        if (previouslySelected) {
+                            previouslySelected.classList.remove('selected-row');
+                            previouslySelected.style.backgroundColor = ''; // Reset background color
+                        }
+
+                        // Add shadow to the clicked row
+                        row.classList.add('selected-row');
+                        row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+                        
+                        // Set the selected document ID for deletion
+                        selectedDocumentId = doc.id;
+                    });
+
+                    lecturesTableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error("Error loading lectures:", error));
+    }
             
             function populateComboBoxes() {
                 const uniqueEmails = new Set();
