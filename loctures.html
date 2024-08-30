@@ -130,6 +130,7 @@
                     // Determine file type and set link text accordingly
                     const fileExtension = lecture.videoURL.split('.').pop().toLowerCase();
                     let displayText = '';
+                    console.log(fileExtension);
                     
                     if (['mp4', 'webm'].includes(fileExtension)) {
                         displayText = 'Display the lecture';
