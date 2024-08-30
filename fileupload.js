@@ -1,4 +1,15 @@
-document.addEventListener('DOMContentLoaded', function() {
+// fileupload.js
+function initiateFileUpload() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '*/*'; // Accept any file type
+    input.onchange = handleFileSelect;
+    input.click();
+}
+
+function handleFileSelect(event) {
+    // Your existing code for handling file selection and upload
+    document.addEventListener('DOMContentLoaded', function() {
     const fileUploadButton = document.getElementById('fileupload');
     const db = firebase.firestore();
     const storage = firebase.storage();
@@ -59,3 +70,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+}
+
+// Expose the function globally so it can be accessed from other scripts
+window.initiateFileUpload = initiateFileUpload;
+
+
+
+
+
+
+
+
+
+
+
