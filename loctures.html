@@ -56,6 +56,18 @@
              <button class="delete-button" id="deleteVideo">Delete Selected Video</button>
             <br>
              <button id="fileupload" style="height:30px;"><h4 style="margin: 0;">Lecture manual upload</h4></button>
+            
+            <script>
+    document.getElementById('fileupload').addEventListener('click', function() {
+        // Call the function defined in fileupload.js
+        if (typeof initiateFileUpload === 'function') {
+            initiateFileUpload();
+        } else {
+            console.error('File upload function is not defined.');
+        }
+    });
+</script>
+
                  <br>
              <button id="signout" style="height:30px;">
             <h4 style="margin: 0;">Sign out</h4></button>
