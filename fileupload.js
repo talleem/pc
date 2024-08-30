@@ -12,8 +12,7 @@ function handleFileSelect(event) {
     if (!file) {
         return;
     }
-
-    const loggedInEmail = localstorage.getitem(loggedInEmail);
+    const loggedInEmail = localStorage.getItem('loggedInEmail');
 
     if (!loggedInEmail) {
         alert('Please log in first.');
