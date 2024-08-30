@@ -13,8 +13,7 @@ function handleFileSelect(event) {
         return;
     }
 
-    const user = firebase.auth().currentUser;
-    const loggedInEmail = user ? user.email : null;
+    const loggedInEmail = localstorage.getitem(loggedInEmail);
 
     if (!loggedInEmail) {
         alert('Please log in first.');
