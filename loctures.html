@@ -143,6 +143,7 @@ function loadLectures(creatorEmail = null, stopRecordingDate = null) {
                     // If the file is a document, use Google Docs Viewer
                    if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
     displayURL = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(lecture.videoURL)}`;
+                       console.log(displayURL);
 }
 
                 } else {
