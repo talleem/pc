@@ -141,9 +141,10 @@ function loadLectures(creatorEmail = null, stopRecordingDate = null) {
                     displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
                     // If the file is a document, use Google Docs Viewer
-                    if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-                        displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
-                    }
+                   if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+    displayURL = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(lecture.videoURL)}`;
+}
+
                 } else {
                     displayText = 'Display file';
                 }
