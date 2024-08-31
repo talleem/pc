@@ -419,6 +419,34 @@ document.addEventListener('DOMContentLoaded', function() {
                         this.style.transform = 'translateY(0px)';
                     });
 
+                    // Add the Pause Recording button
+                    const pauseButton = newWindow.document.createElement('button');
+                    pauseButton.id = 'pauserecord';
+                    pauseButton.textContent = 'Pause Recording';
+                    pauseButton.style.backgroundColor = 'lightblue';
+                    pauseButton.style.color = 'black';
+                    pauseButton.style.position = 'fixed';
+                    pauseButton.style.top = '50px';
+                    pauseButton.style.right = '10px';
+                    pauseButton.style.padding = '10px 20px';
+                    pauseButton.style.fontWeight = 'bold';
+                    pauseButton.style.border = 'none';
+                    pauseButton.style.borderRadius = '5px';
+                    pauseButton.style.cursor = 'pointer';
+                    pauseButton.style.boxShadow = '0 4px #999';
+
+                    pauseButton.addEventListener('mousedown', function() {
+                        this.style.backgroundColor = '#87CEEB';
+                        this.style.boxShadow = '0 2px #666';
+                        this.style.transform = 'translateY(2px)';
+                    });
+
+                    pauseButton.addEventListener('mouseup', function() {
+                        this.style.backgroundColor = 'lightblue';
+                        this.style.boxShadow = '0 4px #999';
+                        this.style.transform = 'translateY(0px)';
+                    });
+
                     // Add the Stop Recording button
                     const stopButton = newWindow.document.createElement('button');
                     stopButton.id = 'stoprecord';
@@ -426,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopButton.style.backgroundColor = 'red';
                     stopButton.style.color = 'white';
                     stopButton.style.position = 'fixed';
-                    stopButton.style.top = '50px';
+                    stopButton.style.top = '90px';
                     stopButton.style.right = '10px';
                     stopButton.style.padding = '10px 20px';
                     stopButton.style.fontWeight = 'bold';
@@ -438,13 +466,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     let mediaRecorder;
                     let stream;
-                     // Attach click event to meeting links
+                    let isPaused = false; // Flag to track pause state
+
+                    // Attach click event to meeting links
                     newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
                         link.addEventListener('click', function(event) {
                             const clickedCreatorEmail = this.getAttribute('data-creator-email');
                             localStorage.setItem('creatorEmail', clickedCreatorEmail);
                         });
                     });
+
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -498,15 +529,37 @@ document.addEventListener('DOMContentLoaded', function() {
                                         mediaRecorder.start();
                                         stopButton.disabled = false;
                                         recordButton.disabled = true;
+                                        pauseButton.disabled = false; // Enable pause button
+                                        isPaused = false;
                                         console.log("Recording started");
+                                          newWindow.alert("Recording started");
                                     } else {
                                         console.log("Cam is not started");
+                                      
                                     }
                                 })
                                 .catch(error => console.error("Error accessing camera:", error));
                         } else {
-                            alert("You are not authorized to start the recording.");
-                            console.log(creatorEmail,loggedInEmail);
+                            newWindow.alert("You are not authorized to start the recording.");
+                            console.log(creatorEmail, loggedInEmail);
+                        }
+                    });
+
+                    pauseButton.addEventListener('click', function() {
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            if (!isPaused) {
+                                mediaRecorder.pause();
+                                this.textContent = 'Resume Recording';
+                                isPaused = true;
+                                console.log("Recording paused");
+                                newWindow.alert("Recording paused")
+                            } else {
+                                mediaRecorder.resume();
+                                this.textContent = 'Pause Recording';
+                                isPaused = false;
+                                console.log("Recording resumed");
+                                newWindow.alert("Recording resumed");
+                            }
                         }
                     });
 
@@ -516,11 +569,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             stream.getTracks().forEach(track => track.stop());
                             recordButton.disabled = false;
                             stopButton.disabled = true;
+                            pauseButton.disabled = true; // Disable pause button
                             console.log("Recording stopped");
+                            
                         }
                     });
 
                     newWindow.document.body.appendChild(recordButton);
+                    newWindow.document.body.appendChild(pauseButton); // Add the pause button
                     newWindow.document.body.appendChild(stopButton);
                 })
                 .catch(error => console.error("Error loading meetings:", error));
@@ -531,8 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please log in to load invitations.');
         }
     });
-});   
-
+});
 </script>
 
      <button id="updateinvit" style=" height: 35px; 
