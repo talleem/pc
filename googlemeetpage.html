@@ -546,23 +546,40 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
 
-                    pauseButton.addEventListener('click', function() {
-                        if (mediaRecorder && mediaRecorder.state === 'recording') {
-                            if (!isPaused) {
-                                mediaRecorder.pause();
-                                this.textContent = 'Resume Recording';
-                                isPaused = true;
-                                console.log("Recording paused");
-                                newWindow.alert("Recording paused")
-                            } else {
-                                mediaRecorder.resume();
-                                this.textContent = 'Pause Recording';
-                                isPaused = false;
-                                console.log("Recording resumed");
-                                newWindow.alert("Recording resumed");
-                            }
-                        }
-                    });
+                   pauseButton.addEventListener('click', function() {
+    if (mediaRecorder) {
+        console.log("MediaRecorder state:", mediaRecorder.state);
+        console.log("isPaused flag:", isPaused);
+
+        if (mediaRecorder.state === 'recording') {
+            if (!isPaused) {
+                try {
+                    mediaRecorder.pause();
+                    this.textContent = 'Resume Recording';
+                    isPaused = true;
+                    console.log("Recording paused");
+                    newWindow.alert("Recording paused");
+                } catch (error) {
+                    console.error("Error pausing recording:", error);
+                }
+            } else {
+                try {
+                    mediaRecorder.resume();
+                    this.textContent = 'Pause Recording';
+                    isPaused = false;
+                    console.log("Recording resumed");
+                    newWindow.alert("Recording resumed");
+                } catch (error) {
+                    console.error("Error resuming recording:", error);
+                }
+            }
+        } else {
+            console.log("MediaRecorder is not in recording state");
+        }
+    } else {
+        console.log("MediaRecorder is not defined");
+    }
+});
 
                     stopButton.addEventListener('click', function() {
                         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
