@@ -95,6 +95,16 @@
     const match = url.match(/\.([a-zA-Z0-9]+)\?/);
     return match ? match[1].toLowerCase() : '';
 }
+            
+            function createOfficeViewerURL(fileURL) {
+    // Decode the Firebase Storage URL once
+    const decodedURL = decodeURIComponent(fileURL);
+    // Encode the decoded URL properly for Office Viewer
+    const encodedURL = encodeURIComponent(decodedURL);
+    // Return the properly formatted Office Viewer URL
+    return `https://view.officeapps.live.com/op/view.aspx?src=${encodedURL}`;
+}
+
 
 function loadLectures(creatorEmail = null, stopRecordingDate = null) {
     let query = db.collection('meetings_his_tbl');
@@ -137,21 +147,21 @@ function loadLectures(creatorEmail = null, stopRecordingDate = null) {
 
                 if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
                     displayText = 'Display the lecture';
-                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpeg','jpg','png'].includes(fileExtension)) {
+                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpeg', 'jpg', 'png'].includes(fileExtension)) {
                     displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
-                    // If the file is a document, use Google Docs Viewer
-                   if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-    displayURL = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(lecture.videoURL)}`;
-                       console.log(displayURL);
-}
+                    // If the file is a document, use Office Viewer
+                    if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                        displayURL = createOfficeViewerURL(lecture.videoURL);
+                        console.log(displayURL);
+                    }
 
                 } else {
                     displayText = 'Display file';
                 }
 
                 link.textContent = displayText;
-                link.href = displayURL; // Update link to use the Google Docs Viewer URL for Office documents
+                link.href = displayURL; // Update link to use the Office Viewer URL for Office documents
                 link.setAttribute('target', '_blank'); // Open in a new tab
                 linkCell.appendChild(link);
 
