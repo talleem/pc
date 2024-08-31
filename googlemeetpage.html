@@ -537,33 +537,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
-                    stopButton.addEventListener('click', function() {
-                        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                            mediaRecorder.stop();
-                            stream.getTracks().forEach(track => track.stop());
-                            recordButton.disabled = false;
-                            stopButton.disabled = true;
-                            pauseButton.disabled = true; // Disable pause button
-                            console.log("Recording stopped");
-                            
-                        }
-                    });
-
-                    newWindow.document.body.appendChild(recordButton);
-                    newWindow.document.body.appendChild(pauseButton); // Add the pause button
-                    newWindow.document.body.appendChild(stopButton);
-                })
-                .catch(error => console.error("Error loading meetings:", error));
-            }
-            
-            loadMeetings();
-        } else {
-            alert('Please log in to load invitations.');
-        }
-    });
-});
-</script>
-
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
