@@ -536,7 +536,6 @@ recordButton.addEventListener('click', function() {
     }
 });
 
-// Function to pause/resume recording
 pauseButton.addEventListener('click', function() {
     if (mediaRecorder) {
         console.log("MediaRecorder state:", mediaRecorder.state);
@@ -567,6 +566,7 @@ pauseButton.addEventListener('click', function() {
         console.log("MediaRecorder is not defined");
     }
 });
+
                     stopButton.addEventListener('click', function() {
                         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                             mediaRecorder.stop();
