@@ -571,8 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopButton.addEventListener('click', function() {
                         if (isPaused && bucketUrl) {
                             const creatorEmail = localStorage.getItem('creatorEmail');
-                            const loggedInEmail = localStorage.get
-                                                        const loggedInEmail = localStorage.getItem('loggedInEmail');
+                            const loggedInEmail = localStorage.getItem('loggedInEmail');
                             console.log(loggedInEmail);
 
                             if (creatorEmail === loggedInEmail) {
