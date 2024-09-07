@@ -1,44 +1,55 @@
 function updatenotes() {
     const selectedRow = document.querySelector('.selected-row');
     if (!selectedRow) {
-        alert('Please select a meeting to update the notes.');
+        alert('Please select a row to update the notes.');
         return;
     }
 
-    const selectedLecturerEmail = selectedRow.cells[0].textContent;  // Getting the lecturer email from the selected row
-    const loggedInEmail = localStorage.getItem('loggedInEmail');  // Retrieving logged in user email
+    // Get the Notes field (textarea) and lecturer email
+    const notesTextarea = selectedRow.querySelector('textarea');
+    const newNotes = notesTextarea.value.trim();
+    const selectedLecturerEmail = selectedRow.cells[0].textContent;  // First cell is lecturer email
+    const loggedInEmail = localStorage.getItem('loggedInEmail');
 
+    // Authorization check: if logged-in user is not the creator, show alert and exit
     if (loggedInEmail !== selectedLecturerEmail) {
         alert('Only the meeting creator is authorized to update the notes field for this meeting video.');
-        return;  // Prevents update if emails don't match
-    } else {
-        const notesTextarea = selectedRow.querySelector('textarea');
-        const newNotes = notesTextarea.value;
-
-        if (!newNotes) {
-            alert('Please enter a value for the Notes field.');
-            return;
-        }
-
-        const documentId = selectedRow.getAttribute('data-document-id');  // Fetch the document ID
-        const docRef = db.collection('meetings_his_tbl').doc(documentId);
-
-        // Retrieve the original notes from Firestore and compare with new notes
-        docRef.get().then((doc) => {
-            if (doc.exists) {
-                const originalNotes = doc.data().Notes || 'No notes';
-
-                if (newNotes === originalNotes) {
-                    alert('The new value already exists in the table.');
-                } else {
-                    // Update Firestore with the new notes
-                    docRef.update({
-                        Notes: newNotes
-                    }).then(() => {
-                        alert('Notes updated successfully.');
-                    }).catch(error => console.error('Error updating notes:', error));
-                }
-            }
-        }).catch(error => console.error('Error fetching document:', error));
+        return;
     }
+
+    // Check if the new notes field is empty
+    if (!newNotes) {
+        alert('Please enter a value for the Notes field.');
+        return;
+    }
+
+    // Fetch the original Notes field from Firestore
+    const db = firebase.firestore();
+    const docId = selectedRow.getAttribute('data-doc-id');  // Assume document ID is stored in the row
+    const docRef = db.collection('meetings_his_tbl').doc(docId);
+
+    docRef.get().then(doc => {
+        if (doc.exists) {
+            const originalNotes = doc.data().Notes || '';
+
+            // Check if the new notes are the same as the original notes
+            if (originalNotes === newNotes) {
+                alert('The new value already exists in the table.');
+            } else {
+                // Update the Notes field in Firestore
+                docRef.update({ Notes: newNotes })
+                    .then(() => {
+                        alert('Notes updated successfully.');
+                        console.log('Notes updated successfully.');
+                    })
+                    .catch(error => {
+                        console.error('Error updating notes:', error);
+                    });
+            }
+        } else {
+            console.error('Document does not exist.');
+        }
+    }).catch(error => {
+        console.error('Error fetching document:', error);
+    });
 }
