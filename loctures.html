@@ -163,8 +163,12 @@
                         const notesCell = document.createElement('td');
                         const notesTextarea = document.createElement('textarea');
                         notesTextarea.textContent = lecture.Notes || 'No notes';
+                        notesTextarea.setAttribute('data-original-notes', lecture.Notes || 'No notes');
                         notesTextarea.style.width = '300px'; // Inline style for width
                         notesTextarea.style.height = '50px'; // Inline style for height
+
+                        // Attach document ID to the row
+                        row.setAttribute('data-document-id', doc.id);
 
                         notesTextarea.addEventListener('blur', function() {
                             const updatedNotes = notesTextarea.value;
