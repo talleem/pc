@@ -9,8 +9,8 @@ function updatenotes() {
     const notesTextarea = selectedRow.querySelector('textarea');
     const originalNotes = notesTextarea.getAttribute('data-original-notes') || 'No notes';
     const newNotes = notesTextarea.value.trim();
-    const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
-    const loggedInEmail = localStorage.getItem('loggedInEmail');
+    const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent.trim() : null; // Trim spaces
+    const loggedInEmail = localStorage.getItem('loggedInEmail') ? localStorage.getItem('loggedInEmail').trim() : null; // Trim spaces
 
     // Check if the notes are empty or equal to the original notes
     if (!newNotes || newNotes === originalNotes) {
@@ -21,7 +21,7 @@ function updatenotes() {
     // Check if the logged-in user is the creator of the meeting
     if (loggedInEmail !== selectedLecturerEmail) {
         alert('Only the meeting creator is authorized to update the notes field for this meeting video.');
-        return;
+        return;  // Prevent update if the user is not authorized
     }
 
     const db = firebase.firestore();
@@ -39,4 +39,3 @@ function updatenotes() {
         alert('Failed to update notes. Please try again.');
     });
 }
-
