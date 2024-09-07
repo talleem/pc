@@ -82,210 +82,201 @@
         </div>
     </div>
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const db = firebase.firestore();
-            const storage = firebase.storage();
-            const lecturesTableBody = document.querySelector('#lectures-table tbody');
-            const lecturerEmailSelect = document.getElementById('lecturer-email');
-            const lectureTimeSelect = document.getElementById('lecture-time');
-            const deleteButton = document.getElementById('deleteVideo');
-            let selectedDocumentId = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        const lecturesTableBody = document.querySelector('#lectures-table tbody');
+        const lecturerEmailSelect = document.getElementById('lecturer-email');
+        const lectureTimeSelect = document.getElementById('lecture-time');
+        const deleteButton = document.getElementById('deleteVideo');
+        let selectedDocumentId = null;
 
-            function getFileExtension(url) {
-    // Extract the part of the URL after the last period
-    const match = url.match(/\.([a-zA-Z0-9]+)\?/);
-    return match ? match[1].toLowerCase() : '';
-}
-            
-    function loadLectures(creatorEmail = null, stopRecordingDate = null) {
-    let query = db.collection('meetings_his_tbl');
+        function getFileExtension(url) {
+            const match = url.match(/\.([a-zA-Z0-9]+)\?/);
+            return match ? match[1].toLowerCase() : '';
+        }
+        
+        function loadLectures(creatorEmail = null, stopRecordingDate = null) {
+            let query = db.collection('meetings_his_tbl');
 
-    // Apply filters based on the combo box values
-    if (creatorEmail && creatorEmail !== 'null') {
-        query = query.where('creatorEmail', '==', creatorEmail);
-    }
-
-    if (stopRecordingDate && stopRecordingDate !== 'null') {
-        const startDate = new Date(stopRecordingDate);
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 1); // End of the day
-
-        query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-                     .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
-    }
-
-    // Clear the current table rows
-    lecturesTableBody.innerHTML = '';
-
-  query.get()
-    .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-            const lecture = doc.data();
-            const row = document.createElement('tr');
-
-            const lecturerCell = document.createElement('td');
-            lecturerCell.textContent = lecture.creatorEmail;
-
-            const updatedCell = document.createElement('td');
-            updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
-
-            const linkCell = document.createElement('td');
-            const link = document.createElement('a');
-            
-            const fileExtension = getFileExtension(lecture.videoURL);
-            let displayText = '';
-            let displayURL = lecture.videoURL; // Default to the direct URL
-
-            if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
-                displayText = 'Display the lecture';
-            } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
-                displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
-
-                // If the file is a document, use Google Docs Viewer
-                if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-                    displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
-                }
-            } else {
-                displayText = 'Display file';
+            if (creatorEmail && creatorEmail !== 'null') {
+                query = query.where('creatorEmail', '==', creatorEmail);
             }
 
-            link.textContent = displayText;
-            link.href = displayURL; // Update link to use the Google Docs Viewer URL for Office documents
-            link.setAttribute('target', '_blank'); // Open in a new tab
-            linkCell.appendChild(link);
+            if (stopRecordingDate && stopRecordingDate !== 'null') {
+                const startDate = new Date(stopRecordingDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 1);
 
-            const notesCell = document.createElement('td');
-            notesCell.textContent = lecture.Notes || 'No notes'; // Add Notes field
-
-            row.appendChild(lecturerCell);
-            row.appendChild(updatedCell);
-            row.appendChild(linkCell);
-            row.appendChild(notesCell); // Append the Notes cell to the row
-
-            row.addEventListener('click', function() {
-                const previouslySelected = document.querySelector('.selected-row');
-                if (previouslySelected) {
-                    previouslySelected.classList.remove('selected-row');
-                    previouslySelected.style.backgroundColor = ''; // Reset background color
-                }
-
-                row.classList.add('selected-row');
-                row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
-                
-                selectedDocumentId = doc.id;
-            });
-
-            lecturesTableBody.appendChild(row);
-        });
-    })
-    .catch(error => console.error("Error loading lectures:", error));
-    }
-
-            function populateComboBoxes() {
-                const uniqueEmails = new Set();
-                const uniqueDates = new Set();
-
-                db.collection('meetings_his_tbl').get()
-                    .then(querySnapshot => {
-                        querySnapshot.forEach(doc => {
-                            const lecture = doc.data();
-
-                            // Add unique values to sets
-                            uniqueEmails.add(lecture.creatorEmail);
-
-                            // Extract the date part only
-                            const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
-                            const dateString = lectureDate.toISOString().split('T')[0]; // YYYY-MM-DD format
-                            uniqueDates.add(dateString);
-                        });
-
-                        // Convert sets to sorted arrays
-                        const sortedEmails = Array.from(uniqueEmails).sort();
-                        const sortedDates = Array.from(uniqueDates).sort();
-
-                        // Populate the combo boxes with unique and sorted values
-                        sortedEmails.forEach(email => {
-                            const option = document.createElement('option');
-                            option.value = email;
-                            option.textContent = email;
-                            lecturerEmailSelect.appendChild(option);
-                        });
-
-                        sortedDates.forEach(date => {
-                            const option = document.createElement('option');
-                            option.value = date;
-                            option.textContent = date;
-                            lectureTimeSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error("Error populating combo boxes:", error));
+                query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
+                             .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
             }
 
-          function deleteSelectedLecture() {
-    if (selectedDocumentId) {
-        // Get the lecturer's email from the selected row
-        const selectedRow = document.querySelector('.selected-row');
-        const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
+            lecturesTableBody.innerHTML = '';
 
-        const loggedInEmail = localStorage.getItem('loggedInEmail');
+            query.get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        const lecture = doc.data();
+                        const row = document.createElement('tr');
 
-        if (loggedInEmail === selectedLecturerEmail) {
-            // Proceed with deletion
-            const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+                        const lecturerCell = document.createElement('td');
+                        lecturerCell.textContent = lecture.creatorEmail;
 
-            docRef.get().then(doc => {
-                if (doc.exists) {
-                    const lecture = doc.data();
-                    const videoURL = lecture.videoURL;
+                        const updatedCell = document.createElement('td');
+                        updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
 
-                    // Delete the video from Firebase Storage
-                    const storageRef = storage.refFromURL(videoURL);
-                    storageRef.delete().then(() => {
-                        alert('Video deleted successfully from storage.');
+                        const linkCell = document.createElement('td');
+                        const link = document.createElement('a');
+                        const fileExtension = getFileExtension(lecture.videoURL);
+                        let displayText = '';
+                        let displayURL = lecture.videoURL;
 
-                        // Delete the document from Firestore
-                        docRef.delete().then(() => {
-                            console.log('Document deleted successfully from Firestore.');
+                        if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
+                            displayText = 'Display the lecture';
+                        } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
+                            displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
-                            // Remove the selected row from the table
-                            if (selectedRow) {
-                                selectedRow.remove();
+                            if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                                displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
+                            }
+                        } else {
+                            displayText = 'Display file';
+                        }
+
+                        link.textContent = displayText;
+                        link.href = displayURL;
+                        link.setAttribute('target', '_blank');
+                        linkCell.appendChild(link);
+
+                        // Notes cell as a textarea
+                        const notesCell = document.createElement('td');
+                        const notesTextarea = document.createElement('textarea');
+                        notesTextarea.textContent = lecture.Notes || 'No notes';
+                        notesTextarea.style.width = '200px'; // Inline style for width
+                        notesTextarea.style.height = '100px'; // Inline style for height
+
+                        notesTextarea.addEventListener('blur', function() {
+                            const updatedNotes = notesTextarea.value;
+                            db.collection('meetings_his_tbl').doc(doc.id).update({
+                                Notes: updatedNotes
+                            }).then(() => {
+                                console.log('Notes updated successfully');
+                            }).catch(error => console.error('Error updating notes:', error));
+                        });
+
+                        notesCell.appendChild(notesTextarea);
+                        
+                        row.appendChild(lecturerCell);
+                        row.appendChild(updatedCell);
+                        row.appendChild(linkCell);
+                        row.appendChild(notesCell);
+
+                        row.addEventListener('click', function() {
+                            const previouslySelected = document.querySelector('.selected-row');
+                            if (previouslySelected) {
+                                previouslySelected.classList.remove('selected-row');
+                                previouslySelected.style.backgroundColor = '';
                             }
 
-                            // Reset selectedDocumentId
-                            selectedDocumentId = null;
-                        }).catch(error => console.error('Error deleting document:', error));
-                    }).catch(error => console.error('Error deleting video from storage:', error));
-                }
-            }).catch(error => console.error('Error fetching document:', error));
-        } else {
-            alert('Only the meeting event creator is authorized to delete the video.');
+                            row.classList.add('selected-row');
+                            row.style.backgroundColor = 'lightblue';
+                            selectedDocumentId = doc.id;
+                        });
+
+                        lecturesTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error loading lectures:", error));
         }
-    } else {
-        alert('Please select a lecture to delete.');
-    }
-}
 
-            // Event listeners for combo boxes to trigger filtering
-            lecturerEmailSelect.addEventListener('change', () => {
-                const selectedEmail = lecturerEmailSelect.value;
-                const selectedDate = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedDate);
-            });
+        function populateComboBoxes() {
+            const uniqueEmails = new Set();
+            const uniqueDates = new Set();
 
-            lectureTimeSelect.addEventListener('change', () => {
-                const selectedEmail = lecturerEmailSelect.value;
-                const selectedDate = lectureTimeSelect.value;
-                loadLectures(selectedEmail, selectedDate);
-            });
+            db.collection('meetings_his_tbl').get()
+                .then(querySnapshot => {
+                    querySnapshot.forEach(doc => {
+                        const lecture = doc.data();
+                        uniqueEmails.add(lecture.creatorEmail);
+                        const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
+                        const dateString = lectureDate.toISOString().split('T')[0];
+                        uniqueDates.add(dateString);
+                    });
 
-            // Event listener for delete button
-            deleteButton.addEventListener('click', deleteSelectedLecture);
+                    const sortedEmails = Array.from(uniqueEmails).sort();
+                    const sortedDates = Array.from(uniqueDates).sort();
 
-            // Initial load
-            populateComboBoxes();
-            loadLectures();
+                    sortedEmails.forEach(email => {
+                        const option = document.createElement('option');
+                        option.value = email;
+                        option.textContent = email;
+                        lecturerEmailSelect.appendChild(option);
+                    });
+
+                    sortedDates.forEach(date => {
+                        const option = document.createElement('option');
+                        option.value = date;
+                        option.textContent = date;
+                        lectureTimeSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error populating combo boxes:", error));
+        }
+
+        function deleteSelectedLecture() {
+            if (selectedDocumentId) {
+                const selectedRow = document.querySelector('.selected-row');
+                const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
+                const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+                if (loggedInEmail === selectedLecturerEmail) {
+                    const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+
+                    docRef.get().then(doc => {
+                        if (doc.exists) {
+                            const lecture = doc.data();
+                            const videoURL = lecture.videoURL;
+                            const storageRef = storage.refFromURL(videoURL);
+
+                            storageRef.delete().then(() => {
+                                alert('Video deleted successfully from storage.');
+                                docRef.delete().then(() => {
+                                    console.log('Document deleted successfully from Firestore.');
+                                    if (selectedRow) {
+                                        selectedRow.remove();
+                                    }
+                                    selectedDocumentId = null;
+                                }).catch(error => console.error('Error deleting document:', error));
+                            }).catch(error => console.error('Error deleting video from storage:', error));
+                        }
+                    }).catch(error => console.error('Error fetching document:', error));
+                } else {
+                    alert('Only the meeting event creator is authorized to delete the video.');
+                }
+            } else {
+                alert('Please select a lecture to delete.');
+            }
+        }
+
+        lecturerEmailSelect.addEventListener('change', () => {
+            const selectedEmail = lecturerEmailSelect.value;
+            const selectedDate = lectureTimeSelect.value;
+            loadLectures(selectedEmail, selectedDate);
         });
-    </script>
+
+        lectureTimeSelect.addEventListener('change', () => {
+            const selectedEmail = lecturerEmailSelect.value;
+            const selectedDate = lectureTimeSelect.value;
+            loadLectures(selectedEmail, selectedDate);
+        });
+
+        deleteButton.addEventListener('click', deleteSelectedLecture);
+
+        populateComboBoxes();
+        loadLectures();
+    });
+</script>
+
 </body>
 </html>
