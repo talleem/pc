@@ -1,41 +1,37 @@
 function updatenotes() {
     const selectedRow = document.querySelector('.selected-row');
-    
     if (!selectedRow) {
-        alert('Please select a lecture to update notes.');
+        alert('Please select a row to update the notes.');
         return;
     }
 
     const notesTextarea = selectedRow.querySelector('textarea');
-    const originalNotes = notesTextarea.getAttribute('data-original-notes') || 'No notes';
+    const originalNotes = notesTextarea.textContent;
     const newNotes = notesTextarea.value.trim();
-    const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent.trim() : null; // Trim spaces
-    const loggedInEmail = localStorage.getItem('loggedInEmail') ? localStorage.getItem('loggedInEmail').trim() : null; // Trim spaces
-
-    // Check if the notes are empty or equal to the original notes
+    
     if (!newNotes || newNotes === originalNotes) {
         alert('Please enter a new note value to update.');
         return;
     }
-     console.log(loggedInEmail,selectedLecturerEmail);
-    // Check if the logged-in user is the creator of the meeting
+
+    const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
+    const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+    // Check if the logged-in user is the creator
     if (loggedInEmail !== selectedLecturerEmail) {
         alert('Only the meeting creator is authorized to update the notes field for this meeting video.');
-        return;  // Prevent update if the user is not authorized
+    } else {
+        // Proceed with updating Firestore
+        const db = firebase.firestore();
+        const docId = selectedRow.getAttribute('data-doc-id'); // assuming you have doc-id stored in row
+
+        db.collection('meetings_his_tbl').doc(docId).update({
+            Notes: newNotes
+        }).then(() => {
+            alert('Notes updated successfully.');
+            console.log('Notes updated successfully.');
+        }).catch(error => {
+            console.error('Error updating notes:', error);
+        });
     }
-
-    const db = firebase.firestore();
-    const selectedDocumentId = selectedRow.getAttribute('data-document-id');
-
-    db.collection('meetings_his_tbl').doc(selectedDocumentId).update({
-        Notes: newNotes
-    })
-    .then(() => {
-        alert('Notes updated successfully.');
-        notesTextarea.setAttribute('data-original-notes', newNotes); // Update original notes after successful update
-    })
-    .catch(error => {
-        console.error('Error updating notes:', error);
-        alert('Failed to update notes. Please try again.');
-    });
 }
