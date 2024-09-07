@@ -17,7 +17,7 @@ function updatenotes() {
         alert('Please enter a new note value to update.');
         return;
     }
-
+     console.log(loggedInEmail,selectedLecturerEmail);
     // Check if the logged-in user is the creator of the meeting
     if (loggedInEmail !== selectedLecturerEmail) {
         alert('Only the meeting creator is authorized to update the notes field for this meeting video.');
