@@ -35,7 +35,7 @@ function updatenotes() {
                             docRef.update({ Notes: newNotes })
                                 .then(() => {
                                     alert('Notes updated successfully.');
-                                    console.log('Notes updated successfully.');
+                                    console.log('Notes updated successfully.2');
                                 })
                                 .catch(error => {
                                     console.error('Error updating notes:', error);
