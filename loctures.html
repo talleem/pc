@@ -117,65 +117,69 @@
     // Clear the current table rows
     lecturesTableBody.innerHTML = '';
 
-    query.get()
-        .then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                const lecture = doc.data();
-                const row = document.createElement('tr');
+  query.get()
+    .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            const lecture = doc.data();
+            const row = document.createElement('tr');
 
-                const lecturerCell = document.createElement('td');
-                lecturerCell.textContent = lecture.creatorEmail;
+            const lecturerCell = document.createElement('td');
+            lecturerCell.textContent = lecture.creatorEmail;
 
-                const updatedCell = document.createElement('td');
-                updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+            const updatedCell = document.createElement('td');
+            updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
 
-                const linkCell = document.createElement('td');
-                const link = document.createElement('a');
-                
-                const fileExtension = getFileExtension(lecture.videoURL);
-                let displayText = '';
-                let displayURL = lecture.videoURL; // Default to the direct URL
+            const linkCell = document.createElement('td');
+            const link = document.createElement('a');
+            
+            const fileExtension = getFileExtension(lecture.videoURL);
+            let displayText = '';
+            let displayURL = lecture.videoURL; // Default to the direct URL
 
-                if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
-                    displayText = 'Display the lecture';
-                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
-                    displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
+            if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
+                displayText = 'Display the lecture';
+            } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
+                displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
-                    // If the file is a document, use Google Docs Viewer
-                    if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-                        displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
-                    }
-                } else {
-                    displayText = 'Display file';
+                // If the file is a document, use Google Docs Viewer
+                if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                    displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
+                }
+            } else {
+                displayText = 'Display file';
+            }
+
+            link.textContent = displayText;
+            link.href = displayURL; // Update link to use the Google Docs Viewer URL for Office documents
+            link.setAttribute('target', '_blank'); // Open in a new tab
+            linkCell.appendChild(link);
+
+            const notesCell = document.createElement('td');
+            notesCell.textContent = lecture.Notes || 'No notes'; // Add Notes field
+
+            row.appendChild(lecturerCell);
+            row.appendChild(updatedCell);
+            row.appendChild(linkCell);
+            row.appendChild(notesCell); // Append the Notes cell to the row
+
+            row.addEventListener('click', function() {
+                const previouslySelected = document.querySelector('.selected-row');
+                if (previouslySelected) {
+                    previouslySelected.classList.remove('selected-row');
+                    previouslySelected.style.backgroundColor = ''; // Reset background color
                 }
 
-                link.textContent = displayText;
-                link.href = displayURL; // Update link to use the Google Docs Viewer URL for Office documents
-                link.setAttribute('target', '_blank'); // Open in a new tab
-                linkCell.appendChild(link);
-
-                row.appendChild(lecturerCell);
-                row.appendChild(updatedCell);
-                row.appendChild(linkCell);
-
-                row.addEventListener('click', function() {
-                    const previouslySelected = document.querySelector('.selected-row');
-                    if (previouslySelected) {
-                        previouslySelected.classList.remove('selected-row');
-                        previouslySelected.style.backgroundColor = ''; // Reset background color
-                    }
-
-                    row.classList.add('selected-row');
-                    row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
-                    
-                    selectedDocumentId = doc.id;
-                });
-
-                lecturesTableBody.appendChild(row);
+                row.classList.add('selected-row');
+                row.style.backgroundColor = 'lightblue'; // Set the background color to light blue
+                
+                selectedDocumentId = doc.id;
             });
-        })
-        .catch(error => console.error("Error loading lectures:", error));
-}
+
+            lecturesTableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error("Error loading lectures:", error));
+
 
             function populateComboBoxes() {
                 const uniqueEmails = new Set();
