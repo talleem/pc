@@ -485,7 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 await db.collection('meetings_his_tbl').add({
                                                     creatorEmail: loggedInEmail,
                                                     stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-                                                    videoURL: downloadURL
+                                                    videoURL: downloadURL,
+                                                    Notes: null  // Add the Notes field as null
                                                 });
 
                                                 console.log("Recording saved to Firestore with URL:", downloadURL);
@@ -508,7 +509,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 .catch(error => console.error("Error accessing camera:", error));
                         } else {
                             newWindow.alert("You are not authorized to start the recording.");
-                            console.log(creatorEmail,loggedInEmail);
+                            console.log(creatorEmail, loggedInEmail);
                         }
                     });
 
@@ -535,8 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });   
 
-</script>                                   
-
+</script>
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
