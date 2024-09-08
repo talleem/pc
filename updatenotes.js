@@ -20,7 +20,14 @@ function updatenotes() {
             } else {
                 // Fetch the original Notes field from Firestore
                 const db = firebase.firestore();
-                const docId = selectedRow.getAttribute('data-doc-id');  // Assume document ID is stored in the row
+                const docId = selectedRow.getAttribute('data-document-id');  // Ensure this is not empty or null
+                console.log("Selected row's document ID:", docId);
+
+                if (!docId) {
+                    console.error('No document ID found for the selected row.');
+                    return;
+                }
+
                 const docRef = db.collection('meetings_his_tbl').doc(docId);
 
                 docRef.get().then(doc => {
@@ -35,7 +42,7 @@ function updatenotes() {
                             docRef.update({ Notes: newNotes })
                                 .then(() => {
                                     alert('Notes updated successfully.');
-                                    console.log('Notes updated successfully.2');
+                                    console.log('Notes updated successfully.');
                                 })
                                 .catch(error => {
                                     console.error('Error updating notes:', error);
