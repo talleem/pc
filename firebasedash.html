@@ -24,7 +24,7 @@
             const baseUrl = `https://monitoring.googleapis.com/v3/projects/${projectId}/timeSeries`;
 
             const queryParams = new URLSearchParams({
-                filter: 'metric.type="storage.googleapis.com/total_bytes"',  // Only querying Cloud Storage bucket metrics
+                filter: 'metric.type="storage.googleapis.com/storage/total_bytes"', // Only querying Cloud Storage bucket metrics
                 interval: 'startTime="2024-01-01",endTime="2024-12-30"'  // Adjust for your desired time window
             });
 
