@@ -25,7 +25,7 @@
 
             const queryParams = new URLSearchParams({
                 filter: 'metric.type="storage.googleapis.com/total_bytes"',  // Only querying Cloud Storage bucket metrics
-                interval: 'startTime="2024-01-01T00:00:00Z",endTime="2024-01-31T23:59:59Z"'  // Adjust for your desired time window
+                interval: 'startTime="2024-01-01T00:00:00Z",endTime="2024-12-30T23:59:59Z"'  // Adjust for your desired time window
             });
 
             const url = `${baseUrl}?${queryParams.toString()}`;
