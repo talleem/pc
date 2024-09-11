@@ -10,7 +10,12 @@
 </head>
 <body>
     <h1 style="background-color: #90e0ef;">Cloud Firebase Storage Usage</h1>
-    <div id="metricsOutput"></div>
+
+
+    <div class="container">
+        <!-- First column -->
+        <div class="column">
+    
     <br>
     <br>
     <br>
@@ -307,7 +312,43 @@ function FirebaseActiveUserAnalytics() {
     );
 }
 </script>
+        </div>
 
+        <div class="column">
+            <button id="CloudMonitorBucketDetails" onclick="openCloudMonitorBucketDetails()" style="background-color: #bdff9c;"><b>Open Cloud Monitor Bucket Details</b></button>
+             <script>
+    // Apply styles for hover and active states
+    const button8 = document.getElementById('CloudMonitorBucketDetails');
+    // Hover effect
+    button8.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button8.onmouseout = function() {
+        this.style.backgroundColor = '#bdff9c';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button8.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button8.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function openCloudMonitorBucketDetails() {
+    window.open(
+        'https://console.cloud.google.com/monitoring/dashboards/resourceDetail/gcs_bucket,project_id:engineerr1983meet,location:us,bucket_name:engineerr1983meet.appspot.com,storage_class:STANDARD;duration=PT1H?authuser=0&project=engineerr1983meet', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script>
+        </div>
+    </div>
     
 </body>
 </html>
