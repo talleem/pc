@@ -122,6 +122,43 @@ function openFireStoreDB() {
     );
 }
 </script>
+
+    <br>
+    <br>
+
+     <button id="firestoreAllDB" onclick="openFireStoreAllDB()" style="height: 45px; width: 150px; background-color: #92e8f1;"><b></M>Open FireStore DB</b></button>
+    
+     <script>
+    // Apply styles for hover and active states
+    const button3 = document.getElementById('firestoreAllDB');
+    // Hover effect
+    button3.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button3.onmouseout = function() {
+        this.style.backgroundColor = '#92e8f1';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button3.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button3.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function openFireStoreAllDB() {
+    window.open(
+        'https://console.cloud.google.com/firestore/databases?authuser=0&hl=en&project=engineerr1983meet', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script>
     
 </body>
 </html>
