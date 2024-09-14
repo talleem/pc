@@ -375,6 +375,41 @@ function CloudMonitorAllBuckets() {
     );
 }
 </script>
+
+            
+            <br>
+ <button id="CloudMonitorResponseSizeLatency" onclick="CloudMonitorResponseSizeLatency()" style="height: 45px; width: 150px; background-color: #ffdf78;"><b>Open Cloud Monitor Response Request Stats</b></button>
+             <script>
+    // Apply styles for hover and active states
+    const button10 = document.getElementById('CloudMonitorResponseSizeLatency');
+    // Hover effect
+    button10.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button10.onmouseout = function() {
+        this.style.backgroundColor = '#ffdf78';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button10.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button10.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function CloudMonitorResponseSizeLatency() {
+    window.open(
+        'https://console.cloud.google.com/monitoring/metrics-explorer;duration=PT1H?pageState=%7B%22domainObjectDeprecationId%22:%22BC944948-F894-4436-A1D3-EFE75F8CD855%22,%22title%22:%22Consumed%20API%20-%20Request%20count%20%5BMEAN%5D,%20...%22,%22xyChart%22:%7B%22constantLines%22:%5B%5D,%22dataSets%22:%5B%7B%22plotType%22:%22LINE%22,%22targetAxis%22:%22Y1%22,%22timeSeriesFilter%22:%7B%22aggregations%22:%5B%7B%22crossSeriesReducer%22:%22REDUCE_MEAN%22,%22groupByFields%22:%5B%5D,%22perSeriesAligner%22:%22ALIGN_RATE%22%7D%5D,%22apiSource%22:%22DEFAULT_CLOUD%22,%22crossSeriesReducer%22:%22REDUCE_MEAN%22,%22filter%22:%22metric.type%3D%5C%22serviceruntime.googleapis.com%2Fapi%2Frequest_count%5C%22%20resource.type%3D%5C%22consumed_api%5C%22%22,%22groupByFields%22:%5B%5D,%22minAlignmentPeriod%22:%2260s%22,%22perSeriesAligner%22:%22ALIGN_RATE%22%7D%7D,%7B%22plotType%22:%22LINE%22,%22targetAxis%22:%22Y2%22,%22timeSeriesFilter%22:%7B%22aggregations%22:%5B%7B%22crossSeriesReducer%22:%22REDUCE_PERCENTILE_50%22,%22groupByFields%22:%5B%5D,%22perSeriesAligner%22:%22ALIGN_DELTA%22%7D%5D,%22apiSource%22:%22DEFAULT_CLOUD%22,%22crossSeriesReducer%22:%22REDUCE_PERCENTILE_50%22,%22filter%22:%22metric.type%3D%5C%22serviceruntime.googleapis.com%2Fapi%2Frequest_latencies%5C%22%20resource.type%3D%5C%22consumed_api%5C%22%22,%22groupByFields%22:%5B%5D,%22minAlignmentPeriod%22:%2260s%22,%22perSeriesAligner%22:%22ALIGN_DELTA%22%7D%7D,%7B%22plotType%22:%22LINE%22,%22targetAxis%22:%22Y1%22,%22timeSeriesFilter%22:%7B%22aggregations%22:%5B%7B%22crossSeriesReducer%22:%22REDUCE_PERCENTILE_50%22,%22groupByFields%22:%5B%5D,%22perSeriesAligner%22:%22ALIGN_DELTA%22%7D%5D,%22apiSource%22:%22DEFAULT_CLOUD%22,%22crossSeriesReducer%22:%22REDUCE_PERCENTILE_50%22,%22filter%22:%22metric.type%3D%5C%22serviceruntime.googleapis.com%2Fapi%2Frequest_sizes%5C%22%20resource.type%3D%5C%22consumed_api%5C%22%22,%22groupByFields%22:%5B%5D,%22minAlignmentPeriod%22:%2260s%22,%22perSeriesAligner%22:%22ALIGN_DELTA%22%7D%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22y1Axis%22:%7B%22label%22:%22%22,%22scale%22:%22LINEAR%22%7D,%22y2Axis%22:%7B%22label%22:%22%22,%22scale%22:%22LINEAR%22%7D%7D%7D&project=engineerr1983meet', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script>
             
         </div>
     </div>
