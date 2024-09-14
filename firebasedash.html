@@ -621,6 +621,39 @@ function GitHubOperationsPulse() {
     );
 }
 </script> 
+            <br>
+ <button id="GitHubContributions" onclick="GitHubContributions()" style="height: 45px; width: 150px; background-color: #ff7f7f;"><b>GitHub Contributions</b></button>
+             <script>
+    // Apply styles for hover and active states
+    const button17 = document.getElementById('GitHubContributions');
+    // Hover effect
+    button17.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button17.onmouseout = function() {
+        this.style.backgroundColor = '#ff7f7f';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button17.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button17.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function GitHubContributions() {
+    window.open(
+        'https://github.com/engineerr1983/hello-world-page/graphs/contributors', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script> 
         </div>
     </div>
     
