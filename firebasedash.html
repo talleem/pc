@@ -341,6 +341,40 @@ function openCloudMonitorBucketDetails() {
     );
 }
 </script>
+
+ <button id="CloudMonitorAllBuckets" onclick="CloudMonitorAllBuckets()" style="height: 45px; width: 150px; background-color: #ccff99;"><b>Open Cloud Monitor All Buckets</b></button>
+             <script>
+    // Apply styles for hover and active states
+    const button9 = document.getElementById('CloudMonitorAllBuckets');
+    // Hover effect
+    button9.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button9.onmouseout = function() {
+        this.style.backgroundColor = '#ccff99';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button9.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button9.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function CloudMonitorAllBuckets() {
+    window.open(
+        'https://console.firebase.google.com/project/engineerr1983meet/storage/usage/current-billing/total_bytes', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script>
+            
         </div>
     </div>
     
