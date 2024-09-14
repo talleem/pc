@@ -479,6 +479,40 @@ function CloudMonitorFirestoreClientsDocs() {
     );
 }
 </script>  
+
+                                 <br>
+ <button id="CloudMonitorProjectPermissions" onclick="CloudMonitorProjectPermissions()" style="height: 45px; width: 150px; background-color: #ae90ff;"><b>Open Cloud Project Permissions</b></button>
+             <script>
+    // Apply styles for hover and active states
+    const button12 = document.getElementById('CloudMonitorProjectPermissions');
+    // Hover effect
+    button12.onmouseover = function() {
+        this.style.backgroundColor = '#77dd77';  // Change color on hover
+    };
+    button12.onmouseout = function() {
+        this.style.backgroundColor = '#ae90ff';  // Revert to original color
+    };
+    // Button press effect (push down)
+    button12.onmousedown = function() {
+        this.style.boxShadow = '0 2px #666';  // Reduce shadow to make it look pressed
+        this.style.transform = 'translateY(2px)';  // Push down effect
+    };
+    // Button release effect (reset position)
+    button12.onmouseup = function() {
+        this.style.boxShadow = '0 4px #999';  // Restore shadow
+        this.style.transform = 'translateY(0)';  // Reset position
+    };
+</script>
+
+<script>
+function CloudMonitorProjectPermissions() {
+    window.open(
+        'https://console.cloud.google.com/monitoring/permissions?authuser=0&project=engineerr1983meet', 
+        '_blank', 
+        'width=800,height=600,toolbar=no,menubar=no,scrollbars=no,status=no,location=no,directories=no,resizable=yes'
+    );
+}
+</script> 
             
         </div>
     </div>
