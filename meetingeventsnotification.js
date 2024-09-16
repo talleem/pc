@@ -120,3 +120,4 @@ function repositionNotifications() {
 document.addEventListener('DOMContentLoaded', function () {
     meetingeventnotification();
 });
+console.log("success");
