@@ -1,58 +1,58 @@
-function meetingeventnotification() {
-    const loadInvitButton = document.getElementById('loadinvit');
-    
-    loadInvitButton.addEventListener('click', function () {
-        const accessToken = localStorage.getItem('accessToken');
-        const loggedInEmail = localStorage.getItem('loggedInEmail');
+document.addEventListener('DOMContentLoaded', function () {
+    meetingeventnotification();
+});
 
-        if (accessToken && loggedInEmail) {
-            // Function to fetch and filter meetings
-            function loadMeetings() {
-                fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        const filteredEvents = data.items.filter(event =>
-                            event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
-                        );
-                        
-                        // Trigger notifications for filtered events
-                        filteredEvents.forEach(event => {
-                            scheduleNotification(event);
-                        });
-                    })
-                    .catch(error => console.error("Error loading meetings:", error));
-            }
-            
-            loadMeetings();
-        } else {
-            alert('Please log in to load invitations.');
-        }
-    });
+function meetingeventnotification() {
+    const accessToken = localStorage.getItem('accessToken');
+    const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+    if (accessToken && loggedInEmail) {
+        loadMeetings();
+    } else {
+        alert('Please log in to load invitations.');
+    }
 }
 
-function scheduleNotification(event) {
-    const now = new Date();
-    const eventStart = new Date(event.start.dateTime);
-    const eventEnd = new Date(event.end.dateTime);
+function loadMeetings() {
+    const accessToken = localStorage.getItem('accessToken');
 
-    const timeBeforeStart = eventStart - now;
-    const timeAfterStart = eventEnd - now;
-
-    if (timeBeforeStart > 0 && timeBeforeStart <= (15 * 60 * 1000)) {
-        // Meeting is within 15 minutes, schedule 3 times before start, 2 after
-        for (let i = 0; i < 3; i++) {
-            setTimeout(() => showNotification(event), (i * 4 * 60 * 1000));  // Before meeting
+    fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
         }
+    })
+        .then(response => response.json())
+        .then(data => {
+            const loggedInEmail = localStorage.getItem('loggedInEmail');
+            const filteredEvents = data.items.filter(event =>
+                event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
+            );
 
-        for (let i = 1; i <= 2; i++) {
-            setTimeout(() => showNotification(event), (15 * 60 * 1000) + (i * 4 * 60 * 1000));  // After meeting started
-        }
-    }
+            const now = new Date();
+
+            // Check each event and schedule notifications
+            filteredEvents.forEach(event => {
+                const eventStart = new Date(event.start.dateTime);
+                const timeBeforeStart = eventStart - now;
+
+                // Only trigger notifications if the event hasn't started yet
+                if (timeBeforeStart > 0 && timeBeforeStart <= (15 * 60 * 1000)) {
+                    // If less than 15 minutes before the event start, notify immediately
+                    let delay = timeBeforeStart > 0 ? timeBeforeStart : 0;
+
+                    // Schedule notifications 3 times before start
+                    for (let i = 0; i < 3; i++) {
+                        setTimeout(() => showNotification(event), delay + (i * 4 * 60 * 1000));
+                    }
+                    // Schedule notifications 2 times after start
+                    for (let i = 1; i <= 2; i++) {
+                        setTimeout(() => showNotification(event), delay + (15 * 60 * 1000) + (i * 4 * 60 * 1000));
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error loading meetings:", error));
 }
 
 function showNotification(event) {
@@ -120,3 +120,4 @@ function repositionNotifications() {
         n.style.bottom = `${i * 110}px`;  // Recalculate stacking position
     });
 }
+
