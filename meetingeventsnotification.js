@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function () {
+    meetingeventnotification();
+});
+
 function meetingeventnotification() {
     const accessToken = localStorage.getItem('accessToken');
     const loggedInEmail = localStorage.getItem('loggedInEmail');
