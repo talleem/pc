@@ -18,39 +18,49 @@ function loadMeetings() {
             'Authorization': `Bearer ${accessToken}`,
         }
     })
-        .then(response => response.json())
-        .then(data => {
-            const loggedInEmail = localStorage.getItem('loggedInEmail');
-            const filteredEvents = data.items.filter(event =>
-                event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
-            );
+    .then(response => response.json())
+    .then(data => {
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
+        const filteredEvents = data.items.filter(event =>
+            event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
+        );
 
-            const now = new Date();
+        const now = new Date();
 
-            // Check each event and schedule notifications
-            filteredEvents.forEach(event => {
-                const eventStart = new Date(event.start.dateTime);
-                const timeBeforeStart = eventStart - now;
+        // Check each event and schedule notifications
+        filteredEvents.forEach(event => {
+            const eventStart = new Date(event.start.dateTime);
+            const timeBeforeStart = eventStart - now;
 
-                // Only trigger notifications if the event hasn't started yet
-                console.log(timeBeforeStart);
-                if (timeBeforeStart > 0 && timeBeforeStart <= (15 * 60 * 1000)) {
-                    console.log("Met",timeBeforeStart);
-                    // If less than 15 minutes before the event start, notify immediately
-                    let delay = timeBeforeStart > 0 ? timeBeforeStart : 0;
+            // Only trigger notifications if the event hasn't started yet
+            if (timeBeforeStart > 0) {
+                console.log("timeBeforeStart:", timeBeforeStart);
 
-                    // Schedule notifications 3 times before start
-                    for (let i = 0; i < 3; i++) {
-                        setTimeout(() => showNotification(event), delay + (i * 4 * 60 * 1000));
+                // Notification times: 3 times before start, 2 times after start
+                const notificationTimes = [
+                    eventStart - 15 * 60 * 1000, // 15 minutes before
+                    eventStart - 11 * 60 * 1000, // 11 minutes before
+                    eventStart - 7 * 60 * 1000, // 7 minutes before
+                    eventStart + 1 * 60 * 1000, // 1 minute after
+                    eventStart + 5 * 60 * 1000 // 5 minutes after
+                ];
+
+                notificationTimes.forEach(notificationTime => {
+                    if (now <= notificationTime && now > (notificationTime - 1 * 60 * 1000)) {
+                        // Check if this notification time has already been shown
+                        if (!localStorage.getItem(`notification_shown_${notificationTime}`)) {
+                            const delay = notificationTime - now;
+                            setTimeout(() => {
+                                showNotification(event);
+                                localStorage.setItem(`notification_shown_${notificationTime}`, 'true');
+                            }, delay);
+                        }
                     }
-                    // Schedule notifications 2 times after start
-                    for (let i = 1; i <= 2; i++) {
-                        setTimeout(() => showNotification(event), delay + (15 * 60 * 1000) + (i * 4 * 60 * 1000));
-                    }
-                }
-            });
-        })
-        .catch(error => console.error("Error loading meetings:", error));
+                });
+            }
+        });
+    })
+    .catch(error => console.error("Error loading meetings:", error));
 }
 
 function showNotification(event) {
