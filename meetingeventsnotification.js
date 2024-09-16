@@ -34,6 +34,7 @@ function loadMeetings() {
 
                 // Only trigger notifications if the event hasn't started yet
                 if (timeBeforeStart > 0 && timeBeforeStart <= (15 * 60 * 1000)) {
+                    console.log(timeBeforeStart);
                     // If less than 15 minutes before the event start, notify immediately
                     let delay = timeBeforeStart > 0 ? timeBeforeStart : 0;
 
