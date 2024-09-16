@@ -1,7 +1,3 @@
-document.addEventListener('DOMContentLoaded', function () {
-    meetingeventnotification();
-});
-
 function meetingeventnotification() {
     const loadInvitButton = document.getElementById('loadinvit');
     
@@ -115,11 +111,7 @@ function showNotification(event) {
         repositionNotifications();
     });
 
-    // Auto remove notification after 5 seconds
-    setTimeout(() => {
-        notificationContainer.remove();
-        repositionNotifications();
-    }, 5000);
+    // Remove automatic disappearance logic (setTimeout removed)
 }
 
 function repositionNotifications() {
@@ -128,4 +120,3 @@ function repositionNotifications() {
         n.style.bottom = `${i * 110}px`;  // Recalculate stacking position
     });
 }
-
