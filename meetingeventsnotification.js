@@ -104,6 +104,7 @@ function showNotification(event) {
 
     // Append notification to the body
     document.body.appendChild(notificationContainer);
+    console.log('Notification added to the DOM');
 
     // Log for debugging
     console.log('Notification added:', notificationContainer);
