@@ -25,47 +25,37 @@ function loadMeetings() {
             event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
         );
 
-        const now = new Date();
-
         // Check each event and schedule notifications
         filteredEvents.forEach(event => {
             const eventStart = new Date(event.start.dateTime);
-            const timeBeforeStart = eventStart - now;
 
-            // Only trigger notifications if the event hasn't started yet
-            if (timeBeforeStart > 0) {
-                console.log("timeBeforeStart:", timeBeforeStart);
+            const checkNotificationTiming = setInterval(() => {
+                const now = new Date();
+                const timeBeforeStart = (eventStart - now) / 1000 / 60; // Convert to minutes
 
-                // Notification times: 3 times before start, 2 times after start
-                const notificationTimes = [
-                    eventStart - 15 * 60 * 1000, // 15 minutes before
-                    eventStart - 11 * 60 * 1000, // 11 minutes before
-                    eventStart - 7 * 60 * 1000, // 7 minutes before
-                    eventStart + 1 * 60 * 1000, // 1 minute after
-                    eventStart + 5 * 60 * 1000 // 5 minutes after
-                ];
-
-                notificationTimes.forEach(notificationTime => {
-                    if (now <= notificationTime && now > (notificationTime - 1 * 60 * 1000)) {
-                        // Check if this notification time has already been shown
-                        if (!localStorage.getItem(`notification_shown_${notificationTime}`)) {
-                            const delay = notificationTime - now;
-                            setTimeout(() => {
-                                showNotification(event);
-                                localStorage.setItem(`notification_shown_${notificationTime}`, 'true');
-                            }, delay);
-                        }
-                    }
-                });
-            }
+                // Check various conditions for notification timing
+                if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
+                    showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 11) {
+                    showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 7) {
+                    showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 3) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
+                    showNotification(event);
+                    clearInterval(checkNotificationTiming); // Stop the loop after the last notification
+                }
+            }, 60000); // Check every minute
         });
     })
     .catch(error => console.error("Error loading meetings:", error));
 }
 
 function showNotification(event) {
-    console.log('showNotification called');  // Check if function is called
-    // Create notification container
+    console.log('showNotification called');
     const notificationContainer = document.createElement('div');
     notificationContainer.classList.add('notification');
     notificationContainer.style.cssText = `
@@ -79,16 +69,14 @@ function showNotification(event) {
         border: 1px solid #ccc;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 9999;
-        color: black;  /* Ensure text color is visible */
-        display: block; /* Ensure it's visible */
+        color: black;
+        display: block;
     `;
 
-    // Position notifications one above the other
     document.querySelectorAll('.notification').forEach((n, i) => {
-        n.style.bottom = `${(i + 1) * 110}px`;  // Stack by 110px
+        n.style.bottom = `${(i + 1) * 110}px`;
     });
 
-    // Notification content
     const startTime = new Date(event.start.dateTime).toLocaleString();
     const endTime = new Date(event.end.dateTime).toLocaleString();
     const creatorEmail = event.creator.email;
@@ -103,24 +91,12 @@ function showNotification(event) {
             <strong>Description:</strong> ${description}<br>
             <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
         </div>
-        <button style="
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-        ">&times;</button>
+        <button style="position: absolute; top: 5px; right: 5px; border: none; background: transparent; cursor: pointer;">&times;</button>
     `;
 
-    // Append notification to the body
     document.body.appendChild(notificationContainer);
     console.log('Notification added to the DOM');
 
-    // Log for debugging
-    console.log('Notification added:', notificationContainer);
-
-    // Close button functionality
     const closeButton = notificationContainer.querySelector('button');
     closeButton.addEventListener('click', () => {
         notificationContainer.remove();
@@ -131,11 +107,10 @@ function showNotification(event) {
 function repositionNotifications() {
     const notifications = document.querySelectorAll('.notification');
     notifications.forEach((n, i) => {
-        n.style.bottom = `${i * 110}px`;  // Recalculate stacking position
+        n.style.bottom = `${i * 110}px`;
     });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     meetingeventnotification();
 });
-console.log("success");
