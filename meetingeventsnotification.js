@@ -54,6 +54,7 @@ function loadMeetings() {
 }
 
 function showNotification(event) {
+    console.log('showNotification called');  // Check if function is called
     // Create notification container
     const notificationContainer = document.createElement('div');
     notificationContainer.classList.add('notification');
