@@ -58,14 +58,17 @@ function showNotification(event) {
     notificationContainer.classList.add('notification');
     notificationContainer.style.cssText = `
         position: fixed;
-        bottom: 0;
-        right: 0;
+        bottom: 10px;
+        right: 10px;
         margin-bottom: 10px;
         padding: 10px;
         width: 300px;
         background-color: #f0f0f0;
+        border: 1px solid #ccc;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         z-index: 9999;
+        color: black;  /* Ensure text color is visible */
+        display: block; /* Ensure it's visible */
     `;
 
     // Position notifications one above the other
@@ -101,14 +104,15 @@ function showNotification(event) {
     // Append notification to the body
     document.body.appendChild(notificationContainer);
 
+    // Log for debugging
+    console.log('Notification added:', notificationContainer);
+
     // Close button functionality
     const closeButton = notificationContainer.querySelector('button');
     closeButton.addEventListener('click', () => {
         notificationContainer.remove();
         repositionNotifications();
     });
-
-    // Remove automatic disappearance logic (setTimeout removed)
 }
 
 function repositionNotifications() {
