@@ -5,7 +5,7 @@ function meetingeventnotification() {
     if (accessToken && loggedInEmail) {
         loadMeetings();
     } else {
-        alert('Please log in to load invitations.');
+        alert('Please log in to load invitations..');
     }
 }
 
