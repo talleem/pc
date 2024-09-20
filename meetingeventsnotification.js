@@ -107,12 +107,9 @@ function showNotification(event) {
     const meetingLink = notificationContainer.querySelector('.meeting-link');
     meetingLink.addEventListener('click', function (e) {
         e.preventDefault();
-        const clickedCreatorEmail = this.getAttribute('data-creator-email');
         const hangoutLink = this.getAttribute('data-hangout-link');
-        localStorage.setItem('creatorEmail', clickedCreatorEmail);
-
-        // Open the small window with the start/stop recording buttons
-        openRecordingWindow(hangoutLink);
+        openRecordingWindow(hangoutLink); // Open the recording controls window
+        window.open(hangoutLink, '_blank'); // Open the meeting link in a new tab
     });
 }
 
@@ -144,13 +141,12 @@ function openRecordingWindow(hangoutLink) {
         alwaysRaised=yes
     `);
 
-    // Write the content of the new window
+    // Write the content of the new window (only start and stop recording buttons)
     newWindow.document.write(`
         <html>
         <head><title>Recording Controls</title></head>
         <body>
             <h2>Recording Controls</h2>
-            <a href="${hangoutLink}" target="_blank">Join Meeting</a><br>
             <button id="startRecording">Start Recording</button>
             <button id="stopRecording" disabled>Stop Recording</button>
         </body>
