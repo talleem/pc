@@ -122,7 +122,7 @@ function repositionNotifications() {
 
 function openRecordingWindow(hangoutLink) {
     // Calculate window position (center of the screen)
-    const width = 400;
+    const width = 420;
     const height = 140;
     const left = (screen.width / 2) - (width / 2);
     const top = (screen.height / 2) - (height / 2);
@@ -192,7 +192,7 @@ function openRecordingWindow(hangoutLink) {
                                 Notes: null
                             });
 
-                            newWindow.alert("Recording saved with URL: " + downloadURL);
+                            newWindow.alert("Recording saved in Firestroe DB ");
                         } catch (error) {
                             console.error("Error saving recording: ", error);
                         }
