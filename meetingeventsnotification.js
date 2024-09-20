@@ -5,7 +5,7 @@ function meetingeventnotification() {
     if (accessToken && loggedInEmail) {
         loadMeetings();
     } else {
-        alert('Please log in to load invitations..');
+        alert('Please log in to load invitations.');
     }
 }
 
@@ -89,7 +89,7 @@ function showNotification(event) {
             <strong>End Time:</strong> ${endTime}<br>
             <strong>Creator's Email:</strong> ${creatorEmail}<br>
             <strong>Description:</strong> ${description}<br>
-            <strong>Meeting Link:</strong> <a href="${hangoutLink}" target="_blank">${hangoutLink}</a><br>
+            <strong>Meeting Link:</strong> <a href="#" class="meeting-link" data-hangout-link="${hangoutLink}" data-creator-email="${creatorEmail}">${hangoutLink}</a><br>
         </div>
         <button style="position: absolute; top: 5px; right: 5px; border: none; background: transparent; cursor: pointer;">&times;</button>
     `;
@@ -102,12 +102,105 @@ function showNotification(event) {
         notificationContainer.remove();
         repositionNotifications();
     });
+
+    // Add click event to meeting link
+    const meetingLink = notificationContainer.querySelector('.meeting-link');
+    meetingLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        const clickedCreatorEmail = this.getAttribute('data-creator-email');
+        const hangoutLink = this.getAttribute('data-hangout-link');
+        localStorage.setItem('creatorEmail', clickedCreatorEmail);
+
+        // Open the small window with the start/stop recording buttons
+        openRecordingWindow(hangoutLink);
+    });
 }
 
 function repositionNotifications() {
     const notifications = document.querySelectorAll('.notification');
     notifications.forEach((n, i) => {
         n.style.bottom = `${i * 110}px`;
+    });
+}
+
+function openRecordingWindow(hangoutLink) {
+    const newWindow = window.open('', '_blank', 'width=400,height=300,toolbar=no,location=no,status=no,menubar=no,resizable=yes');
+
+    newWindow.document.write(`
+        <html>
+        <head><title>Recording Controls</title></head>
+        <body>
+            <h2>Recording Controls</h2>
+            <a href="${hangoutLink}" target="_blank">Join Meeting</a><br>
+            <button id="startRecording">Start Recording</button>
+            <button id="stopRecording" disabled>Stop Recording</button>
+        </body>
+        </html>
+    `);
+
+    const startButton = newWindow.document.getElementById('startRecording');
+    const stopButton = newWindow.document.getElementById('stopRecording');
+    let mediaRecorder;
+    let stream;
+
+    startButton.addEventListener('click', () => {
+        const creatorEmail = localStorage.getItem('creatorEmail');
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+        if (creatorEmail === loggedInEmail) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then((mediaStream) => {
+                    stream = mediaStream;
+                    mediaRecorder = new MediaRecorder(stream);
+                    const chunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const storageRef = firebase.storage().ref();
+                        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+
+                        try {
+                            const snapshot = await videoRef.put(blob);
+                            const downloadURL = await snapshot.ref.getDownloadURL();
+
+                            await db.collection('meetings_his_tbl').add({
+                                creatorEmail: loggedInEmail,
+                                stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                videoURL: downloadURL,
+                                Notes: null
+                            });
+
+                            newWindow.alert("Recording saved with URL: " + downloadURL);
+                        } catch (error) {
+                            console.error("Error saving recording: ", error);
+                        }
+                    };
+
+                    mediaRecorder.start();
+                    stopButton.disabled = false;
+                    startButton.disabled = true;
+                    newWindow.alert("Recording started");
+                })
+                .catch(error => console.error("Error accessing camera: ", error));
+        } else {
+            newWindow.alert("You are not authorized to start the recording.");
+        }
+    });
+
+    stopButton.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+            stream.getTracks().forEach(track => track.stop());
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            newWindow.alert("Recording stopped");
+        }
     });
 }
 
