@@ -31,7 +31,7 @@ function loadMeetings() {
 
             const checkNotificationTiming = setInterval(() => {
                 const now = new Date();
-                const timeBeforeStart = (eventStart - now) / 1000 / 60; // Convert to minutess
+                const timeBeforeStart = (eventStart - now) / 1000 / 60; // Convert to minutes
 
                 // Check various conditions for notification timing
                 if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
@@ -124,8 +124,27 @@ function repositionNotifications() {
 }
 
 function openRecordingWindow(hangoutLink) {
-    const newWindow = window.open('', '_blank', 'width=400,height=300,toolbar=no,location=no,status=no,menubar=no,resizable=yes');
+    // Calculate window position (center of the screen)
+    const width = 200;
+    const height = 150;
+    const left = (screen.width / 2) - (width / 2);
+    const top = (screen.height / 2) - (height / 2);
 
+    // Open a new popup window in the center with custom properties
+    const newWindow = window.open('', '_blank', `
+        width=${width},
+        height=${height},
+        top=${top},
+        left=${left},
+        resizable=no,
+        scrollbars=no,
+        toolbar=no,
+        menubar=no,
+        status=no,
+        alwaysRaised=yes
+    `);
+
+    // Write the content of the new window
     newWindow.document.write(`
         <html>
         <head><title>Recording Controls</title></head>
@@ -202,6 +221,22 @@ function openRecordingWindow(hangoutLink) {
             stopButton.disabled = true;
             newWindow.alert("Recording stopped");
         }
+    });
+
+    // Disable close button and minimize/maximize ability
+    newWindow.onbeforeunload = function () {
+        return "This window cannot be closed.";
+    };
+
+    // Focus and make sure the window stays on top
+    newWindow.focus();
+    const intervalId = setInterval(() => {
+        newWindow.focus();
+    }, 1000);
+
+    // Clear the interval when the window is closed
+    newWindow.addEventListener('beforeunload', () => {
+        clearInterval(intervalId);
     });
 }
 
