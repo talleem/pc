@@ -122,8 +122,8 @@ function repositionNotifications() {
 
 function openRecordingWindow(hangoutLink) {
     // Calculate window position (center of the screen)
-    const width = 200;
-    const height = 150;
+    const width = 400;
+    const height = 140;
     const left = (screen.width / 2) - (width / 2);
     const top = (screen.height / 2) - (height / 2);
 
