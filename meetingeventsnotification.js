@@ -164,6 +164,7 @@ function openRecordingWindow(hangoutLink) {
                         const blob = new Blob(chunks, { type: 'video/webm' });
                         const storageRef = firebase.storage().ref();
                         const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+                        const db = firebase.firestore();
 
                         try {
                             const snapshot = await videoRef.put(blob);
