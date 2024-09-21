@@ -1,8 +1,6 @@
-// instavideo.js
-
-// Function to handle double-click event
+// Function to handle mouse enter event
 function openInstaVideoInNewWindow(event) {
-    // Get the link of the Instagram video from the clicked container
+    // Get the link of the Instagram video from the hovered container
     const linkElement = event.currentTarget.querySelector('a');
     const videoUrl = linkElement ? linkElement.href : null;
 
@@ -18,5 +16,5 @@ function openInstaVideoInNewWindow(event) {
 
 // Attach the event listener to all Instagram containers
 document.querySelectorAll('.instagram-container').forEach(container => {
-    container.addEventListener('dblclick', openInstaVideoInNewWindow);
+    container.addEventListener('mouseenter', openInstaVideoInNewWindow);
 });
