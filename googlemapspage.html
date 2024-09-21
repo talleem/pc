@@ -12,17 +12,22 @@
             gap: 0.1px; /* Small gap between reels */
             margin: 0; /* Remove margin for the row */
         }
-        /* Custom styling to reduce size to half */
-        .instagram-container {
-            transform: scale(0.45); /* Reduces size to 50% */
-            transform-origin: top left; /* Keeps the top left corner as the anchor point */
-            margin: 0; /* Removes extra margins */
-           padding: 0; /* Remove padding */
-        }
-         /* Remove default blockquote margins */
+       .instagram-container {
+    transform: scale(0.45); /* Reduces size */
+    transform-origin: top left;
+    max-width: 50%; /* Constrain max width */
+    height: auto; /* Adjust height automatically */
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Hide any overflow from the original size */
+}
+
 .instagram-media {
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
+    margin: 0;
+    padding: 0;
+    max-width: 100%; /* Make sure it fits within the reduced container */
+    height: auto; /* Allow it to resize accordingly */
+    box-shadow: none;
 }
     </style>
 </head>
