@@ -28,22 +28,32 @@
     overflow: hidden; /* Hide anything that exceeds this height */
           margin: 0;
           padding: 0;
-}
-         
-          body {
+}        
+           body {
             margin: 0;
             padding: 0;
             height: 100vh;
+            position: relative;
+        }
+        /* Apply the background image using a pseudo-element */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: url('your-image.png') no-repeat center center fixed;
             background-size: cover;
-            filter: blur(5px); /* Apply blur directly to the background */
+            opacity: 0.5; /* Adjust the opacity here */
+            z-index: -1; /* Place behind the body content */
         }
 
-        /* Ensure your content is not blurred */
+        /* Your actual content stays above the background */
         h1 {
             position: relative;
-            z-index: 1;
-            color: black; /* Change text color for readability */
+            z-index: 1; /* Keep content above background */
+            color: black;
         }
     </style>
 </head>
