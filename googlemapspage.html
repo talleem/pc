@@ -29,25 +29,21 @@
           margin: 0;
           padding: 0;
 }
+         
           body {
-            background-image: url('bg.png'); /* Path to your PNG file */
-            background-size: cover; /* Scales the image to cover the entire background */
-            background-repeat: no-repeat; /* Prevents the image from repeating */
-            background-position: center; /* Center the background image */
             margin: 0;
             padding: 0;
+            height: 100vh;
+            background: url('your-image.png') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(5px); /* Apply blur directly to the background */
         }
-          /* Create a foggy effect using a pseudo-element */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: inherit; /* Use the same background image */
-            filter: opacity(0.7); /* Adjust blur (fog effect) and opacity */
-            z-index: -1; /* Send the pseudo-element behind the content */
+
+        /* Ensure your content is not blurred */
+        h1 {
+            position: relative;
+            z-index: 1;
+            color: black; /* Change text color for readability */
         }
     </style>
 </head>
