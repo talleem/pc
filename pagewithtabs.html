@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,6 +28,12 @@
         .tablink:active {
             transform: translateY(2px); /* Simulate a button press */
         }
+        .tablink.green {
+            background-color: #70ff70; /* Green background for specific button */
+        }
+        .tablink.green:hover {
+            background-color: #5bff5b; /* Lighter green on hover */
+        }
         .tabcontent {
             display: none; /* Initially hide all tab content */
         }
@@ -40,7 +46,7 @@
     <button class="tablink" onclick="openTab(event, 'tab2')">Reels</button>
     <button class="tablink" onclick="openTab(event, 'tab3')">Tab 3</button>
     <button class="tablink" onclick="openTab(event, 'tab4')">Tab 4</button>
-    <button class="tablink" onclick="openTab(event, 'tab5')" style="background-color: #70ff70;">Lectures archive</button>
+    <button class="tablink green" onclick="openTab(event, 'tab5')">Lectures archive</button>
     <br>
 
     <div id="tab1" class="tabcontent">
