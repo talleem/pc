@@ -38,8 +38,12 @@
         /* Animation styles */
         .logo {
             display: none;
-            width: 200px; /* Adjust size as needed */
+            width: 400px; /* Resize to 4 times its original size */
             animation: slideIn 2s forwards; /* Animation for image */
+            position: absolute; /* Allow centering */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the image */
         }
 
         @keyframes slideIn {
@@ -47,7 +51,7 @@
                 width: 0; /* Start from 0 width */
             }
             to {
-                width: 200px; /* End with full size */
+                width: 400px; /* End with full size */
             }
         }
 
@@ -55,17 +59,20 @@
             display: none;
             border: 5px solid black; /* Border style */
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the borders */
         }
 
         .border1 {
-            width: 220px; /* Slightly larger than the logo */
-            height: 220px;
+            width: 420px; /* Slightly larger than the logo */
+            height: 420px;
             animation: showBorder 1s forwards;
         }
 
         .border2 {
-            width: 220px; /* Same as border1 */
-            height: 220px;
+            width: 420px; /* Same as border1 */
+            height: 420px;
             animation: showBorder 1s forwards;
             animation-delay: 1s; /* Delay for the second border */
         }
@@ -109,8 +116,8 @@
 
 <!-- Image and borders -->
 <img src="logo.png" class="logo" id="logo" alt="Logo">
-<div class="border border1" style="top: calc(50% - 110px); left: calc(50% - 110px);"></div>
-<div class="border border2" style="top: calc(50% - 110px); left: calc(50% - 110px);"></div>
+<div class="border border1"></div>
+<div class="border border2"></div>
 
 <script src="scripts.js"></script>
 <script>
@@ -137,7 +144,6 @@ window.onload = function() {
     const logo = document.getElementById('logo');
     logo.style.display = 'block';
     setTimeout(() => {
-        logo.style.display = 'block';
         document.querySelector('.border1').style.display = 'block';
         document.querySelector('.border2').style.display = 'block';
     }, 2000); // Show borders after 2 seconds
