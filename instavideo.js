@@ -1,28 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-    console.log(document.querySelectorAll('.instagram-container')); // Log to check
-    // Function to handle mouse enter event
-    function openInstaVideoInNewWindow(event) {
-         console.log("Mouse entered!"); // Check if this message logs
-        // Get the link of the Instagram video from the hovered container
-        const linkElement = event.currentTarget.querySelector('a');
-        const videoUrl = linkElement ? linkElement.href : null;
+// Function to handle mouse enter event
+function openInstaVideoInNewWindow(event) {
+    console.log("Mouse entered!");
 
-        if (videoUrl) {
-            // Open a new window with the Instagram video
-            const windowWidth = 560; // Slightly bigger than the usual Instagram width (540px)
-            const windowHeight = 700; // Adjust height accordingly
-            
-            // Open new window
-             console.log("Opening window with URL:", videoUrl); // Check if videoUrl is valid
-            window.open(videoUrl, '_blank', `width=${windowWidth},height=${windowHeight},scrollbars=no`);
-        }
-        else {
-             console.log("No valid URL found in the container.");
-        }
+    // Get the iframe element within the hovered container
+    const iframeElement = event.currentTarget.querySelector('iframe');
+    
+    if (iframeElement) {
+        console.log("Iframe found:", iframeElement);
+        console.log("Iframe src:", iframeElement.src); // Might not work due to cross-origin restrictions
+    } else {
+        console.log("No iframe found in the container.");
     }
 
-    // Attach the event listener to all Instagram containers
-    document.querySelectorAll('.instagram-container').forEach(container => {
-        container.addEventListener('mouseenter', openInstaVideoInNewWindow);
-    });
+    // Check if we can access the iframe's src attribute
+    const videoUrl = iframeElement ? iframeElement.src : null;
+
+    if (videoUrl) {
+        const windowWidth = 560; // Slightly bigger than usual Instagram width
+        const windowHeight = 700; // Adjust height accordingly
+        console.log("Opening window with URL:", videoUrl);
+        window.open(videoUrl, '_blank', `width=${windowWidth},height=${windowHeight},scrollbars=no`);
+    } else {
+        console.log("No valid URL found in the iframe.");
+    }
+}
+
+// Attach the event listener to all Instagram containers
+document.querySelectorAll('.instagram-container').forEach(container => {
+    container.addEventListener('mouseenter', openInstaVideoInNewWindow);
 });
