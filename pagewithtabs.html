@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tabbed Content Example</title>
-     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabbed Content Example</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
-    <!-- Firebase initialization script -->
-<link rel="stylesheet" href="tabsstyles.css">
-<script src="meetingeventsnotification.js"></script>
-     <script src="loadattendeailfromfirestore.js"></script>
-      <style>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    <link rel="stylesheet" href="tabsstyles.css">
+    <script src="meetingeventsnotification.js"></script>
+    <script src="loadattendeailfromfirestore.js"></script>
+    <style>
+        body {
+            background-color: #1E90FF;
+        }
         .tablink {
             background-color: #00ffff;
             border: none;
@@ -31,39 +33,31 @@
         }
     </style>
 </head>
-<body bgcolor="#1E90FF">
+<body>
 
 <div class="tab-container">
-    <button class="tablink" onclick="openTab(event, 'tab1')" style="background-color: #00ffff;">G-Meet</button>
-    <button class="tablink" onclick="openTab(event, 'tab2')" style="background-color: #00ffff;">Reels</button>
-    <button class="tablink" onclick="openTab(event, 'tab3')" style="background-color: #00ffff;">Tab 3</button>
-    <button class="tablink" onclick="openTab(event, 'tab4')" style="background-color: #00ffff;">Tab 4</button>
+    <button class="tablink" onclick="openTab(event, 'tab1')">G-Meet</button>
+    <button class="tablink" onclick="openTab(event, 'tab2')">Reels</button>
+    <button class="tablink" onclick="openTab(event, 'tab3')">Tab 3</button>
+    <button class="tablink" onclick="openTab(event, 'tab4')">Tab 4</button>
     <button class="tablink" onclick="openTab(event, 'tab5')" style="background-color: #70ff70;">Lectures archive</button>
-     <br>
+    <br>
 
-   <div id="tab1" class="tabcontent">
-        <!-- Content of Tab 1 -->
+    <div id="tab1" class="tabcontent">
         <iframe src="googlemeetpage.html" width="100%" height="600" frameborder="0"></iframe>
     </div>
     <div id="tab2" class="tabcontent">
-        <!-- Content of Tab 2 -->
         <iframe src="collegereels.html" width="100%" height="600" frameborder="0"></iframe>
     </div>
     <div id="tab3" class="tabcontent">
-        <!-- Content of Tab 3 -->
         <iframe src="googledrivepage.html" width="100%" height="600" frameborder="0"></iframe>
     </div>
     <div id="tab4" class="tabcontent">
-        <!-- Content of Tab 4 -->
         <iframe src="googlecalendarpage.html" width="100%" height="600" frameborder="0"></iframe>
     </div>
-   <div id="tab5" class="tabcontent">
-        <!-- Content of Tab 5 -->
+    <div id="tab5" class="tabcontent">
         <iframe src="loctures.html" width="100%" height="600" frameborder="0"></iframe>
     </div>
-
-
-   
 </div>
 
 <script src="scripts.js"></script>
@@ -90,8 +84,6 @@ function openTab(evt, tabId) {
     }
 }
 </script>
-
-
 
 </body>
 </html>
