@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,11 @@
     <style>
         body {
             background-color: #1E90FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
         }
         .tablink {
             background-color: #00ffff;
@@ -23,19 +28,63 @@
             transition: background-color 0.3s, transform 0.1s;
         }
         .tablink:hover {
-            background-color: #00ccff; /* Change color on hover */
+            background-color: #00ccff;
         }
         .tablink:active {
-            transform: translateY(2px); /* Simulate a button press */
+            transform: translateY(2px);
         }
         .tablink.green {
-            background-color: #70ff70; /* Green background for specific button */
+            background-color: #70ff70;
         }
         .tablink.green:hover {
-            background-color: #5bff5b; /* Lighter green on hover */
+            background-color: #5bff5b;
         }
         .tabcontent {
-            display: none; /* Initially hide all tab content */
+            display: none;
+        }
+
+        /* Animation styles */
+        .logo {
+            display: none;
+            width: 200px; /* Adjust size as needed */
+            animation: slideIn 2s forwards; /* Animation for image */
+        }
+
+        @keyframes slideIn {
+            from {
+                width: 0; /* Start from 0 width */
+            }
+            to {
+                width: 200px; /* End with full size */
+            }
+        }
+
+        .border {
+            display: none;
+            border: 5px solid black; /* Border style */
+            position: absolute;
+        }
+
+        .border1 {
+            width: 220px; /* Slightly larger than the logo */
+            height: 220px;
+            animation: showBorder 1s forwards;
+        }
+
+        .border2 {
+            width: 220px; /* Same as border1 */
+            height: 220px;
+            animation: showBorder 1s forwards;
+            animation-delay: 1s; /* Delay for the second border */
+        }
+
+        @keyframes showBorder {
+            from {
+                opacity: 0; /* Start from transparent */
+            }
+            to {
+                opacity: 1; /* Fade in */
+            }
         }
     </style>
 </head>
@@ -66,28 +115,40 @@
     </div>
 </div>
 
+<!-- Image and borders -->
+<img src="logo.png" class="logo" id="logo" alt="Logo">
+<div class="border border1" style="top: calc(50% - 110px); left: calc(50% - 110px);"></div>
+<div class="border border2" style="top: calc(50% - 110px); left: calc(50% - 110px);"></div>
+
 <script src="scripts.js"></script>
 <script>
 function openTab(evt, tabId) {
-    // Hide all tab contents
     const tabContents = document.getElementsByClassName('tabcontent');
     for (let i = 0; i < tabContents.length; i++) {
         tabContents[i].style.display = 'none';
     }
-
-    // Show the selected tab
     document.getElementById(tabId).style.display = 'block';
 
-    // Load the iframe content dynamically
     const tabContentDiv = document.getElementById(tabId);
     if (!tabContentDiv.hasChildNodes()) {
         const iframe = document.createElement('iframe');
-        iframe.src = `${tabId}.html`; // Load the corresponding minor page
+        iframe.src = `${tabId}.html`;
         iframe.width = "100%";
         iframe.height = "600";
         iframe.frameBorder = "0";
         tabContentDiv.appendChild(iframe);
     }
+}
+
+// Show logo and borders on page load
+window.onload = function() {
+    const logo = document.getElementById('logo');
+    logo.style.display = 'block';
+    setTimeout(() => {
+        logo.style.display = 'block';
+        document.querySelector('.border1').style.display = 'block';
+        document.querySelector('.border2').style.display = 'block';
+    }, 2000); // Show borders after 2 seconds
 }
 </script>
 
