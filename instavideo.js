@@ -5,8 +5,8 @@ function openInstaVideoInNewWindow(event) {
     // Prevent default behavior
     event.preventDefault();
 
-    // Find the <a> element inside the blockquote
-    const linkElement = this.querySelector('a[href]');
+    // Find the <a> element inside the blockquote of the current container
+    const linkElement = this.querySelector('blockquote a[href]');
     
     if (linkElement) {
         // Get the href attribute (Instagram URL)
