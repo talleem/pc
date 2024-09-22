@@ -1,33 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Function to handle mouse enter event
-    function openInstaVideoInNewWindow(event) {
-        console.log("Mouse entered!");
+// Function to open Instagram reel in a new window
+function openInstaVideoInNewWindow(event) {
+    // Prevent default behavior
+    event.preventDefault();
 
-        // Get the iframe element within the hovered container
-        const iframeElement = event.currentTarget.querySelector('iframe');
+    // Find the <a> element inside the blockquote
+    const linkElement = this.querySelector('a[href]');
+    
+    if (linkElement) {
+        // Get the href attribute (Instagram URL)
+        const videoUrl = linkElement.href;
         
-        if (iframeElement) {
-            console.log("Iframe found:", iframeElement);
-            console.log("Iframe src:", iframeElement.src); // Might not work due to cross-origin restrictions
-        } else {
-            console.log("No iframe found in the container.");
-        }
-
-        // Check if we can access the iframe's src attribute
-        const videoUrl = iframeElement ? iframeElement.src : null;
-
         if (videoUrl) {
-            const windowWidth = 560; // Slightly bigger than usual Instagram width
-            const windowHeight = 700; // Adjust height accordingly
-            console.log("Opening window with URL:", videoUrl);
-            window.open(videoUrl, '_blank', `width=${windowWidth},height=${windowHeight},scrollbars=no`);
+            // Open the video URL in a new window, slightly larger than the video container
+            const newWindowWidth = 800; // You can adjust the width here
+            const newWindowHeight = 600; // You can adjust the height here
+            
+            window.open(videoUrl, '_blank', `width=${newWindowWidth},height=${newWindowHeight}`);
         } else {
-            console.log("No valid URL found in the iframe.");
+            console.error('No valid URL found in the container.');
         }
     }
+}
 
+// Wait for the DOM to load before attaching event listeners
+document.addEventListener('DOMContentLoaded', function() {
     // Attach the event listener to all Instagram containers
     document.querySelectorAll('.instagram-container').forEach(container => {
-        container.addEventListener('mouseenter', openInstaVideoInNewWindow);
+        container.addEventListener('dblclick', openInstaVideoInNewWindow);
     });
 });
