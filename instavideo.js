@@ -5,12 +5,12 @@ function openInstaVideoInNewWindow(event) {
     // Prevent default behavior
     event.preventDefault();
 
-    // Find the <a> element inside the blockquote of the current container
-    const linkElement = this.querySelector('blockquote a[href]');
+    // Find the blockquote element inside the current container
+    const blockquoteElement = this.querySelector('blockquote[data-instgrm-permalink]');
     
-    if (linkElement) {
-        // Get the href attribute (Instagram URL)
-        const videoUrl = linkElement.href;
+    if (blockquoteElement) {
+        // Get the permalink attribute (Instagram URL)
+        const videoUrl = blockquoteElement.getAttribute('data-instgrm-permalink');
 
         console.log('Found video URL:', videoUrl);
 
@@ -25,7 +25,7 @@ function openInstaVideoInNewWindow(event) {
             console.error('No valid URL found in the container.');
         }
     } else {
-        console.error('No <a> element found in the container.');
+        console.error('No blockquote with data-instgrm-permalink found in the container.');
     }
 }
 
