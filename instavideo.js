@@ -36,6 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Attach the event listener to all Instagram containers
     document.querySelectorAll('.instagram-container').forEach(container => {
         console.log('Attaching event listener to container:', container);
-        container.addEventListener('dblclick', openInstaVideoInNewWindow);
+        container.addEventListener('mouseenter', openInstaVideoInNewWindow); // Changed to mouseenter
     });
 });
