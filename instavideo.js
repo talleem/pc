@@ -1,20 +1,22 @@
-// Function to handle mouse enter event
-function openInstaVideoInNewWindow(event) {
-    // Get the link of the Instagram video from the hovered container
-    const linkElement = event.currentTarget.querySelector('a');
-    const videoUrl = linkElement ? linkElement.href : null;
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to handle mouse enter event
+    function openInstaVideoInNewWindow(event) {
+        // Get the link of the Instagram video from the hovered container
+        const linkElement = event.currentTarget.querySelector('a');
+        const videoUrl = linkElement ? linkElement.href : null;
 
-    if (videoUrl) {
-        // Open a new window with the Instagram video
-        const windowWidth = 560; // Slightly bigger than the usual Instagram width (540px)
-        const windowHeight = 700; // Adjust height accordingly
-        
-        // Open new window
-        window.open(videoUrl, '_blank', `width=${windowWidth},height=${windowHeight},scrollbars=no`);
+        if (videoUrl) {
+            // Open a new window with the Instagram video
+            const windowWidth = 560; // Slightly bigger than the usual Instagram width (540px)
+            const windowHeight = 700; // Adjust height accordingly
+            
+            // Open new window
+            window.open(videoUrl, '_blank', `width=${windowWidth},height=${windowHeight},scrollbars=no`);
+        }
     }
-}
 
-// Attach the event listener to all Instagram containers
-document.querySelectorAll('.instagram-container').forEach(container => {
-    container.addEventListener('mouseenter', openInstaVideoInNewWindow);
+    // Attach the event listener to all Instagram containers
+    document.querySelectorAll('.instagram-container').forEach(container => {
+        container.addEventListener('mouseenter', openInstaVideoInNewWindow);
+    });
 });
