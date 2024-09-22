@@ -12,6 +12,24 @@
 <link rel="stylesheet" href="tabsstyles.css">
 <script src="meetingeventsnotification.js"></script>
      <script src="loadattendeailfromfirestore.js"></script>
+      <style>
+        .tablink {
+            background-color: #00ffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .tablink:hover {
+            background-color: #00ccff; /* Change color on hover */
+        }
+        .tablink:active {
+            transform: translateY(2px); /* Simulate a button press */
+        }
+        .tabcontent {
+            display: none; /* Initially hide all tab content */
+        }
+    </style>
 </head>
 <body bgcolor="#1E90FF">
 
