@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log(document.querySelectorAll('.instagram-container')); // Log to check
     // Function to handle mouse enter event
     function openInstaVideoInNewWindow(event) {
         // Get the link of the Instagram video from the hovered container
