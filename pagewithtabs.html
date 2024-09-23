@@ -162,10 +162,12 @@ window.onload = function() {
     const logo = document.getElementById('logo');
     const phone = document.getElementById('phone');
     logo.style.display = 'block';
-    phone.style.display = 'block';
     setTimeout(() => {
         document.querySelector('.border1').style.display = 'block';
         document.querySelector('.border2').style.display = 'block';
+        setTimeout(() => {
+            phone.style.display = 'block'; // Show phone after borders
+        }, 1000); // Show phone 1 second after borders
     }, 2000); // Show borders after 2 seconds
 }
 </script>
