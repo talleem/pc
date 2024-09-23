@@ -85,6 +85,35 @@
                 opacity: 1; /* Fade in */
             }
         }
+
+        /* Phone image styles and animations */
+        .phone {
+            display: none;
+            position: absolute;
+            width: 100px; /* Set phone image size */
+            animation: dropDown 1s forwards; /* Drop-down animation */
+        }
+
+        .phone1 {
+            top: -100px; /* Start above the screen */
+            left: 75%; /* Right upper side of logo */
+        }
+
+        .phone2 {
+            top: -100px; /* Start above the screen */
+            left: 15%; /* Left lower side of logo */
+        }
+
+        @keyframes dropDown {
+            from {
+                transform: translateY(-100vh); /* Start from top of the page */
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0); /* End at normal position */
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body bgcolor="#1e90ff">
@@ -119,6 +148,10 @@
 <div class="border border1"></div>
 <div class="border border2"></div>
 
+<!-- Two phone images -->
+<img src="phone.png" class="phone phone1" id="phone1" alt="Phone 1">
+<img src="phone.png" class="phone phone2" id="phone2" alt="Phone 2">
+
 <script src="scripts.js"></script>
 <script>
 function openTab(evt, tabId) {
@@ -138,16 +171,20 @@ function openTab(evt, tabId) {
         tabContentDiv.appendChild(iframe);
     }
 
-    // Hide the logo and borders when a tab is clicked
+    // Hide the logo, borders, and phone images when a tab is clicked
     const logo = document.getElementById('logo');
     const borders = document.getElementsByClassName('border');
+    const phones = document.getElementsByClassName('phone');
     logo.style.display = 'none';  // Hide the logo
     for (let i = 0; i < borders.length; i++) {
         borders[i].style.display = 'none';  // Hide the borders
     }
+    for (let i = 0; i < phones.length; i++) {
+        phones[i].style.display = 'none';  // Hide the phones
+    }
 }
 
-// Show logo and borders on page load
+// Show logo, borders, and phone images on page load
 window.onload = function() {
     const logo = document.getElementById('logo');
     logo.style.display = 'block';
@@ -155,6 +192,12 @@ window.onload = function() {
         document.querySelector('.border1').style.display = 'block';
         document.querySelector('.border2').style.display = 'block';
     }, 2000); // Show borders after 2 seconds
+
+    // Show phone images 1 second after the borders are shown
+    setTimeout(() => {
+        document.getElementById('phone1').style.display = 'block';
+        document.getElementById('phone2').style.display = 'block';
+    }, 3000); // Show phones 3 seconds after page load
 }
 </script>
 
