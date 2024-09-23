@@ -137,6 +137,14 @@ function openTab(evt, tabId) {
         iframe.frameBorder = "0";
         tabContentDiv.appendChild(iframe);
     }
+
+    // Hide the logo and borders when a tab is clicked
+    const logo = document.getElementById('logo');
+    const borders = document.getElementsByClassName('border');
+    logo.style.display = 'none';  // Hide the logo
+    for (let i = 0; i < borders.length; i++) {
+        borders[i].style.display = 'none';  // Hide the borders
+    }
 }
 
 // Show logo and borders on page load
