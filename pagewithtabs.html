@@ -151,9 +151,8 @@
 <!-- Two phone images -->
 <img src="phone.png" class="phone phone1" id="phone1" alt="Phone 1">
 <img src="phone.png" class="phone phone2" id="phone2" alt="Phone 2">
-    <img src="https://via.placeholder.com/150" class="phone phone1" id="phone1" alt="Phone 1">
-<img src="https://via.placeholder.com/150" class="phone phone2" id="phone2" alt="Phone 2">
-
+<img src="https://via.placeholder.com/150" class="phone phone1" id="phone1-placeholder" alt="Phone 1 Placeholder">
+<img src="https://via.placeholder.com/150" class="phone phone2" id="phone2-placeholder" alt="Phone 2 Placeholder">
 
 <script src="scripts.js"></script>
 <script>
@@ -201,14 +200,27 @@ window.onload = function() {
         document.getElementById('phone1').style.display = 'block';
         document.getElementById('phone2').style.display = 'block';
     }, 3000); // Show phones 3 seconds after page load
-    const img1 = document.getElementById('phone1');
-img1.onload = () => console.log('Phone 1 loaded successfully.');
-img1.onerror = () => console.log('Failed to load Phone 1.');
 
-const img2 = document.getElementById('phone2');
-img2.onload = () => console.log('Phone 2 loaded successfully.');
-img2.onerror = () => console.log('Failed to load Phone 2.');
-}
+    // Adding event listeners for image load success/failure
+    setTimeout(() => {
+        const img1 = document.getElementById('phone1');
+        img1.onload = () => console.log('Phone 1 loaded successfully.');
+        img1.onerror = () => console.log('Failed to load Phone 1.');
+
+        const img2 = document.getElementById('phone2');
+        img2.onload = () => console.log('Phone 2 loaded successfully.');
+        img2.onerror = () => console.log('Failed to load Phone 2.');
+
+        // Check placeholders
+        const placeholder1 = document.getElementById('phone1-placeholder');
+        placeholder1.onload = () => console.log('Phone 1 Placeholder loaded successfully.');
+        placeholder1.onerror = () => console.log('Failed to load Phone 1 Placeholder.');
+
+        const placeholder2 = document.getElementById('phone2-placeholder');
+        placeholder2.onload = () => console.log('Phone 2 Placeholder loaded successfully.');
+        placeholder2.onerror = () => console.log('Failed to load Phone 2 Placeholder.');
+    }, 3100); // After phone images are displayed (3 seconds from page load)
+};
 </script>
 
 </body>
