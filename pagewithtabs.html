@@ -46,12 +46,22 @@
             transform: translate(-50%, -50%); /* Center the image */
         }
 
+        .phone {
+            display: none;
+            width: 100px; /* Set phone image size */
+            animation: slideIn 2s forwards; /* Same animation */
+            position: absolute; /* Position relative to the page */
+            top: 35%; /* Adjust as needed for position */
+            left: 55%; /* Adjust as needed for position */
+            transform: translate(-50%, -50%); /* Center the image */
+        }
+
         @keyframes slideIn {
             from {
                 width: 0; /* Start from 0 width */
             }
             to {
-                width: 400px; /* End with full size */
+                width: 100px; /* End with full size */
             }
         }
 
@@ -116,6 +126,8 @@
 
 <!-- Image and borders -->
 <img src="logo.png" class="logo" id="logo" alt="Logo">
+<img src="phone.png" class="phone" id="phone" alt="Phone">
+
 <div class="border border1"></div>
 <div class="border border2"></div>
 
@@ -140,17 +152,21 @@ function openTab(evt, tabId) {
 
     // Hide the logo and borders when a tab is clicked
     const logo = document.getElementById('logo');
+    const phone = document.getElementById('phone');
     const borders = document.getElementsByClassName('border');
     logo.style.display = 'none';  // Hide the logo
+    phone.style.display = 'none';  // Hide the phone
     for (let i = 0; i < borders.length; i++) {
         borders[i].style.display = 'none';  // Hide the borders
     }
 }
 
-// Show logo and borders on page load
+// Show logo and phone on page load
 window.onload = function() {
     const logo = document.getElementById('logo');
+    const phone = document.getElementById('phone');
     logo.style.display = 'block';
+    phone.style.display = 'block';
     setTimeout(() => {
         document.querySelector('.border1').style.display = 'block';
         document.querySelector('.border2').style.display = 'block';
