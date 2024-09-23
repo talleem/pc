@@ -50,9 +50,19 @@
             position: absolute; /* Position relative to the page */
             top: 30%;
             left: 70%;
+            animation: slideUp 2s forwards; /* Sliding up animation */
         }
 
        @keyframes fall {
+            from {
+                top: -200px; /* Start position above the viewport */
+            }
+            to {
+                top: 50%; /* End position at center */
+            }
+        }
+
+               @keyframes fall {
             from {
                 top: -200px; /* Start position above the viewport */
             }
@@ -167,6 +177,7 @@ window.onload = function() {
         document.querySelector('.border2').style.display = 'block';
         setTimeout(() => {
             phone.style.display = 'block'; // Show phone after borders
+             phone.style.animation = 'slideUp 2s forwards'; // Start the animation
         }, 1000); // Show phone 1 second after borders
     }, 2000); // Show borders after 2 seconds
 }
