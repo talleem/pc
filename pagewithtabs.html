@@ -39,9 +39,10 @@
             display: none;
             width: 400px; /* Resize to 4 times its original size */
             position: absolute; /* Allow centering */
-            top: 50%;
-            left: 50%;
              transform: translate(-50%, -50%);
+             top: -200px; /* Start above the viewport */
+            left: 50%;
+            animation: fall 2s forwards; /* Falling animation */
         }
 
         .phone {
@@ -51,12 +52,12 @@
             left: 70%;
         }
 
-        @keyframes slideIn {
+       @keyframes fall {
             from {
-                width: 0; /* Start from 0 width */
+                top: -200px; /* Start position above the viewport */
             }
             to {
-                width: 100px; /* End with full size */
+                top: 50%; /* End position at center */
             }
         }
 
