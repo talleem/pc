@@ -157,26 +157,27 @@
 
 <script src="scripts.js"></script>
 <script>
+    
 function openTab(evt, tabId) {
-    function openTab(evt, tabId) {
     if (tabId === 'tab6') { // Check if the sign-out button is clicked
         window.location.href = 'loginscreen.html'; // Redirect to loginscreen.html
         return; // Exit the function to prevent further execution
     }
+
     const tabContents = document.getElementsByClassName('tabcontent');
     for (let i = 0; i < tabContents.length; i++) {
-        tabContents[i].style.display = 'none';
+        tabContents[i].style.display = 'none'; // Hide all tab contents
     }
-    document.getElementById(tabId).style.display = 'block';
+    document.getElementById(tabId).style.display = 'block'; // Show the selected tab
 
     const tabContentDiv = document.getElementById(tabId);
     if (!tabContentDiv.hasChildNodes()) {
         const iframe = document.createElement('iframe');
-        iframe.src = `${tabId}.html`;
+        iframe.src = `${tabId}.html`; // Dynamically set iframe source
         iframe.style.width = "100%";
         iframe.style.height = "90vh"; // Full height
         iframe.frameBorder = "0";
-        tabContentDiv.appendChild(iframe);
+        tabContentDiv.appendChild(iframe); // Append iframe to the tab content
     }
 
     // Hide the logo and borders when a tab is clicked
