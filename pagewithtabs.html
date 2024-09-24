@@ -164,8 +164,8 @@ function openTab(evt, tabId) {
     if (!tabContentDiv.hasChildNodes()) {
         const iframe = document.createElement('iframe');
         iframe.src = `${tabId}.html`;
-        iframe.width = "100%";
-        iframe.height = "900";
+        iframe.style.width = "100%";
+        iframe.style.height = "90vh"; // Full height
         iframe.frameBorder = "0";
         tabContentDiv.appendChild(iframe);
     }
