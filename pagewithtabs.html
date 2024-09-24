@@ -198,6 +198,8 @@ function openTab(evt, tabId) {
 window.onload = function() {
     const logo = document.getElementById('logo');
     const phone = document.getElementById('phone');
+    const tabButtons = document.querySelectorAll('.tablink:not([onclick*="tab6"])'); // Exclude the sign-out button
+    
     logo.style.display = 'block';
     setTimeout(() => {
         document.querySelector('.border1').style.display = 'block';
