@@ -25,8 +25,8 @@
             cursor: pointer;
             padding: 0;
             outline: none;
+             transition: background-color 0.3s, transform 0.1s; /* Smooth transition for hover/click effects */
         }
-
         /* Left button */
         .left-button {
             left: 50px; /* Adjust for spacing from left edge */
@@ -41,6 +41,16 @@
         .nav-button img {
             width: 40px;
             height: 40px;
+            transition: transform 0.1s; /* Smooth transition for click */
+        }
+          /* Hover effect: change background color */
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Light background when hovered */
+        }
+
+        /* Click effect: push the button */
+        .nav-button:active {
+            transform: translateY(-50%) scale(0.95); /* Scale down the button when clicked */
         }
     </style>
 </head>
