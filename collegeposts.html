@@ -14,7 +14,10 @@
             max-width: 1100px; /* Adjust as needed */
             flex: 1;
         }
-        
+          /* Show only the active post */
+        .active {
+            display: block;
+        }        
         /* Button styling */
         .nav-button {
             position: absolute;
@@ -59,10 +62,10 @@
     <div class="instagram-container">
         
           <!-- Left navigation button with left arrow icon -->
-        <button class="nav-button left-button">
+        <button class="nav-button left-button" onclick="showPost('prev')">
             <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="Left Arrow">
         </button>
-        <div class="instagram-embed">
+        <div class="instagram-embed" active" id="post1">
             <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DARJg-2KJW0/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:1100px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
             <div style="padding:16px;"> 
                 <a href="https://www.instagram.com/p/DARJg-2KJW0/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
@@ -73,12 +76,44 @@
             <script async src="//www.instagram.com/embed.js"></script>
         </div>
 
+         <div class="instagram-embed" id="post2">
+            <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/p/DATU7VxKzxc/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);">
+                <div style="padding:16px;"> 
+                    <a href="https://www.instagram.com/p/DATU7VxKzxc/?utm_source=ig_embed&amp;utm_campaign=loading" style="background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank">
+                        <!-- Instagram Embed Content -->
+                    </a>
+                </div>
+            </blockquote>
+            <script async src="//www.instagram.com/embed.js"></script>
+        </div>
+        
          <!-- Right navigation button with right arrow icon -->
-        <button class="nav-button right-button" style="background-color: #dddddd;">
+        <button class="nav-button right-button" onclick="showPost('next')">
             <img src="https://cdn-icons-png.flaticon.com/512/271/271228.png" alt="Right Arrow">
         </button>
-        
     </div>
 
+
+      <script>
+        let currentIndex = 0; // Track the current post
+        const posts = document.querySelectorAll('.instagram-embed'); // Get all posts
+
+        function showPost(direction) {
+            // Hide the current post
+            posts[currentIndex].classList.remove('active');
+
+            // Update the index based on direction
+            if (direction === 'next') {
+                currentIndex = (currentIndex + 1) % posts.length; // Go to the next post
+            } else {
+                currentIndex = (currentIndex - 1 + posts.length) % posts.length; // Go to the previous post
+            }
+
+            // Show the new post
+            posts[currentIndex].classList.add('active');
+        }
+    </script>
+
+    
 </body>
 </html>
