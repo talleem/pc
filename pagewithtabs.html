@@ -120,11 +120,11 @@
 <body bgcolor="#1e90ff">
 
 <div class="tab-container">
-    <button class="tablink" onclick="openTab(event, 'tab1')">G-Meet</button>
-    <button class="tablink" onclick="openTab(event, 'tab2')">Reels</button>
-    <button class="tablink" onclick="openTab(event, 'tab3')">Posts</button>
-    <button class="tablink" onclick="openTab(event, 'tab4')">Tab 4</button>
-    <button class="tablink green" onclick="openTab(event, 'tab5')">Lectures archive</button>
+    <button class="tablink" onclick="openTab(event, 'tab1')" disabled>G-Meet</button>
+    <button class="tablink" onclick="openTab(event, 'tab2')" disabled>Reels</button>
+    <button class="tablink" onclick="openTab(event, 'tab3')" disabled>Posts</button>
+    <button class="tablink" onclick="openTab(event, 'tab4')" disabled>Tab 4</button>
+    <button class="tablink green" onclick="openTab(event, 'tab5')" disabled>Lectures archive</button>
      <button class="tablink" onclick="openTab(event, 'tab6')">Sign out</button>
     <br>
 
@@ -205,6 +205,10 @@ window.onload = function() {
         setTimeout(() => {
             phone.style.display = 'block'; // Show phone after borders
              phone.style.animation = 'slideUp 2s forwards'; // Start the animation
+              // Enable tab buttons after phone animation
+            tabButtons.forEach(button => {
+                button.disabled = false; // Enable each tab button
+            });
         }, 1000); // Show phone 1 second after borders
     }, 2000); // Show borders after 2 seconds
 }
