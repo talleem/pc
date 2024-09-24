@@ -158,6 +158,11 @@
 <script src="scripts.js"></script>
 <script>
 function openTab(evt, tabId) {
+    function openTab(evt, tabId) {
+    if (tabId === 'tab6') { // Check if the sign-out button is clicked
+        window.location.href = 'loginscreen.html'; // Redirect to loginscreen.html
+        return; // Exit the function to prevent further execution
+    }
     const tabContents = document.getElementsByClassName('tabcontent');
     for (let i = 0; i < tabContents.length; i++) {
         tabContents[i].style.display = 'none';
