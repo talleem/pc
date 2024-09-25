@@ -128,24 +128,24 @@
      <button class="tablink" onclick="openTab(event, 'tab6')">Sign out</button>
     <br>
 
-    <div id="tab1" class="tabcontent">
-        <iframe src="googlemeetpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab2" class="tabcontent">
-        <iframe src="collegereels.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab3" class="tabcontent">
-        <iframe src="collegeposts.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab4" class="tabcontent">
-        <iframe src="googlecalendarpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab5" class="tabcontent">
-        <iframe src="loctures.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-     <div id="tab6" class="tabcontent">
-        <iframe src="loginscreen.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
+  <div id="tab1" class="tabcontent">
+    <!-- googlemeetpage.html iframe will be loaded dynamically -->
+</div>
+<div id="tab2" class="tabcontent">
+    <!-- collegereels.html iframe will be loaded dynamically -->
+</div>
+<div id="tab3" class="tabcontent">
+    <!-- collegeposts.html iframe will be loaded dynamically -->
+</div>
+<div id="tab4" class="tabcontent">
+    <!-- googlecalendarpage.html iframe will be loaded dynamically -->
+</div>
+<div id="tab5" class="tabcontent">
+    <!-- loctures.html iframe will be loaded dynamically -->
+</div>
+<div id="tab6" class="tabcontent">
+    <!-- loginscreen.html iframe will be loaded dynamically -->
+</div>
 </div>
 
 <!-- Image and borders -->
@@ -165,37 +165,59 @@
 <script>
     
 function openTab(evt, tabId) {
-    if (tabId === 'tab6') { // Check if the sign-out button is clicked
-        window.location.href = 'loginscreen.html'; // Redirect to loginscreen.html
-        return; // Exit the function to prevent further execution
+    if (tabId === 'tab6') { // Handle sign-out separately
+        window.location.href = 'loginscreen.html';
+        return;
     }
 
+    // Hide all tab contents first
     const tabContents = document.getElementsByClassName('tabcontent');
     for (let i = 0; i < tabContents.length; i++) {
-        tabContents[i].style.display = 'none'; // Hide all tab contents
+        tabContents[i].style.display = 'none';
     }
-    document.getElementById(tabId).style.display = 'block'; // Show the selected tab
-
+    
+    // Show the selected tab content
     const tabContentDiv = document.getElementById(tabId);
-    if (!tabContentDiv.hasChildNodes()) {
+    tabContentDiv.style.display = 'block';
+    
+    // Only create and append iframe if it doesn't exist
+    if (!tabContentDiv.querySelector('iframe')) {
         const iframe = document.createElement('iframe');
-        iframe.src = `${tabId}.html`; // Dynamically set iframe source
+        
+        // Dynamically set iframe src based on tabId
+        switch (tabId) {
+            case 'tab1':
+                iframe.src = 'googlemeetpage.html';
+                break;
+            case 'tab2':
+                iframe.src = 'collegereels.html'; // Load collegereels.html only when the tab is clicked
+                break;
+            case 'tab3':
+                iframe.src = 'collegeposts.html'; // Load collegeposts.html only when the tab is clicked
+                break;
+            case 'tab4':
+                iframe.src = 'googlecalendarpage.html';
+                break;
+            case 'tab5':
+                iframe.src = 'loctures.html';
+                break;
+            default:
+                iframe.src = '';
+        }
+        
         iframe.style.width = "100%";
-        iframe.style.height = "90vh"; // Full height
+        iframe.style.height = "90vh";
         iframe.frameBorder = "0";
-        tabContentDiv.appendChild(iframe); // Append iframe to the tab content
+        tabContentDiv.appendChild(iframe);
     }
 
-    // Hide the logo and borders when a tab is clicked
-    const logo = document.getElementById('logo');
-    const phone = document.getElementById('phone');
+    // Hide the logo, phone, staff, and borders when a tab is clicked
+    document.getElementById('logo').style.display = 'none';
+    document.getElementById('phone').style.display = 'none';
+    document.getElementById('staff').style.display = 'none';
     const borders = document.getElementsByClassName('border');
-    const staff = document.getElementById('staff');
-    logo.style.display = 'none';  // Hide the logo
-    phone.style.display = 'none';  // Hide the phone
-    staff.style.display = 'none';  // Hide the staff
     for (let i = 0; i < borders.length; i++) {
-        borders[i].style.display = 'none';  // Hide the borders
+        borders[i].style.display = 'none';
     }
 }
 
