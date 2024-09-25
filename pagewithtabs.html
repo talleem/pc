@@ -18,7 +18,7 @@
             padding: 10px 20px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
-             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Same shadow as staff image */
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
         }
         .tablink:hover {
             background-color: #00ccff;
@@ -35,86 +35,21 @@
         .tabcontent {
             display: none;
         }
- /* Animation styles */
-        .logo {
-            display: none;
-            width: 400px; /* Resize to 4 times its original size */
-            position: absolute; /* Allow centering */
-             transform: translate(-50%, -50%);
-             top: -200px; /* Start above the viewport */
-            left: 50%;
-            animation: fall 2s forwards; /* Falling animation */
-        }
-
-        .phone {
-            display: none;
-            position: absolute; /* Position relative to the page */
-            left: 70%;
-            animation: slideUp 2s forwards; /* Sliding up animation */
-        }
-
-       @keyframes fall {
-            from {
-                top: -200px; /* Start position above the viewport */
-            }
-            to {
-                top: 50%; /* End position at center */
-            }
-        }
-
-   @keyframes slideUp {
-    from {
-        top: 100%; /* Start below the viewport */
-    }
-    to {
-        top: 30%; /* End position at specified place */
-    }
-}
-        .border {
-            display: none;
-            border: 5px solid black; /* Border style */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Center the borders */
-        }
-
-        .border1 {
-            width: 420px; /* Slightly larger than the logo */
-            height: 420px;
-            animation: showBorder 1s forwards;
-        }
-
-        .border2 {
-            width: 420px; /* Same as border1 */
-            height: 420px;
-            animation: showBorder 1s forwards;
-            animation-delay: 1s; /* Delay for the second border */
-        }
-
-        @keyframes showBorder {
-            from {
-                opacity: 0; /* Start from transparent */
-            }
-            to {
-                opacity: 1; /* Fade in */
-            }
-        }
         .staff {
-    position: absolute; /* Positioning relative to the viewport */
-    left: 1%; /* Adjust as needed for spacing */
-    top: 50%; /* Center vertically */
-    transform: translateY(-50%); /* Center vertically */
-    width: 30%; /* Adjust percentage as needed (e.g., 25% of viewport width) */
-    height: 45%; /* Maintain aspect ratio */
-    display: block; /* Ensure it shows when the page loads */
-   box-shadow: 5px 5px 10px 10px rgba(0, 0, 0, 0.5); /* Shadow on bottom and right */
-}
+            position: absolute;
+            left: 1%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30%;
+            height: 45%;
+            display: block;
+            box-shadow: 5px 5px 10px 10px rgba(0, 0, 0, 0.5);
+        }
         .tabcontent iframe {
-    height: 90vh; /* Full viewport height */
-    width: 100%;
-    border: none; /* Optional: Remove iframe border */
-}
+            height: 90vh;
+            width: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body bgcolor="#1e90ff">
@@ -125,72 +60,74 @@
     <button class="tablink" onclick="openTab(event, 'tab3')" disabled>Posts</button>
     <button class="tablink" onclick="openTab(event, 'tab4')" disabled>Tab 4</button>
     <button class="tablink green" onclick="openTab(event, 'tab5')" disabled>Lectures archive</button>
-     <button class="tablink" onclick="openTab(event, 'tab6')">Sign out</button>
+    <button class="tablink" onclick="openTab(event, 'tab6')">Sign out</button>
     <br>
 
-    <div id="tab1" class="tabcontent">
-        <iframe src="googlemeetpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab2" class="tabcontent">
-        <iframe src="collegereels.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab3" class="tabcontent">
-        <iframe src="collegeposts.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab4" class="tabcontent">
-        <iframe src="googlecalendarpage.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-    <div id="tab5" class="tabcontent">
-        <iframe src="loctures.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
-     <div id="tab6" class="tabcontent">
-        <iframe src="loginscreen.html" width="100%" height="600" frameborder="0"></iframe>
-    </div>
+    <div id="tab1" class="tabcontent"></div>
+    <div id="tab2" class="tabcontent"></div>
+    <div id="tab3" class="tabcontent"></div>
+    <div id="tab4" class="tabcontent"></div>
+    <div id="tab5" class="tabcontent"></div>
+    <div id="tab6" class="tabcontent"></div>
 </div>
 
 <!-- Image and borders -->
 <img src="logo.png" class="logo" id="logo" alt="Logo">
 <img src="phone.png" class="phone" id="phone" alt="Phone">
-<img src="staff.png" class="staff" id="staff" alt="Staff"> <!-- New line added -->
+<img src="staff.png" class="staff" id="staff" alt="Staff">
 
 <div class="border border1"></div>
 <div class="border border2"></div>
 
 <script src="scripts.js"></script>
 <script>
-    
 function openTab(evt, tabId) {
-    if (tabId === 'tab6') { // Check if the sign-out button is clicked
-        window.location.href = 'loginscreen.html'; // Redirect to loginscreen.html
-        return; // Exit the function to prevent further execution
+    if (tabId === 'tab6') {
+        window.location.href = 'loginscreen.html';
+        return;
     }
 
     const tabContents = document.getElementsByClassName('tabcontent');
     for (let i = 0; i < tabContents.length; i++) {
-        tabContents[i].style.display = 'none'; // Hide all tab contents
+        tabContents[i].style.display = 'none'; 
     }
-    document.getElementById(tabId).style.display = 'block'; // Show the selected tab
-
     const tabContentDiv = document.getElementById(tabId);
-    if (!tabContentDiv.hasChildNodes()) {
+    tabContentDiv.style.display = 'block';
+
+    if (!tabContentDiv.querySelector('iframe')) { // Check if the iframe is not already added
         const iframe = document.createElement('iframe');
-        iframe.src = `${tabId}.html`; // Dynamically set iframe source
-        iframe.style.width = "100%";
-        iframe.style.height = "90vh"; // Full height
-        iframe.frameBorder = "0";
-        tabContentDiv.appendChild(iframe); // Append iframe to the tab content
+        switch(tabId) {
+            case 'tab1':
+                iframe.src = 'googlemeetpage.html';
+                break;
+            case 'tab2':
+                iframe.src = 'collegereels.html';
+                break;
+            case 'tab3':
+                iframe.src = 'collegeposts.html';
+                break;
+            case 'tab4':
+                iframe.src = 'googlecalendarpage.html';
+                break;
+            case 'tab5':
+                iframe.src = 'loctures.html';
+                break;
+            default:
+                break;
+        }
+        iframe.style.width = '100%';
+        iframe.style.height = '90vh';
+        iframe.frameBorder = '0';
+        tabContentDiv.appendChild(iframe); 
     }
 
     // Hide the logo and borders when a tab is clicked
-    const logo = document.getElementById('logo');
-    const phone = document.getElementById('phone');
+    document.getElementById('logo').style.display = 'none';
+    document.getElementById('phone').style.display = 'none';
+    document.getElementById('staff').style.display = 'none';
     const borders = document.getElementsByClassName('border');
-    const staff = document.getElementById('staff');
-    logo.style.display = 'none';  // Hide the logo
-    phone.style.display = 'none';  // Hide the phone
-    staff.style.display = 'none';  // Hide the staff
     for (let i = 0; i < borders.length; i++) {
-        borders[i].style.display = 'none';  // Hide the borders
+        borders[i].style.display = 'none';
     }
 }
 
@@ -198,21 +135,20 @@ function openTab(evt, tabId) {
 window.onload = function() {
     const logo = document.getElementById('logo');
     const phone = document.getElementById('phone');
-    const tabButtons = document.querySelectorAll('.tablink:not([onclick*="tab6"])'); // Exclude the sign-out button
-    
+    const tabButtons = document.querySelectorAll('.tablink:not([onclick*="tab6"])');
+
     logo.style.display = 'block';
     setTimeout(() => {
         document.querySelector('.border1').style.display = 'block';
         document.querySelector('.border2').style.display = 'block';
         setTimeout(() => {
-            phone.style.display = 'block'; // Show phone after borders
-             phone.style.animation = 'slideUp 2s forwards'; // Start the animation
-              // Enable tab buttons after phone animation
+            phone.style.display = 'block';
+            phone.style.animation = 'slideUp 2s forwards';
             tabButtons.forEach(button => {
-                button.disabled = false; // Enable each tab button
+                button.disabled = false;
             });
-        }, 1000); // Show phone 1 second after borders
-    }, 2000); // Show borders after 2 seconds
+        }, 1000);
+    }, 2000);
 }
 </script>
 
