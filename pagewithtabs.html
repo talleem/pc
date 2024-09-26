@@ -12,6 +12,12 @@
     <script src="meetingeventsnotification.js"></script>
     <script src="loadattendeailfromfirestore.js"></script>
     <style>
+        .tab-container {
+    border: 3px solid black; /* Black border surrounding all buttons */
+    display: inline-block; /* Ensure border wraps tightly around buttons */
+    padding: 2px; /* Add some space between the buttons and the border */
+    border-radius: 5px; /* Optional: Rounded corners for the container */
+}
         .tablink {
             background-color: #00ffff;
             border: none;
@@ -19,6 +25,7 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
              box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Same shadow as staff image */
+      
         }
         .tablink:hover {
             background-color: #00ccff;
