@@ -19,7 +19,19 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.1s;
              box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5); /* Same shadow as staff image */
+            position: relative; /* Positioning context for the border */
         }
+        .tablink::before {
+    content: ''; /* Create a pseudo-element for the border */
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    border: 3px solid black; /* Black border */
+    border-radius: 5px; /* Optional: Rounded corners */
+    z-index: -1; /* Place it behind the button */
+}
         .tablink:hover {
             background-color: #00ccff;
         }
