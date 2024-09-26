@@ -9,7 +9,7 @@ function handleMouseEnter() {
             container.style.transition = 'transform 0.3s'; // Smooth transition
         } else {
             // Restore the size of the hovered container
-            container.style.transform = 'scale(1)'; // Original size
+            container.style.transform = 'scale(2)'; // Original size
             container.style.transition = 'transform 0.3s'; // Smooth transition
         }
     });
