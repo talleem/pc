@@ -5,7 +5,7 @@ function handleMouseEnter() {
     containers.forEach(container => {
         if (container !== this) {
             // Scale down the other containers to 1/6 of their original size
-            container.style.transform = 'scale(0.1667)'; // 1/6
+            container.style.transform = 'scale(0.0667)'; // 1/6
             container.style.transition = 'transform 0.3s'; // Smooth transition
         } else {
             // Restore the size of the hovered container
