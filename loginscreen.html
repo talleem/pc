@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-      <script src="initiateFileUpload.js"></script>
+    <script src="initiateFileUpload.js"></script>
 </head>
 <body bgcolor="#FAFAFA">
     <h1>Login</h1>
@@ -53,18 +53,31 @@
                         return;
                     }
 
-                    // Check password
-                    let isPasswordCorrect = false;
+                    let userDocRef; // Reference to the document for updating later
+                    let userData; // To store the user data
+
                     querySnapshot.forEach(doc => {
-                        if (doc.data().password === password) {
-                            isPasswordCorrect = true;
-                        }
+                        userData = doc.data();
+                        userDocRef = doc.ref;
                     });
 
-                    if (isPasswordCorrect) {
-                        // Redirect to index.html
-                        localStorage.setItem('loggedInEmail', email); // Store email in localStorage
-                        window.location.href = 'OAuthConsentScreen.html';
+                    // Check password
+                    if (userData.password === password) {
+                        if (userData.loggedin === 1) {
+                            alert('Another user with the same credentials is logged in right now, logon failed.');
+                        } else {
+                            // Update "loggedin" to 1
+                            userDocRef.update({ loggedin: 1 })
+                                .then(() => {
+                                    // Redirect to index.html
+                                    localStorage.setItem('loggedInEmail', email); // Store email in localStorage
+                                    window.location.href = 'OAuthConsentScreen.html';
+                                })
+                                .catch(error => {
+                                    console.error('Error updating login status:', error.message);
+                                    alert('Error during login: ' + error.message);
+                                });
+                        }
                     } else {
                         alert('Login failed, check your email and/or password');
                     }
