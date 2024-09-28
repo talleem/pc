@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="tabsstyles.css">
     <script src="meetingeventsnotification.js"></script>
     <script src="loadattendeailfromfirestore.js"></script>
+    <script src="signout.js"></script>
     <style>
         .tablink {
             background-color: #00ffff;
@@ -178,7 +179,7 @@
 
 <script src="scripts.js"></script>
 <script>
-    
+   const db = firebase.firestore();  
 function openTab(evt, tabId) {
     if (tabId === 'tab7') { // Handle sign-out separately
         window.location.href = 'loginscreen.html';
@@ -226,7 +227,6 @@ function openTab(evt, tabId) {
                 iframe.src = 'loctures.html';
                 break;
            case 'tab6':
-                    const db = firebase.firestore();
                     // Get loggedInEmail from localStorage
                     const loggedInEmail = localStorage.getItem('loggedInEmail');
                     if (!loggedInEmail) {
