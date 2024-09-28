@@ -217,8 +217,38 @@ function openTab(evt, tabId) {
                 iframe.src = 'loctures.html';
                 break;
            case 'tab6':
-                iframe.src = 'joinedstudents.html';
+                    const db = firebase.firestore();
+                    // Get loggedInEmail from localStorage
+                    const loggedInEmail = localStorage.getItem('loggedInEmail');
+                    if (!loggedInEmail) {
+                        alert('No logged-in email found.');
+                        return;
+                    }
+
+                    // Query Firestore for the logged-in user category
+                    db.collection('users_tbl').where('email', '==', loggedInEmail).get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            alert('No user found with this email.');
+                            return;
+                        }
+
+                        const userData = querySnapshot.docs[0].data(); // Get the first matching document
+                        if (userData.category === 'lecturer') {
+                            // If the user is a lecturer, load the iframe for the Admin page
+                            iframe.src = 'joinedstudents.html';
+                            tabContentDiv.appendChild(iframe); // Append iframe after Firestore check
+                        } else {
+                            alert('You are not authorized to see this page.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error getting user data:', error);
+                        alert('Error verifying user authorization.');
+                    });
+                    return; // Exit switch statement to wait for Firestore response
                 break;
+                
             default:
                 iframe.src = '';
         }
