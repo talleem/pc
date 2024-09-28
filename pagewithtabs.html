@@ -182,6 +182,7 @@
    const db = firebase.firestore();  
 function openTab(evt, tabId) {
     if (tabId === 'tab7') { // Handle sign-out separately
+        signout();
         window.location.href = 'loginscreen.html';
         return;
     }
