@@ -25,6 +25,8 @@ function signout() {
                 })
                 .then(() => {
                     console.log('Logged out successfully.');
+                    // Optionally remove the email from localStorage
+                    localStorage.removeItem('loggedInEmail');
                 })
                 .catch(error => {
                     console.error('Error updating loggedin status:', error);
@@ -35,4 +37,3 @@ function signout() {
             console.error('Error retrieving user data:', error);
         });
 }
-
