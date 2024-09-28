@@ -194,17 +194,7 @@ function openTab(evt, tabId) {
     // Show the selected tab content
     const tabContentDiv = document.getElementById(tabId);
     tabContentDiv.style.display = 'block';
-
-        // Hide the logo, phone, staff, and borders when a tab is clicked
-    document.getElementById('logo').style.display = 'none';
-    document.getElementById('phone').style.display = 'none';
-    document.getElementById('staff').style.display = 'none';
-    const borders = document.getElementsByClassName('border');
-    for (let i = 0; i < borders.length; i++) {
-        borders[i].style.display = 'none';
-    }
-}
-   
+    
     // Only create and append iframe if it doesn't exist
     if (!tabContentDiv.querySelector('iframe')) {
         const iframe = document.createElement('iframe');
@@ -268,6 +258,17 @@ function openTab(evt, tabId) {
         iframe.frameBorder = "0";
         tabContentDiv.appendChild(iframe);
     }
+
+    // Hide the logo, phone, staff, and borders when a tab is clicked
+    document.getElementById('logo').style.display = 'none';
+    document.getElementById('phone').style.display = 'none';
+    document.getElementById('staff').style.display = 'none';
+    const borders = document.getElementsByClassName('border');
+    for (let i = 0; i < borders.length; i++) {
+        borders[i].style.display = 'none';
+    }
+}
+
 // Show logo and phone on page load
 window.onload = function() {
     const logo = document.getElementById('logo');
@@ -291,4 +292,4 @@ window.onload = function() {
 </script>
 
 </body>
-</html>
+</html> 
