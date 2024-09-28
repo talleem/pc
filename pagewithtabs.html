@@ -136,7 +136,8 @@
     <button class="tablink" onclick="openTab(event, 'tab3')" disabled>Posts</button>
     <button class="tablink" onclick="openTab(event, 'tab4')" disabled>Resumes</button>
     <button class="tablink green" onclick="openTab(event, 'tab5')" disabled>Lectures archive</button>
-     <button class="tablink" onclick="openTab(event, 'tab6')">Sign out</button>
+     <button class="tablink" onclick="openTab(event, 'tab6')">Admin</button>
+     <button class="tablink" onclick="openTab(event, 'tab7')">Sign out</button>
     <br>
 
   <div id="tab1" class="tabcontent">
@@ -155,6 +156,9 @@
     <!-- loctures.html iframe will be loaded dynamically -->
 </div>
 <div id="tab6" class="tabcontent">
+    <!-- loginscreen.html iframe will be loaded dynamically -->
+</div>
+    <div id="tab7" class="tabcontent">
     <!-- loginscreen.html iframe will be loaded dynamically -->
 </div>
 </div>
@@ -176,7 +180,7 @@
 <script>
     
 function openTab(evt, tabId) {
-    if (tabId === 'tab6') { // Handle sign-out separately
+    if (tabId === 'tab7') { // Handle sign-out separately
         window.location.href = 'loginscreen.html';
         return;
     }
@@ -211,6 +215,9 @@ function openTab(evt, tabId) {
                 break;
             case 'tab5':
                 iframe.src = 'loctures.html';
+                break;
+           case 'tab6':
+                iframe.src = 'joinedstudents.html';
                 break;
             default:
                 iframe.src = '';
