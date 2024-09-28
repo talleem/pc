@@ -181,8 +181,13 @@
 <script>
 function openTab(evt, tabId) {
     if (tabId === 'tab7') { // Handle sign-out separately
-        signout();
-        window.location.href = 'loginscreen.html';
+        signout().then(() => {
+            // Redirect after signout completes
+            window.location.href = 'loginscreen.html';
+        }).catch(error => {
+            console.error('Error during signout:', error);
+            // Handle any errors during signout if needed
+        });
         return;
     }
 
