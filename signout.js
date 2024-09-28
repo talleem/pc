@@ -1,4 +1,3 @@
-console.log("started");
 function signout() {
     // Get logged-in email from localStorage
     const email = localStorage.getItem('loggedInEmail');
