@@ -65,7 +65,7 @@
             const tableBody = document.getElementById('tableBody');
             tableBody.innerHTML = ''; // Clear existing table data
 
-            db.collection('usrs_tbl').get().then((querySnapshot) => {
+            db.collection('users_tbl').get().then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const loggedinStatus = data.loggedin === 1 ? 'Online' : 'Offline'; // Convert logged in status
