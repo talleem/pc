@@ -298,5 +298,15 @@ window.onload = function() {
 }
 </script>
 
+    <script>
+window.addEventListener('beforeunload', function (e) {
+    // Add logic to determine whether to show the dialog
+    if (/* condition indicating unsaved changes or active session */) {
+        e.preventDefault();
+        e.returnValue = '';
+    }
+});
+    </script>
+    
 </body>
 </html> 
