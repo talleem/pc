@@ -32,13 +32,17 @@
             messagingSenderId: "308801516934",
             appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
             measurementId: "G-X22VZ2TVWT"
-            databaseURL: "https://engineerr1983meet-default-rtdb.firebaseio.com/"  // Add the Realtime Database URL
+            databaseURL: "https://your-project-id.firebaseio.com"  // Add the Realtime Database URL
         };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const firestore = firebase.firestore();
+        const realtimeDB = firebase.database();
+
+        // 2400 hours in milliseconds (100 days)
+        const MAX_SESSION_DURATION = 2400 * 60 * 60 * 1000; // 8,640,000,000 milliseconds
 
         // Login form submission handler
         document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -55,8 +59,8 @@
                         return;
                     }
 
-                    let userDocRef; // Reference to the document for updating later
-                    let userData; // To store the user data
+                    let userDocRef;
+                    let userData;
 
                     querySnapshot.forEach(doc => {
                         userData = doc.data();
@@ -65,21 +69,41 @@
 
                     // Check password
                     if (userData.password === password) {
-                        if (userData.loggedin === 1) {
-                            alert('Another user with the same credentials is logged in right now, logon failed.');
-                        } else {
-                            // Update "loggedin" to 1
-                            userDocRef.update({ loggedin: 1 })
-                                .then(() => {
-                                    // Redirect to index.html
-                                    localStorage.setItem('loggedInEmail', email); // Store email in localStorage
-                                    window.location.href = 'OAuthConsentScreen.html';
-                                })
-                                .catch(error => {
-                                    console.error('Error updating login status:', error.message);
-                                    alert('Error during login: ' + error.message);
-                                });
-                        }
+                        // Now check Realtime Database for active session
+                        const userSessionRef = realtimeDB.ref(`/sessions/${email.replace('.', '_')}`);
+                        userSessionRef.once('value')
+                            .then(snapshot => {
+                                const sessionData = snapshot.val();
+                                const currentTime = Date.now();
+
+                                // If no session exists or session is outdated (2400 hours)
+                                if (!sessionData || !sessionData.loggedIn || (sessionData.timestamp && currentTime - sessionData.timestamp > MAX_SESSION_DURATION)) {
+                                    // Create or update session
+                                    userSessionRef.set({
+                                        loggedIn: true,
+                                        sessionId: Math.random().toString(36).substring(2, 15),
+                                        timestamp: currentTime
+                                    });
+
+                                    // Update Firestore loggedIn field
+                                    userDocRef.update({ loggedin: 1 })
+                                        .then(() => {
+                                            // Redirect to index.html
+                                            localStorage.setItem('loggedInEmail', email); // Store email in localStorage
+                                            window.location.href = 'OAuthConsentScreen.html';
+                                        })
+                                        .catch(error => {
+                                            console.error('Error updating login status:', error.message);
+                                            alert('Error during login: ' + error.message);
+                                        });
+                                } else {
+                                    alert('Another session with the same credentials is already active.');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error checking session:', error.message);
+                                alert('Error during session check: ' + error.message);
+                            });
                     } else {
                         alert('Login failed, check your email and/or password');
                     }
