@@ -76,7 +76,7 @@
                     // Set cell background color based on status
                     const cellColor = loggedinStatus === 'Online' ? '#B2FF66' : ''; // Light green for Online
 
-                    const emailLink = `<a href="persondetails.html" style="text-decoration: none; color: black;">${data.email}</a>`;
+                    const emailLink = `<a href="persondetails.html" style="text-decoration: none; color: black;" onclick="setEmail('${data.email}')">${data.email}</a>`;
 
                     // Create a new row for the table
                     const row = document.createElement('tr');
@@ -92,6 +92,11 @@
             });
         }
 
+         // Function to set email in local storage
+        function setEmail(email) {
+            localStorage.setItem('detailsemail', email); // Set the item in local storage
+        }
+        
         // Load data on page load
         window.onload = loadData;
     </script>
