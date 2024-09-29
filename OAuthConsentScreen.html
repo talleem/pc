@@ -29,6 +29,14 @@
          </div>
               <img src="G.gif" alt="GIF Image" style="width: 25%;height:auto;"> 
     </div>
+    
+<script>
+    window.addEventListener('beforeunload', function (e) {
+    // Display a confirmation dialog
+    e.preventDefault(); // Standard for most browsers
+    e.returnValue = ''; // Legacy method for older browsers
+});
 
+</script>
 </body>
 </html>
