@@ -76,10 +76,12 @@
                     // Set cell background color based on status
                     const cellColor = loggedinStatus === 'Online' ? '#B2FF66' : ''; // Light green for Online
 
+                    const emailLink = `<a href="persondetails.html" style="text-decoration: none; color: black;">${data.email}</a>`;
+
                     // Create a new row for the table
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td style="background-color: ${cellColor}">${data.email}</td>
+                        <td style="background-color: ${cellColor}">${emailLink}</td>
                         <td style="background-color: ${cellColor}">${data.category}</td>
                         <td style="background-color: ${cellColor}">${loggedinStatus}</td>
                     `;
