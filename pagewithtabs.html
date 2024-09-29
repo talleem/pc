@@ -297,14 +297,6 @@ window.onload = function() {
     }, 2000); // Show borders after 2 seconds
 }
 </script>
-
-    <script>
-window.addEventListener('beforeunload', function (e) {
-    // Add logic to determine whether to show the dialog
-        e.preventDefault();
-        e.returnValue = "Don't try to close the window wiithout clicking on (Sign out) button because the security system will consider your session still opened";
-});
-    </script>
     
 </body>
 </html> 
