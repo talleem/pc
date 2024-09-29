@@ -1,6 +1,6 @@
 <html>
 <head>
-     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
@@ -12,7 +12,7 @@
             background-position: top left; /* Aligns the image to the top left */
             margin: 0;
             padding: 0;
-             display: flex;
+            display: flex;
             justify-content: center;
             align-items: flex-start; /* Change to flex-start to align items at the top */
             height: 100vh; /* Full height of the viewport */
@@ -27,7 +27,8 @@
                 background-position: top left; /* Aligns the image to the top left */
             }
         }
-           table {
+
+        table {
             background-color: #CAA549; /* Table background color */
             border-collapse: collapse; /* Merge borders */
             width: 65%; /* Width of the table */
@@ -46,8 +47,8 @@
         }
     </style>
 
-     <script>
-            // Your Firebase configuration
+    <script>
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
             authDomain: "engineerr1983meet.firebaseapp.com",
@@ -71,13 +72,16 @@
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const loggedinStatus = data.loggedin === 1 ? 'Online' : 'Offline'; // Convert logged in status
+                    
+                    // Set cell background color based on status
+                    const cellColor = loggedinStatus === 'Online' ? '#B2FF66' : ''; // Light green for Online
 
                     // Create a new row for the table
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${data.email}</td>
-                        <td>${data.category}</td>
-                        <td>${loggedinStatus}</td>
+                        <td style="background-color: ${cellColor}">${data.email}</td>
+                        <td style="background-color: ${cellColor}">${data.category}</td>
+                        <td style="background-color: ${cellColor}">${loggedinStatus}</td>
                     `;
                     tableBody.appendChild(row); // Append the row to the table body
                 });
@@ -89,13 +93,11 @@
         // Load data on page load
         window.onload = loadData;
     </script>
-
-     
 </head>
 <body>
-     <br>
-     <br>
-      <table>
+    <br>
+    <br>
+    <table>
         <thead>
             <tr>
                 <th>User email</th>
