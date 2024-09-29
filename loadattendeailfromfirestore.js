@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         messagingSenderId: "308801516934",
         appId: "1:308801516934:web:1a3833be5e03dfbcd66807",
         measurementId: "G-X22VZ2TVWT"
+        databaseURL: "https://engineerr1983meet-default-rtdb.firebaseio.com/"  // Add the Realtime Database URL
     };
 
     // Initialize Firebase
