@@ -303,7 +303,7 @@ window.addEventListener('beforeunload', function (e) {
     // Add logic to determine whether to show the dialog
     if (/* condition indicating unsaved changes or active session */) {
         e.preventDefault();
-        e.returnValue = '';
+        e.returnValue = 'Don't try to close the window wiithout clicking on (Sign out) button because the security system will consider your session still opened';
     }
 });
     </script>
