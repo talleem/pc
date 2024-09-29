@@ -1,25 +1,65 @@
+<!DOCTYPE html>
 <html>
 <head>
-   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <style>
-     html, body {
+    <style>
+        html, body {
             height: 100%; /* Ensure html and body take up full height */
         }
-body {
+        body {
             background-image: url('persondetailsbg.png'); /* Path to your PNG file */
             background-size: cover; /* Scales the image to cover the entire background */
-            background-repeat: repeat; /* Prevents the image from repeating */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
             background-position: center; /* Center the background image */
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        table {
+            background-color: rgba(255, 255, 255, 0.8); /* Slightly transparent background */
+            border-collapse: collapse; /* Merge borders */
+            width: 80%; /* Width of the table */
+            margin: 20px 0; /* Spacing around the table */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow to the table */
+        }
+        th, td {
+            border: 1px solid #ddd; /* Border for table cells */
+            padding: 8px; /* Padding for table cells */
+            text-align: center; /* Centered text */
+        }
+        th {
+            background-color: #f2f2f2; /* Header background color */
         }
     </style>
 </head>
 <body>
-  <script>
-       // Your Firebase configuration
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Category</th>
+                <th>Full Name</th>
+                <th>ID Number</th>
+                <th>ID Record Number</th>
+                <th>Birth Date</th>
+                <th>Phone</th>
+                <th>Emergency Phone</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Lectures</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Data will be populated here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBU0ns9VzWBxbHOIgTR-Yb6g1aFbOQEWFA",
             authDomain: "engineerr1983meet.firebaseapp.com",
@@ -32,8 +72,45 @@ body {
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();  
-  </script>
+        const db = firebase.firestore();
+
+        // Function to load user data from Firestore
+        function loadUserData() {
+            const email = localStorage.getItem('detailsemail'); // Get email from localStorage
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Clear existing table data
+
+            if (email) {
+                // Query the users_tbl collection for the specific email
+                db.collection('users_tbl').where('email', '==', email).get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+
+                        // Create a new row for the table
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${data.email}</td>
+                            <td>${data.category || ''}</td>
+                            <td>${data.FullName || ''}</td>
+                            <td>${data.IdNumber || ''}</td>
+                            <td>${data.IdRecordNumber || ''}</td>
+                            <td>${data.BirthDate || ''}</td>
+                            <td>${data.Phone || ''}</td>
+                            <td>${data.EmergencyPhone || ''}</td>
+                            <td>${data.Address || ''}</td>
+                            <td>${data.City || ''}</td>
+                            <td>${data.Lectures || ''}</td>
+                        `;
+                        tableBody.appendChild(row); // Append the row to the table body
+                    });
+                }).catch((error) => {
+                    console.error('Error getting documents:', error);
+                });
+            }
+        }
+
+        // Load user data on page load
+        window.onload = loadUserData;
+    </script>
 </body>
 </html>
-
