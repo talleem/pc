@@ -67,7 +67,7 @@
     width: 100%; /* Make input fields take up 100% of the table cell */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
-          #updateuserstbl,  #returnback {
+          #updateuserstbl {
             font-weight: bold;
             background-color: lightgray; /* Light gray background */
             color: black; /* Black text */
@@ -76,6 +76,21 @@
             position: relative; /* Position it relative to the table */
             top: 185px; /* Adjust top position */
             right: 1735px; /* Move it right next to the table */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.1s; /* Smooth transitions */
+            width:135px;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3); /* Add shadow to right and bottom */
+            margin-left: 10px; /* Add margin between the buttons */
+        }
+        #returnback {
+            font-weight: bold;
+            background-color: lightgray; /* Light gray background */
+            color: black; /* Black text */
+            padding: 10px 20px; /* Padding for the button */
+            border: 2px solid black; /* Add a 2px black border */
+            position: relative; /* Position it relative to the table */
+            top: 185px; /* Adjust top position */
+            right: 1700px; /* Move it right next to the table */
             cursor: pointer; /* Pointer cursor on hover */
             transition: background-color 0.3s, transform 0.1s; /* Smooth transitions */
             width:135px;
