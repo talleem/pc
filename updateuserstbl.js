@@ -1,6 +1,3 @@
-// Initialize Firebase Firestore
-const db = firebase.firestore();
-
 // Function to update user details in Firestore
 function updateuserstbl() {
     const email = localStorage.getItem('detailsemail'); // Get email from localStorage
