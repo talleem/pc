@@ -67,7 +67,7 @@
     width: 100%; /* Make input fields take up 100% of the table cell */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
-          #updateuserstbl {
+          #updateuserstbl,  #returnback {
             font-weight: bold;
             background-color: lightgray; /* Light gray background */
             color: black; /* Black text */
@@ -80,11 +80,12 @@
             transition: background-color 0.3s, transform 0.1s; /* Smooth transitions */
             width:135px;
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3); /* Add shadow to right and bottom */
+            margin-left: 10px; /* Add margin between the buttons */
         }
-        #updateuserstbl:hover {
+        #updateuserstbl:hover, #returnback:hover {
             background-color: #d3d3d3; /* Hover color */
         }
-        #updateuserstbl:active {
+        #updateuserstbl:active, #returnback:active {
             transform: translateY(2px); /* Push down effect */
         }
     </style>
@@ -112,6 +113,7 @@
     </table>
     
   <button id="updateuserstbl">Update</button>
+  <button id="returnback">Admin page</button>
 
     <script>
         // Your Firebase configuration
@@ -172,6 +174,13 @@
     document.getElementById('updateuserstbl').addEventListener('click', function() {
         // Call the function defined in fileupload.js
            updateuserstbl();
+    });
+</script>
+    <script>
+       // Event listener for the 'Admin page' button
+    document.getElementById('returnback').addEventListener('click', function() {
+        // Redirect to the previous page (joinedstudents.html)
+        window.location.href = 'joinedstudents.html';
     });
 </script>
 </body>
