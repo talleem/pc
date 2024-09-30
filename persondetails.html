@@ -38,8 +38,8 @@
         }
        td {
            background-color: #c6f2ff; /* Cell background color */
-}
-  /* Column width adjustments */
+        }
+        /* Column width adjustments */
         th:nth-child(1), td:nth-child(1) {
             width: 10%; /* Email column (smaller) */
         }
@@ -57,11 +57,11 @@
             width: 10%; /* Emergency phone (smaller but equal to phone number) */
         }
         th:nth-child(9), td:nth-child(9) {
-    width: 15%; /* Address (slightly smaller) */
-}
-th:nth-child(11), td:nth-child(11) {
-    width: 25%; /* Lectures (slightly smaller) */
-}
+            width: 15%; /* Address (slightly smaller) */
+        }
+        th:nth-child(11), td:nth-child(11) {
+            width: 25%; /* Lectures (slightly smaller) */
+        }
     </style>
 </head>
 <body>
@@ -69,7 +69,7 @@ th:nth-child(11), td:nth-child(11) {
         <thead>
             <tr>
                 <th>Email</th>
-                <th>Category</th>
+                <th>Password</th>
                 <th>Full Name</th>
                 <th>ID Number</th>
                 <th>ID Record Number</th>
@@ -114,20 +114,20 @@ th:nth-child(11), td:nth-child(11) {
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
 
-                        // Create a new row for the table
+                        // Create a new row for the table with input fields
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${data.email}</td>
-                            <td>${data.category || ''}</td>
-                            <td>${data.FullName || ''}</td>
-                            <td>${data.IdNumber || ''}</td>
-                            <td>${data.IdRecordNumber || ''}</td>
-                            <td>${data.BirthDate || ''}</td>
-                            <td>${data.Phone || ''}</td>
-                            <td>${data.EmergencyPhone || ''}</td>
-                            <td>${data.Address || ''}</td>
-                            <td>${data.City || ''}</td>
-                            <td>${data.Lectures || ''}</td>
+                            <td><input type="text" value="${data.email}" /></td>
+                            <td><input type="password" value="${data.password || ''}" /></td>
+                            <td><input type="text" value="${data.FullName || ''}" /></td>
+                            <td><input type="text" value="${data.IdNumber || ''}" /></td>
+                            <td><input type="text" value="${data.IdRecordNumber || ''}" /></td>
+                            <td><input type="text" value="${data.BirthDate || ''}" /></td>
+                            <td><input type="text" value="${data.Phone || ''}" /></td>
+                            <td><input type="text" value="${data.EmergencyPhone || ''}" /></td>
+                            <td><input type="text" value="${data.Address || ''}" /></td>
+                            <td><input type="text" value="${data.City || ''}" /></td>
+                            <td><input type="text" value="${data.Lectures || ''}" /></td>
                         `;
                         tableBody.appendChild(row); // Append the row to the table body
                     });
