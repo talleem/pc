@@ -67,6 +67,24 @@
     width: 100%; /* Make input fields take up 100% of the table cell */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
+          #updateuserstbl {
+            font-weight: bold;
+            background-color: lightgray; /* Light gray background */
+            color: black; /* Black text */
+            padding: 10px 20px; /* Padding for the button */
+            border: none; /* No border */
+            position: relative; /* Position it relative to the table */
+            top: 10px; /* Adjust top position */
+            right: -120px; /* Move it right next to the table */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.1s; /* Smooth transitions */
+        }
+        #updateuserstbl:hover {
+            background-color: #d3d3d3; /* Hover color */
+        }
+        #updateuserstbl:active {
+            transform: translateY(2px); /* Push down effect */
+        }
     </style>
 </head>
 <body>
@@ -91,14 +109,7 @@
         </tbody>
     </table>
     
-  <button id="updateuserstbl" style="font-weight: bold; background-color: lightgray; color: black; padding: 10px 20px; border: none; margin-top: 20px; margin-left: 20px; cursor: pointer; transition: background-color 0.3s, transform 0.1s;" 
-    onmouseover="this.style.backgroundColor='#d3d3d3'" 
-    onmouseout="this.style.backgroundColor='lightgray'" 
-    onmousedown="this.style.transform='translateY(2px)'" 
-    onmouseup="this.style.transform=''" 
-    onmouseleave="this.style.transform=''">
-    Update details
-</button>
+  <button id="updateuserstbl">Update details</button>
 
     <script>
         // Your Firebase configuration
