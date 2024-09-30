@@ -39,7 +39,27 @@
        td {
            background-color: #c6f2ff; /* Cell background color */
 }
-
+  /* Column width adjustments */
+        th:nth-child(1), td:nth-child(1) {
+            width: 10%; /* Email column (smaller) */
+        }
+        th:nth-child(3), td:nth-child(3) {
+            width: 15%; /* Full Name column (larger for three names) */
+        }
+        th:nth-child(4), td:nth-child(4),
+        th:nth-child(5), td:nth-child(5) {
+            width: 10%; /* ID Number and ID Record Number (equal width, smaller) */
+        }
+        th:nth-child(7), td:nth-child(7) {
+            width: 12%; /* Phone number (larger) */
+        }
+        th:nth-child(8), td:nth-child(8) {
+            width: 10%; /* Emergency phone (smaller but equal to phone number) */
+        }
+        th:nth-child(9), td:nth-child(9),
+        th:nth-child(11), td:nth-child(11) {
+            width: 30%; /* Address and Lectures (3 times the current width) */
+        }
     </style>
 </head>
 <body>
