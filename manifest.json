@@ -1,6 +1,6 @@
 {
-  "name": "Hello World App",
-  "short_name": "HelloWorld",
+  "name": "College App",
+  "short_name": "College tallem",
   "description": "My Progressive Web App for my website",
   "start_url": "/hello-world-page/",
   "display": "standalone",
