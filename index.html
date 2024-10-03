@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,5 +15,18 @@
   <h4><b>The privacy policy for the application</b></h4>
 <br>
 <a href="https://engineerr1983.github.io/hello-world-page/loginscreen.html"><h3><b>Google API interface tools Home page</b></h3></a>
-  <h4><b>The homepage application using Google API endpoints, scopes to makes use of Google services like: Gmail // Drive // Google Meet // Calendar // Maps</b></h4>       
+  <h4><b>The homepage application using Google API endpoints, scopes to makes use of Google services like: Gmail // Drive // Google Meet // Calendar // Maps</b></h4>  
+     <!-- Register the service worker just before the closing body tag -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/hello-world-page/service-worker.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          console.log('Service Worker registration failed:', error);
+        });
+      }
+    </script>
 </body>
+</html>
