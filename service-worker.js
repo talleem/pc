@@ -34,6 +34,7 @@ self.addEventListener('install', event => {
 '/hello-world-page/loginscreen.html',
 '/hello-world-page/logo.png',
 '/hello-world-page/manifest.json',
+'/hello-world-page/meetingeventsnotification.js',
 '/hello-world-page/pagewithtabs.html',
 '/hello-world-page/persondetails.html',
 '/hello-world-page/persondetailsbg.png',
