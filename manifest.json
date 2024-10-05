@@ -2,7 +2,7 @@
   "name": "College App",
   "short_name": "College tallem",
   "description": "My Progressive Web App for my website",
-  "start_url": "/",
+  "start_url": "/hello-world-page/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
