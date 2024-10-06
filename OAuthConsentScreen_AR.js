@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
          // Apply styling to move it to the horizontal center and slightly to the right
         h1Element.style.textAlign = "center";
-        h1Element.style.marginRight = "90px"; // Adjust this value to shift it more or less to the right
+        h1Element.style.position = "relative";  // Allows moving the element relative to its normal position
+        h1Element.style.right = "-60px";  // Adjust this value to shift it to the right, negative moves it right
         
         // Translate the <h2> elements
         const h2Elements = document.querySelectorAll("h2");
