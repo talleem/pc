@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
         h2Elements[0].innerHTML = "تذكر: سجل الدخول باستخدام حساب غوغل";
         h2Elements[1].innerHTML = "الذي استخدمته في شاشة الدخول الرئيسية";
         h2Elements[2].innerHTML = "أو اضغط على زر خروج للعودة للشاشة الرئيسية";
-
+        h2Elements[3].innerHTML = "";
         // Translate the button texts
         document.querySelector("#oauthButton h4").innerHTML = "أضغط لتسجيل الدخول بحساب غوغل";
         document.querySelector("#signout h4").innerHTML = "خروج";
