@@ -44,6 +44,7 @@
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            localStorage.setItem("loggedEmail", email);
 
             // Check Firestore for user credentials
             firestore.collection('users_tbl').where('email', '==', email)
