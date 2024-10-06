@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OAuth Consent Workflow Google Authentication</title>
-     /* Add styling to position the image */
+    <style>
+        /* Add styling to position the image */
         .image-container {
             position: absolute; /* Make it absolute */
             bottom: 20px; /* Space from the bottom */
             right: 20px; /* Space from the right */
             width: 25%; /* Set width */
         }
+    </style>
 </head>
 <body bgcolor="#FAFAFA">
     <br>
@@ -25,7 +27,7 @@
     <h2 style="text-align: center;font-weight: bold;">Otherwise click (Sign out) to return</h2>
     <h2 style="text-align: center;font-weight: bold;">to login screen...</h2>
    
-    <div style="display: flex; justify-content: center; align-items: center; height: 25vh; padding: 0 20px;">
+    <div style="display: flex; justify-content: center; align-items: center; height: 25vh; padding: 0 20px; position: relative;"> <!-- Add position relative -->
         <div style="display: flex; align-items: center; gap: 20px;"> <!-- Added gap for spacing -->
             <button id="oauthButton" style="display: flex; align-items: center; justify-content: center; height: 35px;">
                 <h4 style="margin: 0;">Click to Grant OAuth Consent To Google services</h4>
@@ -34,7 +36,9 @@
                 <h4 style="margin: 0;">Sign out</h4>
             </button>
         </div>
-        <img src="G.gif" alt="GIF Image" style="width: 25%; height: auto;"> 
+        <div class="image-container"> <!-- Wrap the image in a div for positioning -->
+            <img src="G.gif" alt="GIF Image" style="width: 100%; height: auto;"> <!-- Change to 100% for container scaling -->
+        </div>
     </div>
 
     <script src="script.js"></script>
