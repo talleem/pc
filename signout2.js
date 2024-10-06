@@ -19,6 +19,11 @@ const db = firebase.firestore();
 function signOutUser() {
     const userEmail = localStorage.getItem('loggedEmail'); // Assuming you stored the user's email in localStorage
 
+    // Check if localStorage value for 'arpage' is set to 'ar'
+    if (localStorage.getItem('arpage') === 'ar') {
+        localStorage.setItem('arpage', null); // Reset 'arpage' back to null
+    }
+
     if (userEmail) {
         db.collection('users_tbl')
             .where('email', '==', userEmail)
@@ -44,6 +49,7 @@ function signOutUser() {
         console.error('No user email found in localStorage.');
     }
 }
+
 // Add event listener to the signout button once the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('signout').addEventListener('click', signOutUser);
