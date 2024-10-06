@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelector("h1").innerHTML = "السماح بالدخول باستخدام حساب الغوغل";
 
          // Apply styling to move it to the horizontal center and slightly to the right
-        h1Element.style.textAlign = "center";
+        //h1Element.style.textAlign = "center";
         h1Element.style.marginRight = "100px"; // Adjust this value to shift it more or less to the right
         
         // Translate the <h2> elements
