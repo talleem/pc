@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Check if the localStorage variable `arpage` is set to 'ar'
     if (localStorage.getItem("arpage") === "ar") {
         // Translate the page elements to Arabic
+        const h1Element = document.querySelector("h1");
         document.querySelector("h1").innerHTML = "السماح بالدخول باستخدام حساب الغوغل";
 
          // Apply styling to move it to the horizontal center and slightly to the right
