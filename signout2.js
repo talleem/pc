@@ -45,6 +45,7 @@ function signOutUser() {
     }
 }
 
-// Add event listener to the signout button
-document.getElementById('signout').addEventListener('click', signOutUser);
-
+// Add event listener to the signout button once the DOM is fully loaded
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('signout').addEventListener('click', signOutUser);
+});
