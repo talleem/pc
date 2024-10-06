@@ -44,7 +44,7 @@ function signOutUser() {
         console.error('No user email found in localStorage.');
     }
 }
-
+ localStorage.setItem("arpage", "");
 // Add event listener to the signout button once the DOM is fully loaded
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('signout').addEventListener('click', signOutUser);
