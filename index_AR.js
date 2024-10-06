@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("topButton").addEventListener("click", function() {
         localStorage.setItem("arpage", "ar");
         
-        // Check if localStorage has the Arabic page setting after the button click
+        // Check if localStorage has the Arabic page setting after the button click..
         if (localStorage.getItem("arpage") === "ar") {
             // Replace text with Arabic equivalent
             document.querySelector("h2").innerHTML = "<b>تطبيق معهد (تعلم) الالكتروني <font color='#FF0000'> ملاحظة: لا يزال قيد التطوير </font></b>";
