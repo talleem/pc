@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Check if localStorage has the Arabic page setting after the button click
         if (localStorage.getItem("arpage") === "ar") {
             // Replace text with Arabic equivalent
-            document.querySelector("h3").innerHTML = "<b>تطبيق معهد (تعلم) الالكتروني <font color='#FF0000'> ملاحظة: لا يزال قيد التطوير </font></b>";
+            document.querySelector("h2").innerHTML = "<b>تطبيق معهد (تعلم) الالكتروني <font color='#FF0000'> ملاحظة: لا يزال قيد التطوير </font></b>";
             
             // Replace the application entry link with Arabic
             document.querySelector("a[href='https://engineerr1983.github.io/hello-world-page/loginscreen.html'] h3").innerHTML = "<b>ادخل التطبيق من هنا</b>";
