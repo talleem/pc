@@ -8,8 +8,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const h2Elements = document.querySelectorAll("h2");
         h2Elements[0].innerHTML = "تذكر: سجل الدخول باستخدام حساب غوغل";
         h2Elements[1].innerHTML = "الذي استخدمته في شاشة الدخول الرئيسية";
-        h2Elements[2].innerHTML = "أو اضغط على زر خروج للعودة للشاشة السابقة";
-        h2Elements[3].innerHTML = "أو اضغط على زر خروج للعودة للشاشة السابقة"; // Repeated translation
+        h2Elements[2].innerHTML = "أو اضغط على زر خروج للعودة للشاشة الرئيسية";
 
         // Translate the button texts
         document.querySelector("#oauthButton h4").innerHTML = "أضغط لتسجيل الدخول بحساب غوغل";
