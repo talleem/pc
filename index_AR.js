@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function() {
             // Replace the application entry link with Arabic
             document.querySelector("a[href='https://engineerr1983.github.io/hello-world-page/loginscreen.html'] h3").innerHTML = "<b>ادخل التطبيق من هنا</b>";
             
-            // Replace the description below the link
-            document.querySelector("h4").innerHTML = "<b>يحتوي التطبيق على غرفة اجتماعات مدعومة بواسطة Google Meet / منشورات الكلية وسير المحاضرين (السير الذاتية والفيديوهات) / المحاضرات وأي ملفات أخرى يتم تحميلها يدويًا</b>";
+            // Replace the second <h4> (index 1) with the Arabic equivalent
+            document.querySelectorAll("h4")[1].innerHTML = "<b>يحتوي التطبيق على غرفة اجتماعات مدعومة بواسطة Google Meet / منشورات الكلية وسير المحاضرين (السير الذاتية والفيديوهات) / المحاضرات وأي ملفات أخرى يتم تحميلها يدويًا</b>";
         }
     });
 });
