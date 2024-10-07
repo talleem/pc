@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Check if 'arpage' in localStorage is set to 'ar'
     if (localStorage.getItem('arpage') === 'ar') {
-        translateTableToArabic();
+        // Delay the translation slightly to ensure table is fully loaded
+        setTimeout(translateTableToArabic, 100); // Wait for 100 milliseconds
     }
 });
 
@@ -19,17 +20,19 @@ function translateTableToArabic() {
         const categoryCell = row.children[1]; // 'Category' column
         const statusCell = row.children[2]; // 'Logged in?' column
 
-        // Translate the Category cell
-        if (categoryCell.textContent === 'lecturer') {
+        // Translate the Category cell (trim to avoid issues with extra spaces)
+        const categoryText = categoryCell.textContent.trim();
+        if (categoryText === 'lecturer') {
             categoryCell.textContent = 'محاضر';
-        } else if (categoryCell.textContent === 'student') {
+        } else if (categoryText === 'student') {
             categoryCell.textContent = 'طالب';
         }
 
-        // Translate the Logged in? cell
-        if (statusCell.textContent === 'Online') {
+        // Translate the Logged in? cell (trim to avoid issues with extra spaces)
+        const statusText = statusCell.textContent.trim();
+        if (statusText === 'Online') {
             statusCell.textContent = 'متصل';
-        } else if (statusCell.textContent === 'Offline') {
+        } else if (statusText === 'Offline') {
             statusCell.textContent = 'غير متصل';
         }
     });
