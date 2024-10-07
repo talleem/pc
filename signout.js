@@ -35,6 +35,13 @@ function signout() {
             })
             .then(() => {
                 console.log('Logged out successfully.');
+
+                // Check if `arpage` is set to 'ar', and if so, set it to null
+                if (localStorage.getItem('arpage') === 'ar') {
+                    localStorage.setItem('arpage',null);
+                    console.log('arpage localStorage cleared.');
+                }
+
                 // Optionally remove the email from localStorage
                 localStorage.removeItem('loggedInEmail');
                 resolve(); // Resolve the promise
