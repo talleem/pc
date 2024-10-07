@@ -1,11 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Check if 'arpage' in localStorage is set to 'ar'
-    if (localStorage.getItem('arpage') === 'ar') {
-        // Delay the translation slightly to ensure table is fully loaded
-        setTimeout(translateTableToArabic, 100); // Wait for 100 milliseconds
-    }
-});
-
 // Function to translate table headers and specific cell content to Arabic
 function translateTableToArabic() {
     // Translate the table headers
@@ -24,17 +16,20 @@ function translateTableToArabic() {
         const categoryText = categoryCell.textContent.trim();
         if (categoryText === 'lecturer') {
             categoryCell.textContent = 'محاضر';
-            console.log("succeded");
+            console.log("Category translated to محاضر");
         } else if (categoryText === 'student') {
             categoryCell.textContent = 'طالب';
+            console.log("Category translated to طالب");
         }
 
         // Translate the Logged in? cell (trim to avoid issues with extra spaces)
         const statusText = statusCell.textContent.trim();
         if (statusText === 'Online') {
             statusCell.textContent = 'متصل';
+            console.log("Status translated to متصل");
         } else if (statusText === 'Offline') {
             statusCell.textContent = 'غير متصل';
+            console.log("Status translated to غير متصل");
         }
     });
 }
