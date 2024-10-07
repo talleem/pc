@@ -16,9 +16,11 @@ function translateTableToArabic() {
         const categoryText = categoryCell.textContent.trim();
         if (categoryText === 'lecturer') {
             categoryCell.textContent = 'محاضر';
+            categoryCell.style.fontWeight = 'bold';
             console.log("Category translated to محاضر");
         } else if (categoryText === 'student') {
             categoryCell.textContent = 'طالب';
+            categoryCell.style.fontWeight = 'bold';
             console.log("Category translated to طالب");
         }
 
@@ -26,9 +28,11 @@ function translateTableToArabic() {
         const statusText = statusCell.textContent.trim();
         if (statusText === 'Online') {
             statusCell.textContent = 'متصل';
+            statusCell.style.fontWeight = 'bold';
             console.log("Status translated to متصل");
         } else if (statusText === 'Offline') {
             statusCell.textContent = 'غير متصل';
+            statusCell.style.fontWeight = 'bold';
             console.log("Status translated to غير متصل");
         }
     });
