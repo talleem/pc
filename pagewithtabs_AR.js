@@ -12,7 +12,11 @@ document.addEventListener("DOMContentLoaded", function() {
             buttons[4].innerHTML = "lectures archive  محتوى";
             buttons[5].innerHTML = "Admin مدير";
             buttons[6].innerHTML = "sign out خروج";
+            
+            // Make the text bold for each button
+            buttons.forEach(button => {
+                button.style.fontWeight = "bold";
+            });
         }
     }
 });
-
