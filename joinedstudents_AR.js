@@ -1,4 +1,4 @@
-// Function to translate table headers and specific cell content to Arabic
+// Function to translate table headers, specific cell content, and the custom paragraph to Arabic
 function translateTableToArabic() {
     // Translate the table headers
     const headers = document.querySelectorAll('th');
@@ -36,4 +36,9 @@ function translateTableToArabic() {
             console.log("Status translated to غير متصل");
         }
     });
+
+    // Translate the custom paragraph
+    const customParagraph = document.getElementById('customParagraph');
+    customParagraph.textContent = 'ملاحظة: لا تغلق المتصفح أبداً، بدلاً من ذلك اضغط على (خروج)'; // 'Note: Never close the browser, instead click on (Sign out)'
+    customParagraph.style.fontWeight = 'bold'; // Make the paragraph text bold
 }
