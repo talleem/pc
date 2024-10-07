@@ -24,6 +24,7 @@ function translateTableToArabic() {
         const categoryText = categoryCell.textContent.trim();
         if (categoryText === 'lecturer') {
             categoryCell.textContent = 'محاضر';
+            console.log("succeded");
         } else if (categoryText === 'student') {
             categoryCell.textContent = 'طالب';
         }
