@@ -79,34 +79,39 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Function to load data from Firestore
-        function loadData() {
-            const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = ''; // Clear existing table data
+      function loadData() {
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = ''; // Clear existing table data
 
-            db.collection('users_tbl').get().then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const loggedinStatus = data.loggedin === 1 ? 'Online' : 'Offline'; // Convert logged in status
-                    
-                    // Set cell background color based on status
-                    const cellColor = loggedinStatus === 'Online' ? '#B2FF66' : ''; // Light green for Online
+    db.collection('users_tbl').get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const loggedinStatus = data.loggedin === 1 ? 'Online' : 'Offline'; // Convert logged in status
 
-                    const emailLink = `<a href="persondetails.html" style="text-decoration: none; color: black;" onclick="setEmail('${data.email}')">${data.email}</a>`;
+            // Set cell background color based on status
+            const cellColor = loggedinStatus === 'Online' ? '#B2FF66' : ''; // Light green for Online
 
-                    // Create a new row for the table
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td style="background-color: ${cellColor}">${emailLink}</td>
-                        <td style="background-color: ${cellColor}">${data.category}</td>
-                        <td style="background-color: ${cellColor}">${loggedinStatus}</td>
-                    `;
-                    tableBody.appendChild(row); // Append the row to the table body
-                });
-            }).catch((error) => {
-                console.error('Error getting documents:', error);
-            });
+            const emailLink = `<a href="persondetails.html" style="text-decoration: none; color: black;" onclick="setEmail('${data.email}')">${data.email}</a>`;
+
+            // Create a new row for the table
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="background-color: ${cellColor}">${emailLink}</td>
+                <td style="background-color: ${cellColor}">${data.category}</td>
+                <td style="background-color: ${cellColor}">${loggedinStatus}</td>
+            `;
+            tableBody.appendChild(row); // Append the row to the table body
+        });
+
+        // Call translation function after data is loaded
+        if (localStorage.getItem('arpage') === 'ar') {
+            translateTableToArabic(); // Ensure translation happens only after data load
         }
+    }).catch((error) => {
+        console.error('Error getting documents:', error);
+    });
+}
+
 
          // Function to set email in local storage
         function setEmail(email) {
