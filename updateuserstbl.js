@@ -20,7 +20,7 @@ function updateuserstbl() {
                 EmergencyPhone: inputs[7].value, // Emergency Phone
                 Address: inputs[8].value, // Address
                 City: select.value, // City from the dropdown (select)
-                Lectures: inputs[10].value // Lectures
+                Lectures: inputs[9].value // Lectures
             };
 
             // Update the document in Firestore
