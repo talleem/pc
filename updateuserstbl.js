@@ -8,6 +8,7 @@ function updateuserstbl() {
 
         Array.from(rows).forEach((row) => {
             const inputs = row.getElementsByTagName('input');
+             const select = row.getElementsByTagName('select')[0]; // Get the City dropdown (select element)
             const updatedData = {
                 email: inputs[0].value, // Email
                 password: inputs[1].value, // Password
