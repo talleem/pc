@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function translatePageToArabic() {
     // Translate table headers
-    document.querySelector('th:nth-child(1)').textContent = 'الاستاذ';
+    document.querySelector('th:nth-child(1)').textContent = ' ايميل الاستاذ';
     document.querySelector('th:nth-child(2)').textContent = 'تاريخ التحميل';
-    document.querySelector('th:nth-child(3)').textContent = 'اعرض المحتوى';
+    document.querySelector('th:nth-child(3)').textContent = 'عرض المحتوى';
     document.querySelector('th:nth-child(4)').textContent = 'ملاحظات';
 
     // Translate buttons
