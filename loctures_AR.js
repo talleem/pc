@@ -15,8 +15,11 @@ function translatePageToArabic() {
 
     // Translate buttons
     document.getElementById('deleteVideo').textContent = 'حذف المحتوى';
+    document.getElementById('deleteVideo').style.fontWeight = 'bold';
     document.getElementById('fileupload').textContent = 'تحميل المحتوى';
+    document.getElementById('fileupload').style.fontWeight = 'bold';
     document.getElementById('updatenotes').textContent = 'تعديل الملاحظات';
+    document.getElementById('updatenotes').style.fontWeight = 'bold';
 
     // Translate combo box labels
     document.querySelector('label[for="lecturer-email"] h3').textContent = 'ايميل الاستاذ';
