@@ -192,6 +192,10 @@ row.setAttribute('data-document-id', doc.id);
 
                         lecturesTableBody.appendChild(row);
                     });
+                      // Call translation function after lectures are loaded
+            if (localStorage.getItem('arpage') === 'ar') {
+                translatePageToArabic(); // Assuming you already have the translation function
+            }
                 })
                 .catch(error => console.error("Error loading lectures:", error));
         }
