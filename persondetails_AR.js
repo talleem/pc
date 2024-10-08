@@ -13,6 +13,6 @@ function translateToArabic() {
     document.querySelector('th:nth-child(11)').innerText = 'المحاضرات';
     // Translate buttons
     document.getElementById('updateuserstbl').textContent = "تحديث";
-    document.getElementById('returnback').textContent = "صفحة المسؤول";
+    document.getElementById('returnback').textContent = "صفحة المدير";
 }
 
