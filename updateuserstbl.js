@@ -18,7 +18,7 @@ function updateuserstbl() {
                 Phone: inputs[6].value, // Phone
                 EmergencyPhone: inputs[7].value, // Emergency Phone
                 Address: inputs[8].value, // Address
-                City: inputs[9].value, // City
+                City: select.value, // City from the dropdown (select)
                 Lectures: inputs[10].value // Lectures
             };
 
