@@ -169,7 +169,29 @@
                             <td><input type="text" value="${data.Phone || ''}" /></td>
                             <td><input type="text" value="${data.EmergencyPhone || ''}" /></td>
                             <td><input type="text" value="${data.Address || ''}" /></td>
-                            <td><input type="text" value="${data.City || ''}" /></td>
+                            <td>
+                              <select>
+            <option value="">اختر المدينة</option>
+            <option value="بغداد" ${data.City === 'بغداد' ? 'selected' : ''}>بغداد</option>
+            <option value="البصرة" ${data.City === 'البصرة' ? 'selected' : ''}>البصرة</option>
+            <option value="نينوى" ${data.City === 'نينوى' ? 'selected' : ''}>نينوى</option>
+            <option value="كركوك" ${data.City === 'كركوك' ? 'selected' : ''}>كركوك</option>
+            <option value="الأنبار" ${data.City === 'الأنبار' ? 'selected' : ''}>الأنبار</option>
+            <option value="أربيل" ${data.City === 'أربيل' ? 'selected' : ''}>أربيل</option>
+            <option value="النجف" ${data.City === 'النجف' ? 'selected' : ''}>النجف</option>
+            <option value="كربلاء" ${data.City === 'كربلاء' ? 'selected' : ''}>كربلاء</option>
+            <option value="ذي قار" ${data.City === 'ذي قار' ? 'selected' : ''}>ذي قار</option>
+            <option value="السليمانية" ${data.City === 'السليمانية' ? 'selected' : ''}>السليمانية</option>
+            <option value="واسط" ${data.City === 'واسط' ? 'selected' : ''}>واسط</option>
+            <option value="بابل" ${data.City === 'بابل' ? 'selected' : ''}>بابل</option>
+            <option value="ديالى" ${data.City === 'ديالى' ? 'selected' : ''}>ديالى</option>
+            <option value="ميسان" ${data.City === 'ميسان' ? 'selected' : ''}>ميسان</option>
+            <option value="الديوانية" ${data.City === 'الديوانية' ? 'selected' : ''}>الديوانية</option>
+            <option value="المثنى" ${data.City === 'المثنى' ? 'selected' : ''}>المثنى</option>
+            <option value="صلاح الدين" ${data.City === 'صلاح الدين' ? 'selected' : ''}>صلاح الدين</option>
+            <option value="دهوك" ${data.City === 'دهوك' ? 'selected' : ''}>دهوك</option>
+        </select>
+                            </td>
                             <td><input type="text" value="${data.Lectures || ''}" /></td>
                         `;
                         tableBody.appendChild(row); // Append the row to the table body
