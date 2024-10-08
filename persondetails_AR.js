@@ -11,5 +11,8 @@ function translateToArabic() {
     document.querySelector('th:nth-child(9)').innerText = 'العنوان';
     document.querySelector('th:nth-child(10)').innerText = 'المدينة';
     document.querySelector('th:nth-child(11)').innerText = 'المحاضرات';
+    // Translate buttons
+    document.getElementById('updateuserstbl').textContent = "تحديث";
+    document.getElementById('returnback').textContent = "صفحة المسؤول";
 }
 
