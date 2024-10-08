@@ -16,13 +16,13 @@ function translatePageToArabic() {
     // Translate buttons
     document.getElementById('deleteVideo').textContent = 'حذف المحتوى';
     document.getElementById('deleteVideo').style.fontWeight = 'bold';
-    document.getElementById('deleteVideo').style.fontSize = '1.1em';
+    document.getElementById('deleteVideo').style.fontSize = '1em';
     document.getElementById('fileupload').textContent = 'تحميل المحتوى';
     document.getElementById('fileupload').style.fontWeight = 'bold';
-    document.getElementById('fileupload').style.fontSize = '1.1em';
+    document.getElementById('fileupload').style.fontSize = '1em';
     document.getElementById('updatenotes').textContent = 'تعديل الملاحظات';
     document.getElementById('updatenotes').style.fontWeight = 'bold';
-    document.getElementById('updatenotes').style.fontSize = '1.1em';
+    document.getElementById('updatenotes').style.fontSize = '1em';
 
     // Translate combo box labels
     document.querySelector('label[for="lecturer-email"] h3').textContent = 'ايميل الاستاذ';
