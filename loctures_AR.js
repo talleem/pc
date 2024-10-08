@@ -32,7 +32,7 @@ function translatePageToArabic() {
 
         // Check for specific keywords and translate accordingly
         if (originalText === 'Display the lecture') {
-            translatedText = 'اعرض المحتوى';
+            translatedText = 'اعرض المحاضرة';
         } else if (['png', 'jpg', 'jpeg'].includes(extension)) {
             translatedText = 'اعرض الصورة';
         } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(extension)) {
