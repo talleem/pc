@@ -181,7 +181,15 @@
         }
 
         // Load user data on page load
-        window.onload = loadUserData;
+        window.onload = {
+            loadUserData;
+         // Check if localStorage variable 'arpage' equals 'ar'
+            const arpage = localStorage.getItem('arpage');
+            if (arpage === 'ar') {
+                // If the page is in Arabic, call the function from the external JS file to translate
+                translateToArabic();
+            }
+        };
     </script>
   
        <script>
