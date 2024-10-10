@@ -72,7 +72,7 @@ function translateGoogleMeetPage() {
     // Translate input placeholders
     const attendeeEmailInput = document.getElementById('attendeeEmail');
     if (attendeeEmailInput) {
-        attendeeEmailInput.placeholder = 'أدخل بريد المشارك هنا..';
+        attendeeEmailInput.placeholder = 'أدخل بريد المشاركين هنا..';
     }
 
     const meetingDescInput = document.getElementById('meetingdesc');
