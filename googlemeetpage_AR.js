@@ -69,4 +69,24 @@ function translateGoogleMeetPage() {
             }
         }
     }
+    // Translate input placeholders
+    const attendeeEmailInput = document.getElementById('attendeeEmail');
+    if (attendeeEmailInput) {
+        attendeeEmailInput.placeholder = 'أدخل بريد المشارك هنا..';
+    }
+
+    const meetingDescInput = document.getElementById('meetingdesc');
+    if (meetingDescInput) {
+        meetingDescInput.placeholder = 'أدخل وصف الاجتماع هنا';
+    }
+
+    const startTimeInput = document.getElementById('starttime');
+    if (startTimeInput) {
+        startTimeInput.placeholder = 'أدخل وقت بداية الاجتماع هنا';
+    }
+
+    const endTimeInput = document.getElementById('endtime');
+    if (endTimeInput) {
+        endTimeInput.placeholder = 'أدخل وقت نهاية الاجتماع هنا';
+    }
 }
