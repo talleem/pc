@@ -10,12 +10,14 @@ function translateGoogleMeetPage() {
     if (secondH4) {
         secondH4.textContent = 'مع بريد المستخدم الحالي أو مدير الغرفة الظاهر باللون الأزرق - ضروري -';
     }
+
     // Translate the <h4> inside the <div> with id="texttip"
     const textTip = document.getElementById('texttip');
     if (textTip) {
         textTip.innerHTML = 'أدخل : بريد المدعوين للاجتماع - وقت بدء الاجتماع - وقت الانتهاء - وصف الاجتماع لتكوين اجتماع جديد';
     }
-     // Translate the buttons
+
+    // Translate the buttons
     const sendInvitButton = document.getElementById('sendinvit');
     if (sendInvitButton) {
         sendInvitButton.textContent = 'أضف مشارك';
@@ -42,7 +44,8 @@ function translateGoogleMeetPage() {
     if (createInvitButton) {
         createInvitButton.textContent = 'انشئ الاجتماع';
     }
-     // Translate "Repeat Every:" and "No of Occurs:" titles
+
+    // Translate "Repeat Every:" and "No of Occurs:" titles
     const repeatEveryLabel = document.querySelector('span:nth-of-type(1)');
     if (repeatEveryLabel) {
         repeatEveryLabel.textContent = 'كرر التنبيه كل:';
@@ -53,4 +56,3 @@ function translateGoogleMeetPage() {
         noOfOccursLabel.textContent = 'عدد مرات التكرار:';
     }
 }
-
