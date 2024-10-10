@@ -44,14 +44,13 @@ function translateGoogleMeetPage() {
     if (createInvitButton) {
         createInvitButton.textContent = 'انشئ الاجتماع';
     }
-     // Translate "Repeat Every:" and "No of Occurs:" titles
-    const repeatEveryLabel = document.querySelector('span:nth-of-type(1)');
-    if (repeatEveryLabel) {
-        repeatEveryLabel.textContent = 'كرر التنبيه كل:';
-    }
-
-    const noOfOccursLabel = document.querySelector('span:nth-of-type(2)');
-    if (noOfOccursLabel) {
-        noOfOccursLabel.textContent = 'عدد مرات التكرار:';
-    }
+     // Translate "Repeat Every:" and "No of Occurs:" titles using exact text search
+    const labels = document.querySelectorAll('span');
+    labels.forEach(label => {
+        if (label.textContent.includes('Repeat Every:')) {
+            label.textContent = 'كرر التنبيه كل:';
+        } else if (label.textContent.includes('No of Occurs:')) {
+            label.textContent = 'عدد مرات التكرار:';
+        }
+    });
 }
