@@ -19,11 +19,13 @@ function translateGoogleMeetPage() {
     const sendInvitButton = document.getElementById('sendinvit');
     if (sendInvitButton) {
         sendInvitButton.textContent = 'أضف مشارك';
+        sendInvitButton.style.fontWeight = 'bold';  // Make bold
     }
 
     const deleteAttendeeButton = document.getElementById('deleteattendee1');
     if (deleteAttendeeButton) {
         deleteAttendeeButton.textContent = 'احذف مشارك';
+        deleteAttendeeButton.style.fontWeight = 'bold';  // Make bold
     }
 
     const loadInvitButton = document.getElementById('loadinvit');
