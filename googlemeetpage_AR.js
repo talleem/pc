@@ -53,4 +53,20 @@ function translateGoogleMeetPage() {
             label.textContent = 'عدد مرات التكرار:';
         }
     });
+    // Translate the "Repeat Frequency" dropdown options
+    const repeatFrequencySelect = document.getElementById('repeatFrequency');
+    if (repeatFrequencySelect) {
+        const options = repeatFrequencySelect.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === 'Daily') {
+                options[i].textContent = 'يومي';
+            } else if (options[i].value === 'Weekly') {
+                options[i].textContent = 'أسبوعي';
+            } else if (options[i].value === 'Monthly') {
+                options[i].textContent = 'شهري';
+            } else if (options[i].value === 'Yearly') {
+                options[i].textContent = 'سنوي';
+            }
+        }
+    }
 }
