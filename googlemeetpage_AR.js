@@ -10,5 +10,10 @@ function translateGoogleMeetPage() {
     if (secondH4) {
         secondH4.textContent = 'مع بريد المستخدم الحالي أو مدير الغرفة الظاهر باللون الأزرق - ضروري -';
     }
+    // Translate the <h4> inside the <div> with id="texttip"
+    const textTip = document.getElementById('texttip');
+    if (textTip) {
+        textTip.innerHTML = 'أدخل : بريد المدعوين للاجتماع - وقت بدء الاجتماع - وقت الانتهاء - وصف الاجتماع لتكوين اجتماع جديد';
+    }
 }
 
