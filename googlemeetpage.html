@@ -896,6 +896,16 @@ document.getElementById("updateinvit").onclick = function() {
             }
         });
     });
-</script>    
+</script> 
+         <!-- Add this script at the end of the body -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if localStorage has 'arpage' set to 'ar' after the content is fully loaded
+            const arpage = localStorage.getItem('arpage');
+            if (arpage === 'ar') {
+                translateGoogleMeetPage(); // Call the translation function from the external JS file
+            }
+        });
+    </script>
 </body>
 </html>
