@@ -15,5 +15,30 @@ function translateGoogleMeetPage() {
     if (textTip) {
         textTip.innerHTML = 'أدخل : بريد المدعوين للاجتماع - وقت بدء الاجتماع - وقت الانتهاء - وصف الاجتماع لتكوين اجتماع جديد';
     }
+     // Translate the buttons
+    const sendInvitButton = document.getElementById('sendinvit');
+    if (sendInvitButton) {
+        sendInvitButton.textContent = 'أضف مشارك';
+    }
+
+    const deleteAttendeeButton = document.getElementById('deleteattendee1');
+    if (deleteAttendeeButton) {
+        deleteAttendeeButton.textContent = 'احذف مشارك';
+    }
+
+    const loadInvitButton = document.getElementById('loadinvit');
+    if (loadInvitButton) {
+        loadInvitButton.textContent = 'اعرض الاجتماع';
+    }
+
+    const updateInvitButton = document.getElementById('updateinvit');
+    if (updateInvitButton) {
+        updateInvitButton.textContent = 'عدل الاجتماع';
+    }
+
+    const createInvitButton = document.getElementById('createinvit');
+    if (createInvitButton) {
+        createInvitButton.textContent = 'انشئ الاجتماع';
+    }
 }
 
