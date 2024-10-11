@@ -36,15 +36,30 @@ function loadMeetings() {
                 // Check various conditions for notification timing
                 if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
                     showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 13) {
+                    showNotification(event);
                 } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 11) {
                     showNotification(event);
-                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 7) {
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 9) {
                     showNotification(event);
-                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 3) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 7) {
                     showNotification(event);
-                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 5) {
                     showNotification(event);
-                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
+                }
+                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 3) {
+                    showNotification(event);
+                }
+                else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 1) {
+                    showNotification(event);
+                }
+                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
+                    showNotification(event);
+                }
+                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -3) {
+                    showNotification(event);
+                }
+                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
                     showNotification(event);
                     clearInterval(checkNotificationTiming); // Stop the loop after the last notification
                 }
