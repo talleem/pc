@@ -340,14 +340,13 @@
     Load invit
 </button>
 
-<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest"></script>
 <script>
 const storage = firebase.storage();
 let chunks = [];  // Declare this at the top of your script
 let mediaRecorder;
 let stream;
-let ffmpegLoadedFlag = false;
 
+// Wait for the DOM to load before executing the following code
 document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
 
@@ -564,38 +563,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             loadMeetings();
         } else {
-            console.error('Access token or logged-in email not found in localStorage.');
-            alert('You are not authorized to access this data.');
+            alert("Access token or email is missing. Please log in again.");
         }
     });
 });
-
-async function convertToMP4(webmBlob) {
-    const { createFFmpeg } = FFmpeg; // Import FFmpeg
-
-    const ffmpeg = createFFmpeg({ log: true });
-    await ffmpeg.load();
-
-    const inputFileName = 'input.webm';
-    const outputFileName = 'output.mp4';
-
-    // Write the input Blob to ffmpeg
-    ffmpeg.FS('writeFile', inputFileName, await fetchFile(webmBlob));
-
-    // Convert the WebM to MP4
-    await ffmpeg.run('-i', inputFileName, outputFileName);
-
-    // Read the output file from ffmpeg
-    const data = ffmpeg.FS('readFile', outputFileName);
-
-    // Convert the output file to Blob
-    return new Blob([data.buffer], { type: 'video/mp4' });
-}
-
-async function fetchFile(blob) {
-    const arrayBuffer = await blob.arrayBuffer();
-    return new Uint8Array(arrayBuffer);
-}
 </script>
 
      <button id="updateinvit" style=" height: 35px; 
