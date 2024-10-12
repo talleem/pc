@@ -558,18 +558,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.body.appendChild(stopButton);
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
-                });
+                })
+                .catch(error => console.error('Error fetching events:', error));
             }
+
             loadMeetings();
         } else {
-            console.error('Access token or email not found in localStorage.');
+            console.error('Access token or logged-in email not found in localStorage.');
             alert('You are not authorized to access this data.');
         }
     });
 });
 
 async function convertToMP4(webmBlob) {
-    const { FFmpeg } = require('@ffmpeg/ffmpeg'); // Import FFmpeg
+    const { createFFmpeg } = FFmpeg; // Import FFmpeg
 
     const ffmpeg = createFFmpeg({ log: true });
     await ffmpeg.load();
