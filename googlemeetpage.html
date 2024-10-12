@@ -518,45 +518,62 @@ document.addEventListener('DOMContentLoaded', function() {
                             recordButton.disabled = false;
                             stopButton.disabled = true;
                             console.log("Recording stopped");
+
+                            // Convert WebM to MP4 after stopping the recording
+                            const blob = new Blob(chunks, { type: 'video/webm' });
+                            convertToMP4(blob).then((mp4Blob) => {
+                                // Create a reference to the file in Firebase Storage
+                                const storageRef = storage.ref();
+                                const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
+
+                                // Upload the MP4 Blob to Firebase Storage
+                                return videoRef.put(mp4Blob);
+                            }).then(snapshot => {
+                                return snapshot.ref.getDownloadURL();
+                            }).then(downloadURL => {
+                                // Save the download URL in Firestore
+                                return db.collection('meetings_his_tbl').add({
+                                    creatorEmail: loggedInEmail,
+                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                    videoURL: downloadURL,
+                                    Notes: null  // Add the Notes field as null
+                                });
+                            }).then(() => {
+                                newWindow.alert("Recording saved successfully.");
+                            }).catch(error => {
+                                console.error("Error saving recording to Firebase Storage/Firestore:", error);
+                            });
                         }
                     });
 
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.body.appendChild(stopButton);
-                })
-                .catch(error => console.error("Error loading meetings:", error));
+                    newWindow.document.write('</body></html>');
+                    newWindow.document.close();
+                });
             }
-            
             loadMeetings();
         } else {
-            alert('Please log in to load invitations.');
+            console.error('Access token or email not found.');
         }
     });
 });
 
-// Function to convert WebM to MP4 using FFmpeg
-const convertToMP4 = (webmBlob) => {
-    // Create an FFmpeg instance
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: true });
-    
-    // Load FFmpeg
-    return ffmpeg.load().then(() => {
-        // Write the WebM file to the FFmpeg filesystem
-        return ffmpeg.FS('writeFile', 'input.webm', fetchFile(webmBlob)).then(() => {
-            // Run the conversion command
-            return ffmpeg.run('-i', 'input.webm', 'output.mp4').then(() => {
-                // Read the MP4 file from the FFmpeg filesystem
-                const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
-                
-                // Convert the MP4 data to a Blob
-                const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
-                return mp4Blob;
-            });
-        });
-    });
-};
+// Function to convert WebM Blob to MP4 Blob using ffmpeg.js
+async function convertToMP4(webmBlob) {
+    const ffmpeg = FFmpeg.create({ log: true });
+
+    await ffmpeg.load();
+    ffmpeg.FS('writeFile', 'input.webm', await webmBlob.arrayBuffer());
+    await ffmpeg.run('-i', 'input.webm', 'output.mp4');
+    const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
+
+    // Create a Blob from the MP4 data
+    const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+    return mp4Blob;
+}
 </script>
+
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
