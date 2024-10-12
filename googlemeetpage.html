@@ -305,259 +305,272 @@
                 /* Additional inline styles here if needed */
             " 
         >   
- <button id="loadinvit" style="
-        height: 35px; 
-        text-align: center;
-        font-weight: bold;
-        position: fixed;
-        right: 35px;
-        top: 305px;
-    ">
-        Load invit
-    </button>
 
-    <script>
-        const storage = firebase.storage();
-        let chunks = [];  // Declare this at the top of your script
-        let mediaRecorder;
-        let stream;
+<button id="loadinvit" style="
+    height: 35px; 
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    right: 35px;
+    top: 305px;
+">
+    Load invit
+</button>
 
-        // Wait for the DOM to load before executing the following code
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadInvitButton = document.getElementById('loadinvit');
+<script>
+const storage = firebase.storage();
+let chunks = [];  // Declare this at the top of your script
+let mediaRecorder;
+let stream;
 
-            // FFmpeg variables and functions
-            let ffmpegLoadedFlag = false;
+document.addEventListener('DOMContentLoaded', function() {
+    const loadInvitButton = document.getElementById('loadinvit');
 
-            function ffmpegLoaded() {
-                ffmpegLoadedFlag = true;
-                console.log("ffmpeg.js loaded successfully.");
-            }
+    // Load FFmpeg and set the flag
+    const { createFFmpeg } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
 
-            async function convertToMP4(webmBlob) {
-                if (!ffmpegLoadedFlag) {
-                    console.error("ffmpeg.js not loaded yet.");
-                    return;
-                }
-                const { createFFmpeg, fetchFile } = FFmpeg;
-                const ffmpeg = createFFmpeg({ log: true });
+    ffmpeg.load().then(() => {
+        ffmpegLoadedFlag = true;
+        console.log("ffmpeg.js loaded successfully.");
+    }).catch(err => {
+        console.error("Error loading ffmpeg.js:", err);
+    });
 
-                await ffmpeg.load(); // Load FFmpeg
-                ffmpeg.FS('writeFile', 'input.webm', await fetchFile(webmBlob)); // Write the input file
-                await ffmpeg.run('-i', 'input.webm', 'output.mp4'); // Convert to MP4
-                const data = ffmpeg.FS('readFile', 'output.mp4'); // Read the output file
-                const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
-                return mp4Blob;
-            }
+    loadInvitButton.addEventListener('click', function() {
+        const accessToken = localStorage.getItem('accessToken');
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
+        console.log(loggedInEmail);
 
-            // Load FFmpeg and set the flag
-            const { createFFmpeg } = FFmpeg;
-            const ffmpeg = createFFmpeg({ log: true });
-
-            ffmpeg.load().then(ffmpegLoaded).catch(err => {
-                console.error("Error loading ffmpeg.js:", err);
-            });
-
-            loadInvitButton.addEventListener('click', function() {
-                const accessToken = localStorage.getItem('accessToken');
-                const loggedInEmail = localStorage.getItem('loggedInEmail');
-                console.log(loggedInEmail);
-
-                if (accessToken && loggedInEmail) {
-                    function loadMeetings() {
-                        fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${accessToken}`,
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const filteredEvents = data.items.filter(event => 
-                                event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
-                            );
-
-                            const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-                            newWindow.document.write('<html><head><title>Meetings</title></head><body>');
-                            newWindow.document.write('<h2>Meetings</h2>');
-                            newWindow.document.write('<ul>');
-
-                            filteredEvents.forEach(event => {
-                                const startTime = new Date(event.start.dateTime).toLocaleString();
-                                const endTime = new Date(event.end.dateTime).toLocaleString();
-                                const creatorEmail = event.creator.email;
-                                localStorage.setItem('creatorEmail', creatorEmail);
-                                const description = event.description || 'No description';
-                                const hangoutLink = event.hangoutLink || 'No link available';
-
-                                let recurrenceInfo = 'Single event';
-                                if (event.recurrence) {
-                                    recurrenceInfo = 'Recurring event';
-
-                                    const recurrenceRule = event.recurrence[0];
-                                    const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
-                                    if (countMatch) {
-                                        recurrenceInfo += `, Occurs ${countMatch[1]} times`;
-                                    }
-
-                                    const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
-                                    if (freqMatch) {
-                                        recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
-                                    }
-                                }
-
-                                newWindow.document.write(`  
-                                    <li>  
-                                        <strong>Start Time:</strong> ${startTime}<br>  
-                                        <strong>End Time:</strong> ${endTime}<br>  
-                                        <strong>Creator's Email:</strong> ${creatorEmail}<br>  
-                                        <strong>Description:</strong> ${description}<br>  
-                                        <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>  
-                                        <strong>Meeting Type:</strong> ${recurrenceInfo}  
-                                    </li>  
-                                `);  
-                            });
-
-                            newWindow.document.write('</ul>');
-
-                            // Add the Start Recording button
-                            const recordButton = newWindow.document.createElement('button');
-                            recordButton.id = 'recordmeet';
-                            recordButton.textContent = 'Start Recording';
-                            recordButton.style.backgroundColor = 'green';
-                            recordButton.style.color = 'white';
-                            recordButton.style.position = 'fixed';
-                            recordButton.style.top = '10px';
-                            recordButton.style.right = '10px';
-                            recordButton.style.padding = '10px 20px';
-                            recordButton.style.fontWeight = 'bold';
-                            recordButton.style.border = 'none';
-                            recordButton.style.borderRadius = '5px';
-                            recordButton.style.cursor = 'pointer';
-                            recordButton.style.boxShadow = '0 4px #999';
-
-                            recordButton.addEventListener('mousedown', function() {
-                                this.style.backgroundColor = '#3e8e41';
-                                this.style.boxShadow = '0 2px #666';
-                                this.style.transform = 'translateY(2px)';
-                            });
-
-                            recordButton.addEventListener('mouseup', function() {
-                                this.style.backgroundColor = 'green';
-                                this.style.boxShadow = '0 4px #999';
-                                this.style.transform = 'translateY(0px)';
-                            });
-
-                            // Add the Stop Recording button
-                            const stopButton = newWindow.document.createElement('button');
-                            stopButton.id = 'stoprecord';
-                            stopButton.textContent = 'Stop Recording';
-                            stopButton.style.backgroundColor = 'red';
-                            stopButton.style.color = 'white';
-                            stopButton.style.position = 'fixed';
-                            stopButton.style.top = '50px';
-                            stopButton.style.right = '10px';
-                            stopButton.style.padding = '10px 20px';
-                            stopButton.style.fontWeight = 'bold';
-                            stopButton.style.border = 'none';
-                            stopButton.style.borderRadius = '5px';
-                            stopButton.style.cursor = 'pointer';
-                            stopButton.style.boxShadow = '0 4px #999';
-                            stopButton.disabled = true; // Initially disabled
-
-                            // Attach click event to meeting links
-                            newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
-                                link.addEventListener('click', function(event) {
-                                    const clickedCreatorEmail = this.getAttribute('data-creator-email');
-                                    localStorage.setItem('creatorEmail', clickedCreatorEmail);
-                                });
-                            });
-
-                            recordButton.addEventListener('click', async function() {
-                                const creatorEmail = localStorage.getItem('creatorEmail');
-                                const loggedInEmail = localStorage.getItem('loggedInEmail');
-                                console.log(loggedInEmail);
-
-                                if (creatorEmail === loggedInEmail) {
-                                    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                                        .then((mediaStream) => {
-                                            stream = mediaStream;
-
-                                            const options = { mimeType: 'video/webm; codecs=vp9' };
-                                            mediaRecorder = new MediaRecorder(stream, options);
-                                            chunks = [];  // Reset chunks when starting a new recording
-
-                                            mediaRecorder.ondataavailable = function(event) {
-                                                if (event.data.size > 0) {
-                                                    chunks.push(event.data);
-                                                }
-                                            };
-
-                                            mediaRecorder.onstop = async function() {
-                                                const blob = new Blob(chunks, { type: 'video/webm' });
-
-                                                // Check if ffmpeg.js is loaded before conversion
-                                                if (ffmpegLoadedFlag) {
-                                                    const mp4Blob = await convertToMP4(blob);  // Call the conversion function
-                                                    // Create a reference to the file in Firebase Storage
-                                                    const storageRef = storage.ref();
-                                                    const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
-
-                                                    // Upload the MP4 Blob to Firebase Storage
-                                                    try {
-                                                        const snapshot = await videoRef.put(mp4Blob);
-                                                        const downloadURL = await snapshot.ref.getDownloadURL();
-
-                                                        // Save the download URL in Firestore
-                                                        await db.collection('meetings_his_tbl').add({
-                                                            creatorEmail: loggedInEmail,
-                                                            meetingRecording: downloadURL,
-                                                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                                        });
-                                                        console.log("Video uploaded successfully:", downloadURL);
-                                                    } catch (error) {
-                                                        console.error("Error uploading video:", error);
-                                                    }
-                                                } else {
-                                                    console.error("ffmpeg.js not loaded.");
-                                                }
-                                            };
-
-                                            mediaRecorder.start();
-                                            stopButton.disabled = false; // Enable the stop button
-                                            recordButton.disabled = true; // Disable the record button
-
-                                            stopButton.addEventListener('click', function() {
-                                                mediaRecorder.stop(); // Stop the recording
-                                                stream.getTracks().forEach(track => track.stop()); // Stop all media tracks
-                                                stopButton.disabled = true; // Disable the stop button
-                                                recordButton.disabled = false; // Enable the record button
-                                            });
-                                        })
-                                        .catch((error) => {
-                                            console.error("Error accessing media devices.", error);
-                                        });
-                                } else {
-                                    alert("You can only record your own meetings.");
-                                }
-                            });
-
-                            newWindow.document.body.appendChild(recordButton);
-                            newWindow.document.body.appendChild(stopButton);
-                            newWindow.document.write('</body></html>');
-                            newWindow.document.close();
-                        })
-                        .catch(error => {
-                            console.error('Error fetching events:', error);
-                        });
+        if (accessToken && loggedInEmail) {
+            function loadMeetings() {
+                fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
                     }
-                    loadMeetings();
-                } else {
-                    console.error("No access token or logged-in email found.");
-                }
-            });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const filteredEvents = data.items.filter(event => 
+                        event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
+                    );
+
+                    const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
+                    newWindow.document.write('<html><head><title>Meetings</title></head><body>');
+                    newWindow.document.write('<h2>Meetings</h2>');
+                    newWindow.document.write('<ul>');
+
+                    filteredEvents.forEach(event => {
+                        const startTime = new Date(event.start.dateTime).toLocaleString();
+                        const endTime = new Date(event.end.dateTime).toLocaleString();
+                        const creatorEmail = event.creator.email;
+                        localStorage.setItem('creatorEmail', creatorEmail);
+                        const description = event.description || 'No description';
+                        const hangoutLink = event.hangoutLink || 'No link available';
+
+                        let recurrenceInfo = 'Single event';
+                        if (event.recurrence) {
+                            recurrenceInfo = 'Recurring event';
+
+                            const recurrenceRule = event.recurrence[0];
+                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                            if (countMatch) {
+                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                            }
+
+                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                            if (freqMatch) {
+                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                            }
+                        }
+
+                        newWindow.document.write(`  
+                            <li>  
+                                <strong>Start Time:</strong> ${startTime}<br>  
+                                <strong>End Time:</strong> ${endTime}<br>  
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>  
+                                <strong>Description:</strong> ${description}<br>  
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>  
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}  
+                            </li>  
+                        `);  
+                    });
+
+                    newWindow.document.write('</ul>');
+
+                    // Add the Start Recording button
+                    const recordButton = newWindow.document.createElement('button');
+                    recordButton.id = 'recordmeet';
+                    recordButton.textContent = 'Start Recording';
+                    recordButton.style.backgroundColor = 'green';
+                    recordButton.style.color = 'white';
+                    recordButton.style.position = 'fixed';
+                    recordButton.style.top = '10px';
+                    recordButton.style.right = '10px';
+                    recordButton.style.padding = '10px 20px';
+                    recordButton.style.fontWeight = 'bold';
+                    recordButton.style.border = 'none';
+                    recordButton.style.borderRadius = '5px';
+                    recordButton.style.cursor = 'pointer';
+                    recordButton.style.boxShadow = '0 4px #999';
+
+                    recordButton.addEventListener('mousedown', function() {
+                        this.style.backgroundColor = '#3e8e41';
+                        this.style.boxShadow = '0 2px #666';
+                        this.style.transform = 'translateY(2px)';
+                    });
+
+                    recordButton.addEventListener('mouseup', function() {
+                        this.style.backgroundColor = 'green';
+                        this.style.boxShadow = '0 4px #999';
+                        this.style.transform = 'translateY(0px)';
+                    });
+
+                    // Add the Stop Recording button
+                    const stopButton = newWindow.document.createElement('button');
+                    stopButton.id = 'stoprecord';
+                    stopButton.textContent = 'Stop Recording';
+                    stopButton.style.backgroundColor = 'red';
+                    stopButton.style.color = 'white';
+                    stopButton.style.position = 'fixed';
+                    stopButton.style.top = '50px';
+                    stopButton.style.right = '10px';
+                    stopButton.style.padding = '10px 20px';
+                    stopButton.style.fontWeight = 'bold';
+                    stopButton.style.border = 'none';
+                    stopButton.style.borderRadius = '5px';
+                    stopButton.style.cursor = 'pointer';
+                    stopButton.style.boxShadow = '0 4px #999';
+                    stopButton.disabled = true; // Initially disabled
+
+                    // Attach click event to meeting links
+                    newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
+                        link.addEventListener('click', function(event) {
+                            const clickedCreatorEmail = this.getAttribute('data-creator-email');
+                            localStorage.setItem('creatorEmail', clickedCreatorEmail);
+                        });
+                    });
+
+                    recordButton.addEventListener('click', function() {
+                        const creatorEmail = localStorage.getItem('creatorEmail');
+                        const loggedInEmail = localStorage.getItem('loggedInEmail');
+                        console.log(loggedInEmail);
+
+                        if (creatorEmail === loggedInEmail) {
+                            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                                .then((mediaStream) => {
+                                    stream = mediaStream;
+
+                                    const options = { mimeType: 'video/webm; codecs=vp9' };
+                                    mediaRecorder = new MediaRecorder(stream, options);
+                                    chunks = [];  // Reset chunks when starting a new recording
+
+                                    mediaRecorder.ondataavailable = function(event) {
+                                        if (event.data.size > 0) {
+                                            chunks.push(event.data);
+                                        }
+                                    };
+
+                                    mediaRecorder.onstop = function() {
+                                        const blob = new Blob(chunks, { type: 'video/webm' });
+
+                                        // Check if ffmpeg.js is loaded before conversion
+                                        if (ffmpegLoadedFlag) {
+                                            convertToMP4(blob);  // Call the conversion function
+                                        } else {
+                                            console.error("ffmpeg.js failed to load.");
+                                            newWindow.alert("Error: ffmpeg.js failed to load.");
+                                        }
+                                    };
+
+                                    mediaRecorder.start();
+                                    stopButton.disabled = false;
+                                    recordButton.disabled = true;
+                                    console.log("Recording started");
+                                    newWindow.alert("Recording started");
+                                })
+                                .catch(error => console.error("Error accessing camera:", error));
+                        } else {
+                            newWindow.alert("You are not authorized to start the recording.");
+                            console.log(creatorEmail, loggedInEmail);
+                        }
+                    });
+
+                    stopButton.addEventListener('click', function() {
+                        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                            mediaRecorder.stop();
+                            stream.getTracks().forEach(track => track.stop());
+                            recordButton.disabled = false;
+                            stopButton.disabled = true;
+                            console.log("Recording stopped");
+                        }
+                    });
+
+                    newWindow.document.body.appendChild(recordButton);
+                    newWindow.document.body.appendChild(stopButton);
+                    newWindow.document.write('</body></html>');
+                    newWindow.document.close();
+                })
+                .catch(error => console.error('Error fetching events:', error));
+            }
+
+            loadMeetings();
+        } else {
+            alert("Access token or email is missing. Please log in again.");
+        }
+    });
+});
+
+// Function to convert WebM to MP4 without async
+function convertToMP4(webmBlob) {
+    if (!ffmpegLoadedFlag) {
+        console.error("ffmpeg.js not loaded yet.");
+        return;
+    }
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+
+    ffmpeg.load().then(() => {
+        ffmpeg.FS('writeFile', 'input.webm', fetchFile(webmBlob)); // Write the input file
+        return ffmpeg.run('-i', 'input.webm', 'output.mp4'); // Convert to MP4
+    }).then(() => {
+        const data = ffmpeg.FS('readFile', 'output.mp4'); // Read the output file
+        const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
+        
+        // Create a reference to the file in
+        // Create a reference to the file in Firebase Storage
+        const storageRef = storage.ref();
+        const mp4FileRef = storageRef.child('converted_video.mp4');
+
+        // Upload the MP4 blob to Firebase Storage
+        mp4FileRef.put(mp4Blob).then(snapshot => {
+            console.log('Uploaded the video successfully!');
+            return snapshot.ref.getDownloadURL(); // Get the download URL of the uploaded file
+        }).then(downloadURL => {
+            console.log('Download URL:', downloadURL);
+            // You can now use the download URL, for example, displaying it or storing it in Firestore
+            alert(`Video converted and uploaded successfully! Download URL: ${downloadURL}`);
+        }).catch(error => {
+            console.error('Error uploading the video:', error);
         });
-    </script>
+    }).catch(err => {
+        console.error('Error during FFmpeg operation:', err);
+    });
+}
+
+// Function to fetch the file (make sure this is defined as a regular function)
+function fetchFile(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(blob);
+    });
+}
+</script>
+
+           
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
