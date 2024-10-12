@@ -431,13 +431,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     let mediaRecorder;
                     let stream;
-                     // Attach click event to meeting links
+
+                    // Attach click event to meeting links
                     newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
                         link.addEventListener('click', function(event) {
                             const clickedCreatorEmail = this.getAttribute('data-creator-email');
                             localStorage.setItem('creatorEmail', clickedCreatorEmail);
                         });
                     });
+
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -465,13 +467,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                         mediaRecorder.onstop = async function() {
                                             const blob = new Blob(chunks, { type: 'video/webm' });
 
+                                            // Convert WebM to MP4
+                                            const mp4Blob = await convertToMP4(blob);
+
                                             // Create a reference to the file in Firebase Storage
                                             const storageRef = storage.ref();
-                                            const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+                                            const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
 
-                                            // Upload the video Blob to Firebase Storage
+                                            // Upload the MP4 Blob to Firebase Storage
                                             try {
-                                                const snapshot = await videoRef.put(blob);
+                                                const snapshot = await videoRef.put(mp4Blob);
                                                 const downloadURL = await snapshot.ref.getDownloadURL();
 
                                                 // Save the download URL in Firestore
@@ -527,8 +532,30 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please log in to load invitations.');
         }
     });
-});   
+});
 
+// Function to convert WebM to MP4 using FFmpeg
+const convertToMP4 = (webmBlob) => {
+    // Create an FFmpeg instance
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+    
+    // Load FFmpeg
+    return ffmpeg.load().then(() => {
+        // Write the WebM file to the FFmpeg filesystem
+        return ffmpeg.FS('writeFile', 'input.webm', fetchFile(webmBlob)).then(() => {
+            // Run the conversion command
+            return ffmpeg.run('-i', 'input.webm', 'output.mp4').then(() => {
+                // Read the MP4 file from the FFmpeg filesystem
+                const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
+                
+                // Convert the MP4 data to a Blob
+                const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+                return mp4Blob;
+            });
+        });
+    });
+};
 </script>
 
      <button id="updateinvit" style=" height: 35px; 
