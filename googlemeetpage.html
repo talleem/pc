@@ -318,6 +318,9 @@
 
 <script>
 const storage = firebase.storage();
+let chunks = [];  // Declare this at the top of your script
+let mediaRecorder;
+let stream;
 
 document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
@@ -370,16 +373,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
 
-                        newWindow.document.write(`
-                            <li>
-                                <strong>Start Time:</strong> ${startTime}<br>
-                                <strong>End Time:</strong> ${endTime}<br>
-                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                                <strong>Meeting Type:</strong> ${recurrenceInfo}
-                            </li>
-                        `);
+                        newWindow.document.write(`  
+                            <li>  
+                                <strong>Start Time:</strong> ${startTime}<br>  
+                                <strong>End Time:</strong> ${endTime}<br>  
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>  
+                                <strong>Description:</strong> ${description}<br>  
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>  
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}  
+                            </li>  
+                        `);  
                     });
 
                     newWindow.document.write('</ul>');
@@ -429,9 +432,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopButton.style.boxShadow = '0 4px #999';
                     stopButton.disabled = true; // Initially disabled
 
-                    let mediaRecorder;
-                    let stream;
-
                     // Attach click event to meeting links
                     newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
                         link.addEventListener('click', function(event) {
@@ -450,59 +450,48 @@ document.addEventListener('DOMContentLoaded', function() {
                                 .then((mediaStream) => {
                                     stream = mediaStream;
 
-                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
-                                        console.log("Cam is started");
-                                    
-                                        // Start recording the video
-                                        const options = { mimeType: 'video/webm; codecs=vp9' };
-                                        mediaRecorder = new MediaRecorder(stream, options);
-                                        const chunks = [];
+                                    const options = { mimeType: 'video/webm; codecs=vp9' };
+                                    mediaRecorder = new MediaRecorder(stream, options);
+                                    chunks = [];  // Reset chunks when starting a new recording
 
-                                        mediaRecorder.ondataavailable = function(event) {
-                                            if (event.data.size > 0) {
-                                                chunks.push(event.data);
-                                            }
-                                        };
+                                    mediaRecorder.ondataavailable = function(event) {
+                                        if (event.data.size > 0) {
+                                            chunks.push(event.data);
+                                        }
+                                    };
 
-                                        mediaRecorder.onstop = async function() {
-                                            const blob = new Blob(chunks, { type: 'video/webm' });
+                                    mediaRecorder.onstop = async function() {
+                                        const blob = new Blob(chunks, { type: 'video/webm' });
+                                        const mp4Blob = await convertToMP4(blob);  // Call the conversion function
+                                        // Create a reference to the file in Firebase Storage
+                                        const storageRef = storage.ref();
+                                        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
 
-                                            // Convert WebM to MP4
-                                            const mp4Blob = await convertToMP4(blob);
+                                        // Upload the MP4 Blob to Firebase Storage
+                                        try {
+                                            const snapshot = await videoRef.put(mp4Blob);
+                                            const downloadURL = await snapshot.ref.getDownloadURL();
 
-                                            // Create a reference to the file in Firebase Storage
-                                            const storageRef = storage.ref();
-                                            const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
+                                            // Save the download URL in Firestore
+                                            await db.collection('meetings_his_tbl').add({
+                                                creatorEmail: loggedInEmail,
+                                                stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                                videoURL: downloadURL,
+                                                Notes: null  // Add the Notes field as null
+                                            });
 
-                                            // Upload the MP4 Blob to Firebase Storage
-                                            try {
-                                                const snapshot = await videoRef.put(mp4Blob);
-                                                const downloadURL = await snapshot.ref.getDownloadURL();
+                                            console.log("Recording saved to Firestore with URL:", downloadURL);
+                                            newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
+                                        } catch (error) {
+                                            console.error("Error saving recording to Firebase Storage/Firestore:", error);
+                                        }
+                                    };
 
-                                                // Save the download URL in Firestore
-                                                await db.collection('meetings_his_tbl').add({
-                                                    creatorEmail: loggedInEmail,
-                                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-                                                    videoURL: downloadURL,
-                                                    Notes: null  // Add the Notes field as null
-                                                });
-
-                                                console.log("Recording saved to Firestore with URL:", downloadURL);
-                                                newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
-                                            } catch (error) {
-                                                console.error("Error saving recording to Firebase Storage/Firestore:", error);
-                                            }
-                                        };
-
-                                        mediaRecorder.start();
-                                        stopButton.disabled = false;
-                                        recordButton.disabled = true;
-                                        console.log("Recording started");
-                                        newWindow.alert("Recording started");
-                                    } else {
-                                        console.log("Cam is not started");
-                                        newWindow.alert("Cam is not started");
-                                    }
+                                    mediaRecorder.start();
+                                    stopButton.disabled = false;
+                                    recordButton.disabled = true;
+                                    console.log("Recording started");
+                                    newWindow.alert("Recording started");
                                 })
                                 .catch(error => console.error("Error accessing camera:", error));
                         } else {
@@ -518,31 +507,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             recordButton.disabled = false;
                             stopButton.disabled = true;
                             console.log("Recording stopped");
-
-                            // Convert WebM to MP4 after stopping the recording
-                            const blob = new Blob(chunks, { type: 'video/webm' });
-                            convertToMP4(blob).then((mp4Blob) => {
-                                // Create a reference to the file in Firebase Storage
-                                const storageRef = storage.ref();
-                                const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);
-
-                                // Upload the MP4 Blob to Firebase Storage
-                                return videoRef.put(mp4Blob);
-                            }).then(snapshot => {
-                                return snapshot.ref.getDownloadURL();
-                            }).then(downloadURL => {
-                                // Save the download URL in Firestore
-                                return db.collection('meetings_his_tbl').add({
-                                    creatorEmail: loggedInEmail,
-                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-                                    videoURL: downloadURL,
-                                    Notes: null  // Add the Notes field as null
-                                });
-                            }).then(() => {
-                                newWindow.alert("Recording saved successfully.");
-                            }).catch(error => {
-                                console.error("Error saving recording to Firebase Storage/Firestore:", error);
-                            });
                         }
                     });
 
@@ -550,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.body.appendChild(stopButton);
                     newWindow.document.write('</body></html>');
                     newWindow.document.close();
-                });
+                }
             }
             loadMeetings();
         } else {
