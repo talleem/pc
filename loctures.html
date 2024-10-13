@@ -110,10 +110,11 @@
                     <title>Video Player</title>
                 </head>
                 <body>
-                    <video id="myVideo" width="640" height="480" controls preload="metadata">
-                        <source src="${videoUrl}" type="video/${fileExtension}">
-                        Your browser does not support the video tag.
-                    </video>
+<video id="myVideo" width="640" height="480" controls preload="auto">
+    <source src="${videoUrl}" type="video/${fileExtension}">
+    Your browser does not support the video tag.
+</video>
+
                 </body>
                 </html>
             `);
