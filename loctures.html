@@ -97,96 +97,96 @@
             return match ? match[1].toLowerCase() : '';
         }
 
-        // Function to open video in a new window
-        function openVideoInNewWindow(videoUrl) {
-            const fileExtension = getFileExtension(videoUrl); // Get the file extension
-            const newWindow = window.open('', '_blank'); // Open a new blank window
-            newWindow.document.write(`
-            <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lectures' Videos with MediaSource API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e0ffff;
-        }
-        h3 {
-            text-align: center;
-            margin-top: 20px;
-        }
-        video {
-            display: block;
-            margin: 20px auto;
-            width: 640px;
-            height: 480px;
-            border: 1px solid #ccc;
-        }
-    </style>
-</head>
-<body>
+       function openVideoInNewWindow(videoUrl) {
+    const fileExtension = getFileExtension(videoUrl); // Get the file extension
+    const newWindow = window.open('', '_blank'); // Open a new blank window
 
-    <h3>Video Player with MediaSource API</h3>
-    <video id="myVideo" controls preload="auto"></video>
+    // Ensure the videoUrl is escaped properly for use in the script
+    newWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Lectures' Videos with MediaSource API</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #e0ffff;
+                }
+                h3 {
+                    text-align: center;
+                    margin-top: 20px;
+                }
+                video {
+                    display: block;
+                    margin: 20px auto;
+                    width: 640px;
+                    height: 480px;
+                    border: 1px solid #ccc;
+                }
+            </style>
+        </head>
+        <body>
+            <h3>Video Player with MediaSource API</h3>
+            <video id="myVideo" controls preload="auto"></video>
+            <script>
+                // Step 1: Create the video element and MediaSource
+                const videoElement = document.getElementById('myVideo');
+                const mediaSource = new MediaSource();
 
-    <script>
-        // Step 1: Create the video element and MediaSource
-        const videoElement = document.getElementById('myVideo');
-        const mediaSource = new MediaSource();
+                // Attach the MediaSource object to the video element
+                videoElement.src = URL.createObjectURL(mediaSource);
 
-        // Attach the MediaSource object to the video element
-        videoElement.src = URL.createObjectURL(mediaSource);
+                // Add an event listener to handle when the media source is ready
+                mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-        // Add an event listener to handle when the media source is ready
-        mediaSource.addEventListener('sourceopen', handleSourceOpen);
+                function handleSourceOpen(event) {
+                    // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
+                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
 
-        function handleSourceOpen(event) {
-            // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
-            const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
-            
-            // Step 3: Fetch video data in chunks and append to the SourceBuffer
-            fetchVideoChunks('https://example.com/path-to-your-webm-file.webm', sourceBuffer);
-        }
+                    // Step 3: Fetch video data in chunks and append to the SourceBuffer
+                    fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
+                }
 
-        function fetchVideoChunks(url, sourceBuffer) {
-            // Fetch the video file in chunks using the Fetch API
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not OK');
-                    }
-                    return response.body.getReader(); // Return a reader for streaming
-                })
-                .then(reader => {
-                    // Function to process each chunk of data
-                    const processChunk = ({ done, value }) => {
-                        if (done) {
-                            console.log('Fetch complete');
-                            // Step 5: End of the stream (signal that all data has been fetched)
-                            mediaSource.endOfStream();
-                            return;
-                        }
+                function fetchVideoChunks(url, sourceBuffer) {
+                    // Fetch the video file in chunks using the Fetch API
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not OK');
+                            }
+                            return response.body.getReader(); // Return a reader for streaming
+                        })
+                        .then(reader => {
+                            // Function to process each chunk of data
+                            const processChunk = ({ done, value }) => {
+                                if (done) {
+                                    console.log('Fetch complete');
+                                    // Step 5: End of the stream (signal that all data has been fetched)
+                                    mediaSource.endOfStream();
+                                    return;
+                                }
 
-                        // Step 4: Append the chunk of video data to the SourceBuffer
-                        sourceBuffer.appendBuffer(value);
+                                // Step 4: Append the chunk of video data to the SourceBuffer
+                                sourceBuffer.appendBuffer(value);
 
-                        // Continue reading and appending more chunks
-                        reader.read().then(processChunk);
-                    };
+                                // Continue reading and appending more chunks
+                                reader.read().then(processChunk);
+                            };
 
-                    // Start reading the first chunk
-                    reader.read().then(processChunk);
-                })
-                .catch(error => console.error('Error fetching video chunks:', error));
-        }
-    </script>
+                            // Start reading the first chunk
+                            reader.read().then(processChunk);
+                        })
+                        .catch(error => console.error('Error fetching video chunks:', error));
+                }
+            <\/script> <!-- Use <\/script> to escape the closing tag -->
+        </body>
+        </html>
+    `);
 
-</body>
-</html> `);
-            newWindow.document.close(); // Close the document to ensure it is rendered
-        }
+    newWindow.document.close(); // Close the document to ensure it is rendered
+}
         
         function loadLectures(creatorEmail = null, stopRecordingDate = null) {
             let query = db.collection('meetings_his_tbl');
