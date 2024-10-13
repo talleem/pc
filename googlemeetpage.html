@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <script>
-      function ffmpegLoaded() {
-    console.log('FFmpeg script loaded. Initializing...');
-    
-    // Check if FFmpeg is ready
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: true });
+      <script>
+        function ffmpegLoaded() {
+            console.log('FFmpeg script loaded. Initializing...');
 
-    ffmpeg.load().then(() => {
-        console.log('FFmpeg is ready to use.');
-        // FFmpeg is now fully loaded and ready for commands
-        // You can initialize any FFmpeg related tasks here
-    }).catch(err => {
-        console.error('Error loading FFmpeg:', err);
-    });
-}
-      </script>
-      <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" onload="ffmpegLoaded()"></script>
+            // Check if FFmpeg is ready
+            const { createFFmpeg, fetchFile } = FFmpeg; // This will be defined after FFmpeg is loaded
+            const ffmpeg = createFFmpeg({ log: true });
+
+            ffmpeg.load().then(() => {
+                console.log('FFmpeg is ready to use.');
+                // FFmpeg is now fully loaded and ready for commands
+                // You can initialize any FFmpeg related tasks here
+            }).catch(err => {
+                console.error('Error loading FFmpeg:', err);
+            });
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" defer></script>
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
