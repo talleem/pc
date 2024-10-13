@@ -6,13 +6,13 @@
     <title>Lectures' Videos</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
     <!-- Firebase initialization script -->
     <script src="loadattendeailfromfirestore.js"></script>
     <script src="fileupload.js"></script>
     <script src="updatenotes.js"></script>
-     <script src="loctures_AR.js"></script>
+    <script src="loctures_AR.js"></script>
 
     <style>
         .container {
@@ -38,184 +38,195 @@
 <body bgcolor="#e0ffff">
     <h3>Lectures' Videos</h3>
     <div class="container">
-    <div>
-    <table id="lectures-table" border="1" cellpadding="10" cellspacing="0">
-        <thead>
-            <tr>
-                <th bgcolor="#ececec">Lecturer</th>
-                <th bgcolor="#ececec">Last Updated</th>
-                <th bgcolor="#ececec">Display the Lecture</th>
-                <th bgcolor="#ececec">Notes</th> <!-- Add Notes column header -->
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be added here dynamically -->
-        </tbody>
-    </table>
-</div>
+        <div>
+            <table id="lectures-table" border="1" cellpadding="10" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th bgcolor="#ececec">Lecturer</th>
+                        <th bgcolor="#ececec">Last Updated</th>
+                        <th bgcolor="#ececec">Display the Lecture</th>
+                        <th bgcolor="#ececec">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
         <div class="combo-boxes">
             <label for="lecturer-email"><h3>Lecturer Email</h3></label>
             <select id="lecturer-email" style="width: 250px; height: 30px;"><option value="null"></option></select>
             <label for="lecture-time"><h3>Lecture Time</h3></label>
             <select id="lecture-time" style="width: 250px; height: 30px;"><option value="null"></option></select>
-             <button class="delete-button" id="deleteVideo">Delete Selected Video</button>
+            <button class="delete-button" id="deleteVideo">Delete Selected Video</button>
             <br>
-             <button id="fileupload" style="height:30px;"><h4 style="margin: 0;">Lecture manual upload</h4></button>
-            
+            <button id="fileupload" style="height:30px;"><h4 style="margin: 0;">Lecture manual upload</h4></button>
             <script>
-    document.getElementById('fileupload').addEventListener('click', function() {
-        // Call the function defined in fileupload.js
-        if (typeof initiateFileUpload === 'function') {
-            initiateFileUpload();
-        } else {
-            console.error('File upload function is not defined.');
-        }
-    });
-</script>
-
-                <br>
-             <button id="updatenotes" style="height:30px;">
-            <h4 style="margin: 0;">Update lecture's notes</h4></button>
-              <script>
-    document.getElementById('updatenotes').addEventListener('click', function() {
-      updatenotes();
-    });
-  </script>
-
+                document.getElementById('fileupload').addEventListener('click', function() {
+                    if (typeof initiateFileUpload === 'function') {
+                        initiateFileUpload();
+                    } else {
+                        console.error('File upload function is not defined.');
+                    }
+                });
+            </script>
+            <br>
+            <button id="updatenotes" style="height:30px;">
+                <h4 style="margin: 0;">Update lecture's notes</h4>
+            </button>
+            <script>
+                document.getElementById('updatenotes').addEventListener('click', function() {
+                    updatenotes();
+                });
+            </script>
         </div>
     </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-        const lecturesTableBody = document.querySelector('#lectures-table tbody');
-        const lecturerEmailSelect = document.getElementById('lecturer-email');
-        const lectureTimeSelect = document.getElementById('lecture-time');
-        const deleteButton = document.getElementById('deleteVideo');
-        let selectedDocumentId = null;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const db = firebase.firestore();
+            const storage = firebase.storage();
+            const lecturesTableBody = document.querySelector('#lectures-table tbody');
+            const lecturerEmailSelect = document.getElementById('lecturer-email');
+            const lectureTimeSelect = document.getElementById('lecture-time');
+            const deleteButton = document.getElementById('deleteVideo');
+            let selectedDocumentId = null;
 
-        function getFileExtension(url) {
-            const match = url.match(/\.([a-zA-Z0-9]+)\?/);
-            return match ? match[1].toLowerCase() : '';
-        }
-        
-        function loadLectures(creatorEmail = null, stopRecordingDate = null) {
-            let query = db.collection('meetings_his_tbl');
-
-            if (creatorEmail && creatorEmail !== 'null') {
-                query = query.where('creatorEmail', '==', creatorEmail);
+            function getFileExtension(url) {
+                const match = url.match(/\.([a-zA-Z0-9]+)\?/);
+                return match ? match[1].toLowerCase() : '';
             }
 
-            if (stopRecordingDate && stopRecordingDate !== 'null') {
-                const startDate = new Date(stopRecordingDate);
-                const endDate = new Date(startDate);
-                endDate.setDate(endDate.getDate() + 1);
+            function loadLectures(creatorEmail = null, stopRecordingDate = null) {
+                let query = db.collection('meetings_his_tbl');
 
-                query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-                             .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
-            }
+                if (creatorEmail && creatorEmail !== 'null') {
+                    query = query.where('creatorEmail', '==', creatorEmail);
+                }
 
-            lecturesTableBody.innerHTML = '';
+                if (stopRecordingDate && stopRecordingDate !== 'null') {
+                    const startDate = new Date(stopRecordingDate);
+                    const endDate = new Date(startDate);
+                    endDate.setDate(endDate.getDate() + 1);
 
-            query.get()
-                .then(querySnapshot => {
-                    querySnapshot.forEach(doc => {
-                        const lecture = doc.data();
-                        const row = document.createElement('tr');
+                    query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
+                                 .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
+                }
 
-                        const lecturerCell = document.createElement('td');
-                        lecturerCell.textContent = lecture.creatorEmail;
+                lecturesTableBody.innerHTML = '';
 
-                        const updatedCell = document.createElement('td');
-                        updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+                query.get()
+                    .then(querySnapshot => {
+                        querySnapshot.forEach(doc => {
+                            const lecture = doc.data();
+                            const row = document.createElement('tr');
 
-                        const linkCell = document.createElement('td');
-                        const link = document.createElement('a');
-                        const fileExtension = getFileExtension(lecture.videoURL);
-                        let displayText = '';
-                        let displayURL = lecture.videoURL;
+                            const lecturerCell = document.createElement('td');
+                            lecturerCell.textContent = lecture.creatorEmail;
 
-                        if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
-                            displayText = 'Display the lecture';
-                        } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
-                            displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
+                            const updatedCell = document.createElement('td');
+                            updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
 
-                            if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-                                displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
-                            }
-                        } else {
-                            displayText = 'Display file';
-                        }
+                            const linkCell = document.createElement('td');
+                            const link = document.createElement('a');
+                            const fileExtension = getFileExtension(lecture.videoURL);
+                            let displayText = '';
+                            let displayURL = lecture.videoURL;
 
-                        link.textContent = displayText;
-                        link.href = displayURL;
-                        link.setAttribute('target', '_blank');
-                        linkCell.appendChild(link);
+                            if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
+                                displayText = 'Display the lecture';
+                                link.href = 'javascript:void(0);'; // Prevent default link action
+                                link.addEventListener('click', function() {
+                                    const newWindow = window.open('', '_blank');
+                                    newWindow.document.write(`
+                                        <!DOCTYPE html>
+                                        <html lang="en">
+                                        <head>
+                                            <meta charset="UTF-8">
+                                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                            <title>Lecture Video</title>
+                                        </head>
+                                        <body>
+                                            <video id="myVideo" width="640" height="480" controls preload="metadata">
+                                                <source src="${lecture.videoURL}" type="video/${fileExtension}">
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </body>
+                                        </html>
+                                    `);
+                                    newWindow.document.close(); // Close the document to render it
+                                });
+                            } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx','jpg','jpeg','png'].includes(fileExtension)) {
+                                displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
-                        // Notes cell as a textarea
-                        const notesCell = document.createElement('td');
-                        const notesTextarea = document.createElement('textarea');
-                        notesTextarea.textContent = lecture.Notes || 'No notes';
-                        notesTextarea.style.width = '300px'; // Inline style for width
-                        notesTextarea.style.height = '50px'; // Inline style for height
-
-                       // Attach document ID to the row
-row.setAttribute('data-document-id', doc.id);
-
-                       // notesTextarea.addEventListener('blur', function() {
-                         //   const updatedNotes = notesTextarea.value;
-                         //   db.collection('meetings_his_tbl').doc(doc.id).update({
-                            //    Notes: updatedNotes
-                         //   }).then(() => {
-                             //   console.log('Notes updated successfully');
-                          //  }).catch(error => console.error('Error updating notes:', error));
-                     //   });
-
-                        notesCell.appendChild(notesTextarea);
-                        
-                        row.appendChild(lecturerCell);
-                        row.appendChild(updatedCell);
-                        row.appendChild(linkCell);
-                        row.appendChild(notesCell);
-
-                        row.addEventListener('click', function() {
-                            const previouslySelected = document.querySelector('.selected-row');
-                            if (previouslySelected) {
-                                previouslySelected.classList.remove('selected-row');
-                                previouslySelected.style.backgroundColor = '';
+                                if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                                    displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
+                                }
+                                link.href = displayURL;
+                                link.setAttribute('target', '_blank');
+                            } else {
+                                displayText = 'Display file';
+                                link.href = displayURL;
+                                link.setAttribute('target', '_blank');
                             }
 
-                            row.classList.add('selected-row');
-                            row.style.backgroundColor = 'lightblue';
-                            selectedDocumentId = doc.id;
+                            link.textContent = displayText;
+                            linkCell.appendChild(link);
+
+                            const notesCell = document.createElement('td');
+                            const notesTextarea = document.createElement('textarea');
+                            notesTextarea.textContent = lecture.Notes || 'No notes';
+                            notesTextarea.style.width = '300px';
+                            notesTextarea.style.height = '50px';
+
+                            // Attach document ID to the row
+                            row.setAttribute('data-document-id', doc.id);
+
+                            notesCell.appendChild(notesTextarea);
+                            
+                            row.appendChild(lecturerCell);
+                            row.appendChild(updatedCell);
+                            row.appendChild(linkCell);
+                            row.appendChild(notesCell);
+
+                            row.addEventListener('click', function() {
+                                const previouslySelected = document.querySelector('.selected-row');
+                                if (previouslySelected) {
+                                    previouslySelected.classList.remove('selected-row');
+                                    previouslySelected.style.backgroundColor = '';
+                                }
+
+                                row.classList.add('selected-row');
+                                row.style.backgroundColor = 'lightblue';
+                                selectedDocumentId = doc.id;
+                            });
+
+                            lecturesTableBody.appendChild(row);
                         });
 
-                        lecturesTableBody.appendChild(row);
-                    });
-                      // Call translation function after lectures are loaded
-            if (localStorage.getItem('arpage') === 'ar') {
-                translatePageToArabic(); // Assuming you already have the translation function
+                        // Call translation function after lectures are loaded
+                        if (localStorage.getItem('arpage') === 'ar') {
+                            translatePageToArabic();
+                        }
+                    })
+                    .catch(error => console.error("Error loading lectures:", error));
             }
-                })
-                .catch(error => console.error("Error loading lectures:", error));
-        }
 
-        function populateComboBoxes() {
-            const uniqueEmails = new Set();
-            const uniqueDates = new Set();
+            function populateComboBoxes() {
+                const uniqueEmails = new Set();
+                const uniqueDates = new Set();
 
-            db.collection('meetings_his_tbl').get()
-                .then(querySnapshot => {
-                    querySnapshot.forEach(doc => {
-                        const lecture = doc.data();
-                        uniqueEmails.add(lecture.creatorEmail);
-                        const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
-                        const dateString = lectureDate.toISOString().split('T')[0];
-                        uniqueDates.add(dateString);
-                    });
+                db.collection('meetings_his_tbl').get()
+                    .then(querySnapshot => {
+                        querySnapshot.forEach(doc => {
+                            const lecture = doc.data();
+                            uniqueEmails.add(lecture.creatorEmail);
+                            const lectureDate = new Date(lecture.stopRecordingTime.seconds * 1000);
+                            const dateString = lectureDate.toISOString().split('T')[0];
+                            uniqueDates.add(dateString);
+                        });
 
-                    const sortedEmails = Array.from(uniqueEmails).sort();
-                    const sortedDates = Array.from(uniqueDates).sort();
+                        const sortedEmails = Array.from(uniqueEmails).sort();
+                        const sortedDates = Array.from(uniqueDates).sort();
 
                     sortedEmails.forEach(email => {
                         const option = document.createElement('option');
