@@ -31,6 +31,8 @@
                 console.log('FFmpeg is not available yet. Checking again...');
             }
         }
+             // Set an interval to check for FFmpeg availability every 100 milliseconds
+        const ffmpegCheckInterval = setInterval(checkFFmpegAvailability, 100);
       </script>
 
     <meta charset="UTF-8">
