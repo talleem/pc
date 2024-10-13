@@ -20,7 +20,17 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" defer></script>
-    
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // This ensures the ffmpegLoaded function can access the FFmpeg variable after it's defined
+            if (typeof FFmpeg !== 'undefined') {
+                ffmpegLoaded();
+            } else {
+                console.error('FFmpeg is not available yet.');
+            }
+        });
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persistent Storage Example</title>
