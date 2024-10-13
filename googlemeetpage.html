@@ -1,7 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-      <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" defer></script>
+      <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" onload="ffmpegLoaded()"></script>
+      <script>
+      function ffmpegLoaded() {
+    console.log('FFmpeg script loaded. Initializing...');
+    
+    // Check if FFmpeg is ready
+    const { createFFmpeg, fetchFile } = FFmpeg;
+    const ffmpeg = createFFmpeg({ log: true });
+
+    ffmpeg.load().then(() => {
+        console.log('FFmpeg is ready to use.');
+        // FFmpeg is now fully loaded and ready for commands
+        // You can initialize any FFmpeg related tasks here
+    }).catch(err => {
+        console.error('Error loading FFmpeg:', err);
+    });
+}
+      </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Persistent Storage Example</title>
