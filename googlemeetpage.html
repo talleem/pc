@@ -20,16 +20,18 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest" defer></script>
+
       <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // This ensures the ffmpegLoaded function can access the FFmpeg variable after it's defined
+      // Function to check for FFmpeg availability
+        function checkFFmpegAvailability() {
             if (typeof FFmpeg !== 'undefined') {
                 ffmpegLoaded();
+                clearInterval(ffmpegCheckInterval); // Clear the interval once FFmpeg is available
             } else {
-                console.error('FFmpeg is not available yet.');
+                console.log('FFmpeg is not available yet. Checking again...');
             }
-        });
-    </script>
+        }
+      </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
