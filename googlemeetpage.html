@@ -319,23 +319,9 @@
 
 <script>
 const storage = firebase.storage();
-let chunks = [];  // Declare this at the top of your script
-let mediaRecorder;
-let stream;
 
 document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
-
-    // Load FFmpeg and set the flag
-    const { createFFmpeg } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: true });
-
-    ffmpeg.load().then(() => {
-        ffmpegLoadedFlag = true;
-        console.log("ffmpeg.js loaded successfully.");
-    }).catch(err => {
-        console.error("Error loading ffmpeg.js:", err);
-    });
 
     loadInvitButton.addEventListener('click', function() {
         const accessToken = localStorage.getItem('accessToken');
@@ -385,16 +371,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
 
-                        newWindow.document.write(`  
-                            <li>  
-                                <strong>Start Time:</strong> ${startTime}<br>  
-                                <strong>End Time:</strong> ${endTime}<br>  
-                                <strong>Creator's Email:</strong> ${creatorEmail}<br>  
-                                <strong>Description:</strong> ${description}<br>  
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>  
-                                <strong>Meeting Type:</strong> ${recurrenceInfo}  
-                            </li>  
-                        `);  
+                        newWindow.document.write(`
+                            <li>
+                                <strong>Start Time:</strong> ${startTime}<br>
+                                <strong>End Time:</strong> ${endTime}<br>
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
+                                <strong>Description:</strong> ${description}<br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}
+                            </li>
+                        `);
                     });
 
                     newWindow.document.write('</ul>');
@@ -444,14 +430,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopButton.style.boxShadow = '0 4px #999';
                     stopButton.disabled = true; // Initially disabled
 
-                    // Attach click event to meeting links
+                    let mediaRecorder;
+                    let stream;
+                     // Attach click event to meeting links
                     newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
                         link.addEventListener('click', function(event) {
                             const clickedCreatorEmail = this.getAttribute('data-creator-email');
                             localStorage.setItem('creatorEmail', clickedCreatorEmail);
                         });
                     });
-
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -462,33 +449,56 @@ document.addEventListener('DOMContentLoaded', function() {
                                 .then((mediaStream) => {
                                     stream = mediaStream;
 
-                                    const options = { mimeType: 'video/webm; codecs=vp9' };
-                                    mediaRecorder = new MediaRecorder(stream, options);
-                                    chunks = [];  // Reset chunks when starting a new recording
+                                    if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
+                                        console.log("Cam is started");
+                                    
+                                        // Start recording the video
+                                        const options = { mimeType: 'video/webm; codecs=vp9' };
+                                        mediaRecorder = new MediaRecorder(stream, options);
+                                        const chunks = [];
 
-                                    mediaRecorder.ondataavailable = function(event) {
-                                        if (event.data.size > 0) {
-                                            chunks.push(event.data);
-                                        }
-                                    };
+                                        mediaRecorder.ondataavailable = function(event) {
+                                            if (event.data.size > 0) {
+                                                chunks.push(event.data);
+                                            }
+                                        };
 
-                                    mediaRecorder.onstop = function() {
-                                        const blob = new Blob(chunks, { type: 'video/webm' });
+                                        mediaRecorder.onstop = async function() {
+                                            const blob = new Blob(chunks, { type: 'video/webm' });
 
-                                        // Check if ffmpeg.js is loaded before conversion
-                                        if (ffmpegLoadedFlag) {
-                                            convertToMP4(blob);  // Call the conversion function
-                                        } else {
-                                            console.error("ffmpeg.js failed to load.");
-                                            newWindow.alert("Error: ffmpeg.js failed to load.");
-                                        }
-                                    };
+                                            // Create a reference to the file in Firebase Storage
+                                            const storageRef = storage.ref();
+                                            const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
 
-                                    mediaRecorder.start();
-                                    stopButton.disabled = false;
-                                    recordButton.disabled = true;
-                                    console.log("Recording started");
-                                    newWindow.alert("Recording started");
+                                            // Upload the video Blob to Firebase Storage
+                                            try {
+                                                const snapshot = await videoRef.put(blob);
+                                                const downloadURL = await snapshot.ref.getDownloadURL();
+
+                                                // Save the download URL in Firestore
+                                                await db.collection('meetings_his_tbl').add({
+                                                    creatorEmail: loggedInEmail,
+                                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                                    videoURL: downloadURL,
+                                                    Notes: null  // Add the Notes field as null
+                                                });
+
+                                                console.log("Recording saved to Firestore with URL:", downloadURL);
+                                                newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
+                                            } catch (error) {
+                                                console.error("Error saving recording to Firebase Storage/Firestore:", error);
+                                            }
+                                        };
+
+                                        mediaRecorder.start();
+                                        stopButton.disabled = false;
+                                        recordButton.disabled = true;
+                                        console.log("Recording started");
+                                        newWindow.alert("Recording started");
+                                    } else {
+                                        console.log("Cam is not started");
+                                        newWindow.alert("Cam is not started");
+                                    }
                                 })
                                 .catch(error => console.error("Error accessing camera:", error));
                         } else {
@@ -509,67 +519,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.body.appendChild(stopButton);
-                    newWindow.document.write('</body></html>');
-                    newWindow.document.close();
                 })
-                .catch(error => console.error('Error fetching events:', error));
+                .catch(error => console.error("Error loading meetings:", error));
             }
-
+            
             loadMeetings();
         } else {
-            alert("Access token or email is missing. Please log in again.");
+            alert('Please log in to load invitations.');
         }
     });
-});
+});   
 
-// Function to convert WebM to MP4 without async
-function convertToMP4(webmBlob) {
-    if (!ffmpegLoadedFlag) {
-        console.error("ffmpeg.js not loaded yet.");
-        return;
-    }
-    const { createFFmpeg, fetchFile } = FFmpeg;
-    const ffmpeg = createFFmpeg({ log: true });
-
-    ffmpeg.load().then(() => {
-        ffmpeg.FS('writeFile', 'input.webm', fetchFile(webmBlob)); // Write the input file
-        return ffmpeg.run('-i', 'input.webm', 'output.mp4'); // Convert to MP4
-    }).then(() => {
-        const data = ffmpeg.FS('readFile', 'output.mp4'); // Read the output file
-        const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
-        
-        // Create a reference to the file in
-        // Create a reference to the file in Firebase Storage
-        const storageRef = storage.ref();
-        const mp4FileRef = storageRef.child('converted_video.mp4');
-
-        // Upload the MP4 blob to Firebase Storage
-        mp4FileRef.put(mp4Blob).then(snapshot => {
-            console.log('Uploaded the video successfully!');
-            return snapshot.ref.getDownloadURL(); // Get the download URL of the uploaded file
-        }).then(downloadURL => {
-            console.log('Download URL:', downloadURL);
-            // You can now use the download URL, for example, displaying it or storing it in Firestore
-            alert(`Video converted and uploaded successfully! Download URL: ${downloadURL}`);
-        }).catch(error => {
-            console.error('Error uploading the video:', error);
-        });
-    }).catch(err => {
-        console.error('Error during FFmpeg operation:', err);
-    });
-}
-
-// Function to fetch the file (make sure this is defined as a regular function)
-function fetchFile(blob) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsArrayBuffer(blob);
-    });
-}
 </script>
-
            
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
