@@ -151,6 +151,7 @@ newWindow.document.write(`
                 fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
 
                 sourceBuffer.addEventListener('updateend', () => {
+                    console.log('SourceBuffer updated');
                     // Check if there are more chunks to append
                     if (nextChunk) {
                         appendChunk(nextChunk);
@@ -201,9 +202,12 @@ newWindow.document.write(`
                                     // End the stream if the MediaSource is still open
                                     if (mediaSource.readyState === 'open') {
                                         mediaSource.endOfStream();
+                                        videoElement.load(); // Force video to recognize new data
                                     }
                                     return;
                                 }
+
+                                console.log('Chunk received:', value); // Log the chunk data
 
                                 // Append the chunk of video data to the SourceBuffer
                                 appendChunk(value); // Use the append function
@@ -227,7 +231,6 @@ newWindow.document.write(`
     </body>
     </html>
 `);
-
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
