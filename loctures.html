@@ -148,7 +148,7 @@ newWindow.document.write(`
                 let nextChunk = null;
 
                 // Fetch video data in chunks and append to the SourceBuffer
-                fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
+                fetchVideoChunks('${videoUrl}'); // Use the passed video URL
 
                 sourceBuffer.addEventListener('updateend', () => {
                     console.log('SourceBuffer updated');
@@ -231,6 +231,7 @@ newWindow.document.write(`
     </body>
     </html>
 `);
+
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
