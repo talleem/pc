@@ -101,7 +101,7 @@
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
 
-  // Ensure the videoUrl is escaped properly for use in the script
+// Ensure the videoUrl is escaped properly for use in the script
 newWindow.document.write(`
     <!DOCTYPE html>
     <html lang="en">
@@ -144,14 +144,12 @@ newWindow.document.write(`
             function handleSourceOpen(event) {
                 // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
                 const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
-                let isAppending = false;
                 let nextChunk = null;
 
                 // Fetch video data in chunks and append to the SourceBuffer
                 fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
 
                 sourceBuffer.addEventListener('updateend', () => {
-                    isAppending = false; // Reset the flag when the update is done
                     // Check if there are more chunks to append
                     if (nextChunk) {
                         appendChunk(nextChunk);
@@ -161,7 +159,9 @@ newWindow.document.write(`
 
                 sourceBuffer.addEventListener('error', (error) => {
                     console.error('Error in SourceBuffer:', error);
-                    mediaSource.endOfStream(); // Stop if there's an error
+                    if (mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream(); // Stop if there's an error and the media source is open
+                    }
                 });
 
                 function appendChunk(chunk) {
@@ -187,8 +187,10 @@ newWindow.document.write(`
                             const processChunk = ({ done, value }) => {
                                 if (done) {
                                     console.log('Fetch complete');
-                                    // Step 5: End of the stream (signal that all data has been fetched)
-                                    mediaSource.endOfStream();
+                                    // Check if the media source is still open before calling endOfStream
+                                    if (mediaSource.readyState === 'open') {
+                                        mediaSource.endOfStream();
+                                    }
                                     return;
                                 }
 
@@ -209,6 +211,7 @@ newWindow.document.write(`
     </body>
     </html>
 `);
+
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
