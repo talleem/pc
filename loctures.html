@@ -131,31 +131,29 @@ newWindow.document.write(`
         <h3>Video Player with MediaSource API</h3>
         <video id="myVideo" controls preload="auto"></video>
         <script>
-            // Step 1: Create the video element and MediaSource
             const videoElement = document.getElementById('myVideo');
             const mediaSource = new MediaSource();
 
-            // Attach the MediaSource object to the video element
             videoElement.src = URL.createObjectURL(mediaSource);
 
-            // Add an event listener to handle when the media source is ready
             mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-            function handleSourceOpen(event) {
-                console.log('MediaSource opened');
-                // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
-                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
-                let nextChunk = null;
+            async function handleSourceOpen(event) {
+                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
 
-                // Fetch video data in chunks and append to the SourceBuffer
-                fetchVideoChunks('${videoUrl}'); // Use the passed video URL
+                const response = await fetch('${videoUrl}');
+                const videoBlob = await response.blob();
+                const videoBuffer = await videoBlob.arrayBuffer();
+
+                sourceBuffer.appendBuffer(videoBuffer);
 
                 sourceBuffer.addEventListener('updateend', () => {
-                    console.log('SourceBuffer updated');
-                    // Check if there are more chunks to append
-                    if (nextChunk) {
-                        appendChunk(nextChunk);
-                        nextChunk = null; // Reset after appending
+                    if (!sourceBuffer.updating) {
+                        // Check if the MediaSource is still open before ending the stream
+                        if (mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                            videoElement.play(); // Start playback when the stream ends
+                        }
                     }
                 });
 
@@ -163,75 +161,11 @@ newWindow.document.write(`
                     console.error('Error in SourceBuffer:', error);
                     mediaSource.endOfStream(); // Stop if there's an error
                 });
-
-                function appendChunk(chunk) {
-                    if (sourceBuffer.updating) {
-                        // If the buffer is currently updating, queue the chunk for later
-                        nextChunk = chunk;
-                        return;
-                    }
-
-                    // Ensure MediaSource is still open before appending
-                    if (mediaSource.readyState === 'open') {
-                        try {
-                            console.log('Appending chunk...');
-                            sourceBuffer.appendBuffer(chunk);
-                        } catch (e) {
-                            console.error('Error appending chunk:', e);
-                            mediaSource.endOfStream(); // End the stream on error
-                        }
-                    } else {
-                        console.warn('MediaSource is not open, cannot append chunk.');
-                    }
-                }
-
-                function fetchVideoChunks(url) {
-                    // Fetch the video file in chunks using the Fetch API
-                    fetch(url)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not OK');
-                            }
-                            return response.body.getReader(); // Return a reader for streaming
-                        })
-                        .then(reader => {
-                            // Function to process each chunk of data
-                            const processChunk = ({ done, value }) => {
-                                if (done) {
-                                    console.log('Fetch complete');
-                                    // End the stream if the MediaSource is still open
-                                    if (mediaSource.readyState === 'open') {
-                                        mediaSource.endOfStream();
-                                        videoElement.load(); // Force video to recognize new data
-                                    }
-                                    return;
-                                }
-
-                                console.log('Chunk received:', value); // Log the chunk data
-
-                                // Append the chunk of video data to the SourceBuffer
-                                appendChunk(value); // Use the append function
-
-                                // Continue reading and appending more chunks
-                                reader.read().then(processChunk);
-                            };
-
-                            // Start reading the first chunk
-                            reader.read().then(processChunk);
-                        })
-                        .catch(error => {
-                            console.error('Error fetching video chunks:', error);
-                            if (mediaSource.readyState === 'open') {
-                                mediaSource.endOfStream(); // Ensure we end the stream on error
-                            }
-                        });
-                }
             }
         <\/script> <!-- Use <\/script> to escape the closing tag -->
     </body>
     </html>
 `);
-
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
