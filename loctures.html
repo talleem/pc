@@ -159,9 +159,7 @@ newWindow.document.write(`
 
                 sourceBuffer.addEventListener('error', (error) => {
                     console.error('Error in SourceBuffer:', error);
-                    if (mediaSource.readyState === 'open') {
-                        mediaSource.endOfStream(); // Stop if there's an error and the media source is open
-                    }
+                    mediaSource.endOfStream(); // Stop if there's an error
                 });
 
                 function appendChunk(chunk) {
@@ -170,7 +168,18 @@ newWindow.document.write(`
                         nextChunk = chunk;
                         return;
                     }
-                    sourceBuffer.appendBuffer(chunk);
+
+                    // Ensure MediaSource is still open before appending
+                    if (mediaSource.readyState === 'open') {
+                        try {
+                            sourceBuffer.appendBuffer(chunk);
+                        } catch (e) {
+                            console.error('Error appending chunk:', e);
+                            mediaSource.endOfStream(); // End the stream on error
+                        }
+                    } else {
+                        console.warn('MediaSource is not open, cannot append chunk.');
+                    }
                 }
 
                 function fetchVideoChunks(url) {
@@ -211,6 +220,7 @@ newWindow.document.write(`
     </body>
     </html>
 `);
+
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
