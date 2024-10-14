@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebM to MP4 Converter</title>
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.9/dist/ffmpeg.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #fileInput {
+            margin-bottom: 20px;
+        }
+        #status {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>WebM to MP4 Converter</h2>
+    <input type="file" id="fileInput" accept=".webm" />
+    <div id="status">No file uploaded yet.</div>
+
+    <script>
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        const ffmpeg = createFFmpeg({ log: true });
+        
+        document.getElementById('fileInput').addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                alert('Please upload a WebM file!');
+                return;
+            }
+
+            // Load FFmpeg core
+            document.getElementById('status').textContent = 'Loading FFmpeg...';
+            await ffmpeg.load();
+
+            // Read the uploaded file
+            document.getElementById('status').textContent = 'Processing file...';
+            ffmpeg.FS('writeFile', 'input.webm', await fetchFile(file));
+
+            // Run the conversion from WebM to MP4
+            await ffmpeg.run('-i', 'input.webm', 'output.mp4');
+
+            // Read the result file from FFmpeg file system
+            const data = ffmpeg.FS('readFile', 'output.mp4');
+
+            // Create a Blob from the file and generate a download link
+            const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(mp4Blob);
+            downloadLink.download = 'converted_video.mp4';
+            downloadLink.textContent = 'Download MP4';
+            document.getElementById('status').textContent = '';
+            document.body.appendChild(downloadLink);
+        });
+    </script>
+</body>
+</html>
 
