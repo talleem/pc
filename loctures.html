@@ -101,55 +101,79 @@
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
 
-    // Ensure the videoUrl is escaped properly for use in the script
-    newWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Lectures' Videos with MediaSource API</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #e0ffff;
+  // Ensure the videoUrl is escaped properly for use in the script
+newWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lectures' Videos with MediaSource API</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #e0ffff;
+            }
+            h3 {
+                text-align: center;
+                margin-top: 20px;
+            }
+            video {
+                display: block;
+                margin: 20px auto;
+                width: 640px;
+                height: 480px;
+                border: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Video Player with MediaSource API</h3>
+        <video id="myVideo" controls preload="auto"></video>
+        <script>
+            // Step 1: Create the video element and MediaSource
+            const videoElement = document.getElementById('myVideo');
+            const mediaSource = new MediaSource();
+
+            // Attach the MediaSource object to the video element
+            videoElement.src = URL.createObjectURL(mediaSource);
+
+            // Add an event listener to handle when the media source is ready
+            mediaSource.addEventListener('sourceopen', handleSourceOpen);
+
+            function handleSourceOpen(event) {
+                // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
+                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
+                let isAppending = false;
+                let nextChunk = null;
+
+                // Fetch video data in chunks and append to the SourceBuffer
+                fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
+
+                sourceBuffer.addEventListener('updateend', () => {
+                    isAppending = false; // Reset the flag when the update is done
+                    // Check if there are more chunks to append
+                    if (nextChunk) {
+                        appendChunk(nextChunk);
+                        nextChunk = null; // Reset after appending
+                    }
+                });
+
+                sourceBuffer.addEventListener('error', (error) => {
+                    console.error('Error in SourceBuffer:', error);
+                    mediaSource.endOfStream(); // Stop if there's an error
+                });
+
+                function appendChunk(chunk) {
+                    if (sourceBuffer.updating) {
+                        // If the buffer is currently updating, queue the chunk for later
+                        nextChunk = chunk;
+                        return;
+                    }
+                    sourceBuffer.appendBuffer(chunk);
                 }
-                h3 {
-                    text-align: center;
-                    margin-top: 20px;
-                }
-                video {
-                    display: block;
-                    margin: 20px auto;
-                    width: 640px;
-                    height: 480px;
-                    border: 1px solid #ccc;
-                }
-            </style>
-        </head>
-        <body>
-            <h3>Video Player with MediaSource API</h3>
-            <video id="myVideo" controls preload="auto"></video>
-            <script>
-                // Step 1: Create the video element and MediaSource
-                const videoElement = document.getElementById('myVideo');
-                const mediaSource = new MediaSource();
 
-                // Attach the MediaSource object to the video element
-                videoElement.src = URL.createObjectURL(mediaSource);
-
-                // Add an event listener to handle when the media source is ready
-                mediaSource.addEventListener('sourceopen', handleSourceOpen);
-
-                function handleSourceOpen(event) {
-                    // Step 2: Create a SourceBuffer and specify the codec (VP9 for WebM video)
-                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
-
-                    // Step 3: Fetch video data in chunks and append to the SourceBuffer
-                    fetchVideoChunks('${videoUrl}', sourceBuffer); // Use the passed video URL
-                }
-
-                function fetchVideoChunks(url, sourceBuffer) {
+                function fetchVideoChunks(url) {
                     // Fetch the video file in chunks using the Fetch API
                     fetch(url)
                         .then(response => {
@@ -169,7 +193,7 @@
                                 }
 
                                 // Step 4: Append the chunk of video data to the SourceBuffer
-                                sourceBuffer.appendBuffer(value);
+                                appendChunk(value); // Use the append function
 
                                 // Continue reading and appending more chunks
                                 reader.read().then(processChunk);
@@ -180,11 +204,11 @@
                         })
                         .catch(error => console.error('Error fetching video chunks:', error));
                 }
-            <\/script> <!-- Use <\/script> to escape the closing tag -->
-        </body>
-        </html>
-    `);
-
+            }
+        <\/script> <!-- Use <\/script> to escape the closing tag -->
+    </body>
+    </html>
+`);
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
