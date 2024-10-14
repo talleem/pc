@@ -1,0 +1,15 @@
+<body>
+<script>
+fetch('https://firebasestorage.googleapis.com/v0/b/engineerr1983meet.appspot.com/o/meetings_videos%2F1728927765735_meeting_recording.webm?alt=media')
+    .then(response => {
+        if (response.ok) {
+            console.log('CORS is working:', response);
+        } else {
+            console.error('CORS issue or file not found:', response);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching the resource:', error);
+    });
+</script>
+</body>
