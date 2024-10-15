@@ -308,14 +308,7 @@
             " 
         >   
 
-<button id="loadinvit" style="
-    height: 35px; 
-    text-align: center;
-    font-weight: bold;
-    position: fixed;
-    right: 35px;
-    top: 305px;
-">
+<button id="loadinvit" style="height: 35px; text-align: center; font-weight: bold; position: fixed; right: 35px; top: 305px;">
     Load invit
 </button>
 
@@ -465,31 +458,39 @@ document.addEventListener('DOMContentLoaded', function() {
                                             }
                                         };
 
+                                        // Updated onstop to include video compression before upload
                                         mediaRecorder.onstop = async function() {
                                             const blob = new Blob(chunks, { type: 'video/webm' });
 
-                                            // Create a reference to the file in Firebase Storage
-                                            const storageRef = storage.ref();
-                                            const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+                                            // Call the videocompress function and pass the blob for compression
+                                            videocompress(blob)
+                                                .then(async (compressedBlob) => {
+                                                    // Once compressed, continue with the upload to Firebase
+                                                    const storageRef = storage.ref();
+                                                    const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);  // Save as MP4 now
 
-                                            // Upload the video Blob to Firebase Storage
-                                            try {
-                                                const snapshot = await videoRef.put(blob);
-                                                const downloadURL = await snapshot.ref.getDownloadURL();
+                                                    // Upload the compressed video Blob to Firebase Storage
+                                                    try {
+                                                        const snapshot = await videoRef.put(compressedBlob);
+                                                        const downloadURL = await snapshot.ref.getDownloadURL();
 
-                                                // Save the download URL in Firestore
-                                                await db.collection('meetings_his_tbl').add({
-                                                    creatorEmail: loggedInEmail,
-                                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-                                                    videoURL: downloadURL,
-                                                    Notes: null  // Add the Notes field as null
+                                                        // Save the download URL in Firestore
+                                                        await db.collection('meetings_his_tbl').add({
+                                                            creatorEmail: loggedInEmail,
+                                                            stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                                            videoURL: downloadURL,
+                                                            Notes: null  // Add the Notes field as null
+                                                        });
+
+                                                        console.log("Recording saved to Firestore with URL:", downloadURL);
+                                                        newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
+                                                    } catch (error) {
+                                                        console.error("Error saving recording to Firebase Storage/Firestore:", error);
+                                                    }
+                                                })
+                                                .catch((error) => {
+                                                    console.error("Error compressing video:", error);
                                                 });
-
-                                                console.log("Recording saved to Firestore with URL:", downloadURL);
-                                                newWindow.alert("Recording saved to Firestore with URL:" + downloadURL);
-                                            } catch (error) {
-                                                console.error("Error saving recording to Firebase Storage/Firestore:", error);
-                                            }
                                         };
 
                                         mediaRecorder.start();
@@ -531,7 +532,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });   
-
 </script>
            
      <button id="updateinvit" style=" height: 35px; 
