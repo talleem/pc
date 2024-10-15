@@ -1,20 +1,24 @@
 // Load FFmpeg dynamically if not already loaded
-if (typeof createFFmpeg === 'undefined') {
-    const script = document.createElement('script');
-    script.src = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.2";
-    document.head.appendChild(script);
+if (typeof window.FFmpeg === 'undefined') {
+    const script1 = document.createElement('script');
+    script1.src = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.8.5";
+    document.head.appendChild(script1);
 
-    script.onload = () => {
+    const script2 = document.createElement('script');
+    script2.src = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.9.8";
+    document.head.appendChild(script2);
+
+    script2.onload = () => {
         console.log("FFmpeg.js loaded!");
     };
 }
 
 async function videocompress(inputBlob) {
-    if (typeof createFFmpeg === 'undefined') {
+    if (typeof window.FFmpeg === 'undefined') {
         throw new Error("FFmpeg is not loaded.");
     }
 
-    const { createFFmpeg, fetchFile } = window.FFmpeg;
+    const { createFFmpeg, fetchFile } = window.FFmpeg; // Access from the FFmpeg global variable
     const ffmpeg = createFFmpeg({ log: true });
     
     try {
@@ -36,4 +40,3 @@ async function videocompress(inputBlob) {
         throw error;  // Rethrow the error for the calling function to handle
     }
 }
-
