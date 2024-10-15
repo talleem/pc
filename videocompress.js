@@ -1,39 +1,32 @@
 // videocompress.js
 
-function videocompress(blob) {
-    return new Promise((resolve, reject) => {
+const { createFFmpeg, fetchFile } = FFmpeg;  // Ensure FFmpeg is available
+
+async function videocompress(blob) {
+    try {
         const ffmpeg = createFFmpeg({ log: true });
-        
-        ffmpeg.load()
-            .then(() => {
-                // Read the input video (blob) and write it to FFmpeg's virtual file system
-                const inputFileName = 'input.webm';
-                const outputFileName = 'output.mp4';
+        await ffmpeg.load(); // Load the FFmpeg library
 
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const uint8Array = new Uint8Array(reader.result);
-                    ffmpeg.FS('writeFile', inputFileName, uint8Array);
+        // Set input and output file names
+        const inputFileName = 'input.webm';
+        const outputFileName = 'output.mp4';
 
-                    // Run FFmpeg command to convert and compress the video
-                    ffmpeg.run('-i', inputFileName, '-vcodec', 'libx264', '-crf', '23', '-preset', 'medium', outputFileName)
-                        .then(() => {
-                            // Read the compressed output file from FFmpeg's virtual file system
-                            const output = ffmpeg.FS('readFile', outputFileName);
+        // Fetch the input Blob and write it to FFmpeg's virtual file system
+        const inputData = await fetchFile(blob);
+        ffmpeg.FS('writeFile', inputFileName, inputData);
 
-                            // Convert the compressed file back to a Blob
-                            const compressedBlob = new Blob([output.buffer], { type: 'video/mp4' });
+        // Run FFmpeg command to convert the video format from WebM to MP4 with compression
+        await ffmpeg.run('-i', inputFileName, '-c:v', 'libx264', '-crf', '28', '-preset', 'slow', outputFileName);
 
-                            // Resolve the Promise with the compressed video blob
-                            resolve(compressedBlob);
-                        })
-                        .catch(error => reject(error));
-                };
+        // Read the compressed video from FFmpeg's virtual file system
+        const outputData = ffmpeg.FS('readFile', outputFileName);
 
-                reader.onerror = (error) => reject(error);
-                reader.readAsArrayBuffer(blob);  // Convert the input blob to an ArrayBuffer
-            })
-            .catch(error => reject(error));
-    });
+        // Convert the output video file to a Blob for further use
+        const compressedBlob = new Blob([outputData.buffer], { type: 'video/mp4' });
+
+        return compressedBlob;  // Return the compressed Blob
+    } catch (error) {
+        console.error("Error compressing video:", error);
+        throw error;  // Rethrow the error so that it can be caught by the calling function
+    }
 }
-
