@@ -6,18 +6,24 @@ if (typeof createFFmpeg === 'undefined') {
 
     script.onload = () => {
         console.log("FFmpeg.js loaded!");
+        // Now call your function or any other initialization that depends on FFmpeg being loaded
     };
 }
 
-// Video compression function with error handling
+// Your video compression function here
 async function videocompress(inputBlob) {
+    if (typeof createFFmpeg === 'undefined') {
+        throw new Error("FFmpeg is not loaded.");
+    }
+
+    const { createFFmpeg, fetchFile } = window.FFmpeg;  // Ensure you access FFmpeg correctly
+    const ffmpeg = createFFmpeg({ log: true });
+    await ffmpeg.load();  // Load the FFmpeg library
+
+    const inputFileName = 'input.webm';
+    const outputFileName = 'output.mp4';
+
     try {
-        const ffmpeg = createFFmpeg({ log: true });
-        await ffmpeg.load();
-
-        const inputFileName = 'input.webm';
-        const outputFileName = 'output.mp4';
-
         const inputData = await fetchFile(inputBlob);
         ffmpeg.FS('writeFile', inputFileName, inputData);
 
@@ -29,7 +35,6 @@ async function videocompress(inputBlob) {
         return compressedBlob;  // Return the compressed Blob
     } catch (error) {
         console.error("Error compressing video:", error);
-        throw error;  // Rethrow the error for calling function to handle
+        throw error;  // Rethrow the error for the calling function to handle
     }
 }
-
