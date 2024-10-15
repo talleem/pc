@@ -26,7 +26,8 @@ async function videocompress(inputBlob) {
         const inputData = await fetchFile(inputBlob);
         ffmpeg.FS('writeFile', inputFileName, inputData);
 
-        await ffmpeg.run('-i', inputFileName, '-c:v', 'libx264', '-crf', '28', '-preset', 'slow', outputFileName);
+        // Modify the FFmpeg command to include a lower bitrate
+        await ffmpeg.run('-i', inputFileName, '-vcodec', 'libx264', '-b:v', '1500k', '-crf', '28', outputFileName);
 
         const outputData = ffmpeg.FS('readFile', outputFileName);
         return new Blob([outputData.buffer], { type: 'video/mp4' });
@@ -35,3 +36,4 @@ async function videocompress(inputBlob) {
         throw error;  // Rethrow the error for the calling function to handle
     }
 }
+
