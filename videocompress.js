@@ -6,17 +6,19 @@ if (typeof createFFmpeg === 'undefined') {
 
     script.onload = () => {
         console.log("FFmpeg.js loaded!");
-        // Now call your function or any other initialization that depends on FFmpeg being loaded
+        // Now you can call your function or any other initialization that depends on FFmpeg being loaded
+        // For example, call videocompress here or set up your mediaRecorder.onstop event
     };
 }
 
 // Your video compression function here
 async function videocompress(inputBlob) {
+    const { createFFmpeg, fetchFile } = window.FFmpeg;  // Ensure you access FFmpeg correctly
+
     if (typeof createFFmpeg === 'undefined') {
         throw new Error("FFmpeg is not loaded.");
     }
 
-    const { createFFmpeg, fetchFile } = window.FFmpeg;  // Ensure you access FFmpeg correctly
     const ffmpeg = createFFmpeg({ log: true });
     await ffmpeg.load();  // Load the FFmpeg library
 
