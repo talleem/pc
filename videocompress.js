@@ -1,5 +1,5 @@
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { FFmpeg } from '@ffmpeg/core';
+import { createFFmpeg, fetchFile } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest/dist/ffmpeg.min.js';
+import { FFmpeg } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@latest/dist/ffmpeg-core.min.js';
 
 // Initialize FFmpeg
 const ffmpeg = createFFmpeg({ log: true });
