@@ -1,5 +1,5 @@
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-import { FFmpeg } from '@ffmpeg/core';
+import { createFFmpeg, fetchFile } from '/@ffmpeg/ffmpeg';
+import { FFmpeg } from '/@ffmpeg/core';
 
 // Initialize FFmpeg
 const ffmpeg = createFFmpeg({ log: true });
