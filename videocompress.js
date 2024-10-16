@@ -1,4 +1,6 @@
-import { createFFmpeg, fetchFile } from 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@latest/dist/ffmpeg.js';
+import { createFFmpeg, fetchFile } from './node_modules/@ffmpeg/ffmpeg/dist/ffmpeg.min.js';
+import { FFmpeg } from './node_modules/@ffmpeg/core/dist/ffmpeg-core.min.js';
+
 
 // Initialize FFmpeg
 const ffmpeg = createFFmpeg({ log: true });
