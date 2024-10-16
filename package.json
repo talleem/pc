@@ -1,5 +1,9 @@
 {
   "engines": {
     "node": "18.x"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "^0.12.6",
+    "@ffmpeg/ffmpeg": "^0.12.10"
   }
 }
