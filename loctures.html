@@ -139,7 +139,6 @@ newWindow.document.write(`
             mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
             async function handleSourceOpen(event) {
-                // Separate audio and video source buffers
                 const audioBuffer = mediaSource.addSourceBuffer('audio/webm; codecs="opus"');
                 const videoBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9"');
 
@@ -147,40 +146,33 @@ newWindow.document.write(`
                 const videoBlob = await response.blob();
                 const videoBufferData = await videoBlob.arrayBuffer();
 
-                // Append smaller segments of the video buffer (256KB segments)
-                appendSegmentsToBuffer(videoBuffer, videoBufferData, 256 * 1024, mediaSource);
-                appendSegmentsToBuffer(audioBuffer, videoBufferData, 256 * 1024, mediaSource); // Assuming audio is part of the same buffer
+                appendSegmentsToBuffer(videoBuffer, videoBufferData, 256 * 1024);
+                appendSegmentsToBuffer(audioBuffer, videoBufferData, 256 * 1024);
 
-                // Source buffer management
                 videoBuffer.addEventListener('updateend', () => {
-                    if (!videoBuffer.updating) {
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                            videoElement.play(); // Start playback when the stream ends
+                    if (!videoBuffer.updating && mediaSource.readyState === 'open') {
+                        if (videoBuffer.buffered.length > 0) {
+                            const bufferedEnd = videoBuffer.buffered.end(videoBuffer.buffered.length - 1);
+                            if (bufferedEnd - videoElement.currentTime < 5) {
+                                appendSegmentsToBuffer(videoBuffer, videoBufferData, 256 * 1024);
+                            }
                         }
                     }
-                });
-
-                videoBuffer.addEventListener('error', (error) => {
-                    console.error('Error in Video SourceBuffer:', error);
-                    mediaSource.endOfStream(); // Stop if there's an error
                 });
 
                 audioBuffer.addEventListener('updateend', () => {
-                    if (!audioBuffer.updating) {
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
+                    if (!audioBuffer.updating && mediaSource.readyState === 'open') {
+                        if (audioBuffer.buffered.length > 0) {
+                            const bufferedEnd = audioBuffer.buffered.end(audioBuffer.buffered.length - 1);
+                            if (bufferedEnd - videoElement.currentTime < 5) {
+                                appendSegmentsToBuffer(audioBuffer, videoBufferData, 256 * 1024);
+                            }
                         }
                     }
                 });
-
-                audioBuffer.addEventListener('error', (error) => {
-                    console.error('Error in Audio SourceBuffer:', error);
-                    mediaSource.endOfStream(); // Stop if there's an error
-                });
             }
 
-            function appendSegmentsToBuffer(sourceBuffer, videoBuffer, segmentSize, mediaSource) {
+            function appendSegmentsToBuffer(sourceBuffer, videoBuffer, segmentSize) {
                 let offset = 0;
 
                 function appendNextSegment() {
@@ -190,22 +182,23 @@ newWindow.document.write(`
 
                         sourceBuffer.appendBuffer(chunk);
                     } else {
-                        // Only call endOfStream after all segments are appended
-                        if (mediaSource.readyState === 'open') {
+                        if (sourceBuffer === videoBuffer) {
                             mediaSource.endOfStream();
-                            videoElement.play(); // Start playback
-                            console.log("All video segments appended, endOfStream called.");
                         }
                     }
                 }
 
+                if (!sourceBuffer.updating) {
+                    appendNextSegment();
+                }
+
                 sourceBuffer.addEventListener('updateend', appendNextSegment);
-                appendNextSegment(); // Start the first segment append
             }
-        <\/script> <!-- Use <\/script> to escape the closing tag -->
+        </script>
     </body>
     </html>
 `);
+
 
 
     newWindow.document.close(); // Close the document to ensure it is rendered
