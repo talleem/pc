@@ -138,41 +138,59 @@ newWindow.document.write(`
 
             mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
+            function appendSegmentsToBuffer(videoBuffer, sourceBuffer, segmentSize) {
+                let offset = 0;
+
+                function appendNextSegment() {
+                    if (offset < videoBuffer.byteLength) {
+                        const chunk = videoBuffer.slice(offset, offset + segmentSize);
+                        offset += segmentSize;
+
+                        sourceBuffer.appendBuffer(chunk);
+                    }
+                }
+
+                sourceBuffer.addEventListener('updateend', appendNextSegment);
+                appendNextSegment(); // Start the first segment append
+            }
+
             async function handleSourceOpen(event) {
                 const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
 
-                fetch('${videoUrl}')
-                    .then(response => response.blob())
-                    .then(async (videoBlob) => {
-                        const videoBuffer = await videoBlob.arrayBuffer();
-                        sourceBuffer.appendBuffer(videoBuffer);
+                // Fetch and append video in smaller segments (e.g., 1MB chunks)
+                const response = await fetch('${videoUrl}');
+                const videoBlob = await response.blob();
+                const videoBuffer = await videoBlob.arrayBuffer();
 
-                        // Listen to the updateend event to manage buffer space
-                        sourceBuffer.addEventListener('updateend', () => {
-                            if (!sourceBuffer.updating) {
-                                if (mediaSource.readyState === 'open') {
-                                    mediaSource.endOfStream();
-                                    videoElement.play(); // Start playback
-                                }
+                // Append smaller segments of the video buffer
+                appendSegmentsToBuffer(videoBuffer, sourceBuffer, 1 * 1024 * 1024);
 
-                                // Periodically remove old segments from the buffer
-                                const currentTime = videoElement.currentTime;
-                                const bufferThreshold = 10; // Keep 10 seconds of video data in buffer
-                                
-                                // Only remove data that's older than the threshold
-                                if (currentTime > bufferThreshold) {
-                                    const removeEndTime = currentTime - bufferThreshold;
-                                    sourceBuffer.remove(0, removeEndTime);
-                                    console.log(\`Removed buffer from 0 to \${removeEndTime}\`);
-                                }
-                            }
-                        });
-                    });
+                // Buffer management and cleanup logic
+                sourceBuffer.addEventListener('updateend', () => {
+                    if (!sourceBuffer.updating) {
+                        if (mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                            videoElement.play(); // Start playback
+                        }
+
+                        // Periodically remove old segments from the buffer
+                        const currentTime = videoElement.currentTime;
+                        const bufferThreshold = 10; // Keep 10 seconds of video data in buffer
+
+                        // Only remove data that's older than the threshold
+                        if (currentTime > bufferThreshold) {
+                            const removeEndTime = currentTime - bufferThreshold;
+                            sourceBuffer.remove(0, removeEndTime);
+                            console.log(\`Removed buffer from 0 to \${removeEndTime}\`);
+                        }
+                    }
+                });
             }
         <\/script> <!-- Use <\/script> to escape the closing tag -->
     </body>
     </html>
 `);
+
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
