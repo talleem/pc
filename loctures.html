@@ -138,7 +138,8 @@ newWindow.document.write(`
 
             mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-            function appendSegmentsToBuffer(videoBuffer, sourceBuffer, segmentSize) {
+            // Updated appendSegmentsToBuffer function to handle segment appending and endOfStream correctly
+            function appendSegmentsToBuffer(videoBuffer, sourceBuffer, segmentSize, mediaSource) {
                 let offset = 0;
 
                 function appendNextSegment() {
@@ -147,6 +148,13 @@ newWindow.document.write(`
                         offset += segmentSize;
 
                         sourceBuffer.appendBuffer(chunk);
+                    } else {
+                        // Only call endOfStream after all segments are appended
+                        if (mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                            videoElement.play(); // Start playback
+                            console.log("All video segments appended, endOfStream called.");
+                        }
                     }
                 }
 
@@ -157,22 +165,21 @@ newWindow.document.write(`
             async function handleSourceOpen(event) {
                 const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
 
-                // Fetch and append video in smaller segments (e.g., 1MB chunks)
+                // Fetch the video and append segments in smaller chunks (e.g., 512KB)
                 const response = await fetch('${videoUrl}');
                 const videoBlob = await response.blob();
                 const videoBuffer = await videoBlob.arrayBuffer();
 
-                // Append smaller segments of the video buffer
-                appendSegmentsToBuffer(videoBuffer, sourceBuffer, 1 * 1024 * 1024);
+                // Log the sizes of the fetched videoBlob and videoBuffer
+                console.log('Video Blob size:', videoBlob.size);
+                console.log('Video Buffer size:', videoBuffer.byteLength);
+
+                // Append video segments of 512KB
+                appendSegmentsToBuffer(videoBuffer, sourceBuffer, 512 * 1024, mediaSource);
 
                 // Buffer management and cleanup logic
                 sourceBuffer.addEventListener('updateend', () => {
                     if (!sourceBuffer.updating) {
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                            videoElement.play(); // Start playback
-                        }
-
                         // Periodically remove old segments from the buffer
                         const currentTime = videoElement.currentTime;
                         const bufferThreshold = 10; // Keep 10 seconds of video data in buffer
