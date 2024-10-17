@@ -153,7 +153,7 @@ newWindow.document.write(`
                     if (!videoBuffer.updating && mediaSource.readyState === 'open') {
                         if (videoBuffer.buffered.length > 0) {
                             const bufferedEnd = videoBuffer.buffered.end(videoBuffer.buffered.length - 1);
-                            if (bufferedEnd - videoElement.currentTime < 5) {
+                            if (bufferedEnd - videoElement.currentTime < 10) {
                                 appendSegmentsToBuffer(videoBuffer, videoBufferData, 256 * 1024);
                             }
                         }
@@ -164,7 +164,7 @@ newWindow.document.write(`
                     if (!audioBuffer.updating && mediaSource.readyState === 'open') {
                         if (audioBuffer.buffered.length > 0) {
                             const bufferedEnd = audioBuffer.buffered.end(audioBuffer.buffered.length - 1);
-                            if (bufferedEnd - videoElement.currentTime < 5) {
+                            if (bufferedEnd - videoElement.currentTime < 10) {
                                 appendSegmentsToBuffer(audioBuffer, videoBufferData, 256 * 1024);
                             }
                         }
