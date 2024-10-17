@@ -194,12 +194,10 @@ newWindow.document.write(`
 
                 sourceBuffer.addEventListener('updateend', appendNextSegment);
             }
-        </script>
+        <\/script> <!-- Use <\/script> to escape the closing tag -->
     </body>
     </html>
 `);
-
-
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
