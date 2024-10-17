@@ -138,27 +138,57 @@ newWindow.document.write(`
 
             mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-            // Updated appendSegmentsToBuffer function to handle segment appending and endOfStream correctly
+            // Updated function with buffer management to avoid QuotaExceededError
             function appendSegmentsToBuffer(videoBuffer, sourceBuffer, segmentSize, mediaSource) {
                 let offset = 0;
+                let lastRemovedTime = 0; // Keep track of last time data was removed from buffer
 
                 function appendNextSegment() {
-                    if (offset < videoBuffer.byteLength) {
-                        const chunk = videoBuffer.slice(offset, offset + segmentSize);
-                        offset += segmentSize;
+                    // Prevent appending if the buffer is full
+                    if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                        if (offset < videoBuffer.byteLength) {
+                            const chunk = videoBuffer.slice(offset, offset + segmentSize);
+                            offset += segmentSize;
 
-                        sourceBuffer.appendBuffer(chunk);
-                    } else {
-                        // Only call endOfStream after all segments are appended
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                            videoElement.play(); // Start playback
-                            console.log("All video segments appended, endOfStream called.");
+                            try {
+                                sourceBuffer.appendBuffer(chunk);
+                            } catch (error) {
+                                console.error('Error appending buffer chunk:', error);
+                            }
+                        } else {
+                            if (mediaSource.readyState === 'open') {
+                                mediaSource.endOfStream();
+                                videoElement.play(); // Start playback
+                                console.log("All video segments appended, endOfStream called.");
+                            }
                         }
                     }
                 }
 
-                sourceBuffer.addEventListener('updateend', appendNextSegment);
+                // Automatically clear old buffer to free space for new segments
+                function manageBuffer() {
+                    const bufferThreshold = 30; // Keep 30 seconds of video in the buffer
+                    const currentTime = videoElement.currentTime;
+
+                    // Check if we need to remove old segments
+                    if (currentTime > lastRemovedTime + bufferThreshold) {
+                        const removeEndTime = currentTime - bufferThreshold;
+                        try {
+                            sourceBuffer.remove(0, removeEndTime);
+                            lastRemovedTime = currentTime;
+                            console.log(\`Removed buffer from 0 to \${removeEndTime}\`);
+                        } catch (error) {
+                            console.error('Error removing buffer segments:', error);
+                        }
+                    }
+                }
+
+                // Listen for the 'updateend' event to append the next chunk
+                sourceBuffer.addEventListener('updateend', () => {
+                    manageBuffer(); // Free up space before appending new segments
+                    appendNextSegment();
+                });
+
                 appendNextSegment(); // Start the first segment append
             }
 
@@ -176,22 +206,6 @@ newWindow.document.write(`
 
                 // Append video segments of 512KB
                 appendSegmentsToBuffer(videoBuffer, sourceBuffer, 512 * 1024, mediaSource);
-
-                // Buffer management and cleanup logic
-                sourceBuffer.addEventListener('updateend', () => {
-                    if (!sourceBuffer.updating) {
-                        // Periodically remove old segments from the buffer
-                        const currentTime = videoElement.currentTime;
-                        const bufferThreshold = 10; // Keep 10 seconds of video data in buffer
-
-                        // Only remove data that's older than the threshold
-                        if (currentTime > bufferThreshold) {
-                            const removeEndTime = currentTime - bufferThreshold;
-                            sourceBuffer.remove(0, removeEndTime);
-                            console.log(\`Removed buffer from 0 to \${removeEndTime}\`);
-                        }
-                    }
-                });
             }
         <\/script> <!-- Use <\/script> to escape the closing tag -->
     </body>
