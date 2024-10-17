@@ -448,16 +448,13 @@ document.addEventListener('DOMContentLoaded', function() {
 mediaRecorder.onstop = async function() {
     const blob = new Blob(chunks, { type: 'video/webm' });
 
-    // Call the videocompress function and pass the blob for compression
     try {
-        const compressedBlob = await videocompress(blob);  // Compress the recorded video
-
-        // Once compressed, continue with the upload to Firebase
+        // Directly save the recorded video blob to Firebase Storage without compression
         const storageRef = storage.ref();
-        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.mp4`);  // Save as MP4 now
+        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);  // Keep the original WebM format
 
-        // Upload the compressed video Blob to Firebase Storage
-        const snapshot = await videoRef.put(compressedBlob);
+        // Upload the recorded video Blob to Firebase Storage
+        const snapshot = await videoRef.put(blob);
         const downloadURL = await snapshot.ref.getDownloadURL();
 
         // Save the download URL in Firestore
@@ -471,10 +468,9 @@ mediaRecorder.onstop = async function() {
         console.log("Recording saved to Firestore with URL:", downloadURL);
         newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
     } catch (error) {
-        console.error("Error compressing video:", error);
+        console.error("Error saving video to Firebase:", error);
     }
 };
-
 
                                         mediaRecorder.start();
                                         stopButton.disabled = false;
