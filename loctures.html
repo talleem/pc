@@ -151,9 +151,7 @@ newWindow.document.write(`
                 async function readNextChunk() {
                     const { done, value } = await reader.read();
                     if (done) {
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                        }
+                        checkAndEndStream();
                         return;
                     }
 
@@ -208,11 +206,26 @@ newWindow.document.write(`
                         }
                     }
                 }
+
+                function checkAndEndStream() {
+                    // Only call endOfStream when sourceBuffer is not updating
+                    if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream();
+                    } else {
+                        // Wait until sourceBuffer finishes updating
+                        sourceBuffer.addEventListener('updateend', () => {
+                            if (mediaSource.readyState === 'open') {
+                                mediaSource.endOfStream();
+                            }
+                        });
+                    }
+                }
             }
         <\/script> <!-- Use <\/script> to escape the closing tag -->
     </body>
     </html>
 `);
+
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
