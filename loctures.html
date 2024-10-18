@@ -103,109 +103,102 @@
         
 newWindow.document.write(`
     <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lectures' Videos with MediaSource API</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #e0ffff;
-            }
-            h3 {
-                text-align: center;
-                margin-top: 20px;
-            }
-            video {
-                display: block;
-                margin: 20px auto;
-                width: 640px;
-                height: 480px;
-                border: 1px solid #ccc;
-            }
-        </style>
-    </head>
-    <body>
-        <h3>Video Player with MediaSource API</h3>
-        <video id="myVideo" controls preload="auto"></video>
-        <script>
-            const videoElement = document.getElementById('myVideo');
-            const mediaSource = new MediaSource();
-            videoElement.src = URL.createObjectURL(mediaSource);
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Lectures' Videos with MediaSource API</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #e0ffff;
+                }
+                h3 {
+                    text-align: center;
+                    margin-top: 20px;
+                }
+                video {
+                    display: block;
+                    margin: 20px auto;
+                    width: 640px;
+                    height: 480px;
+                    border: 1px solid #ccc;
+                }
+            </style>
+        </head>
+        <body>
+            <h3>Video Player with MediaSource API</h3>
+            <video id="myVideo" controls preload="auto"></video>
+            <script>
+                const videoElement = document.getElementById('myVideo');
+                const mediaSource = new MediaSource();
+                videoElement.src = URL.createObjectURL(mediaSource);
 
-            mediaSource.addEventListener('sourceopen', handleSourceOpen);
+                mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-            let bufferQueue = [];
-            let isBufferUpdating = false;
-
-            async function handleSourceOpen(event) {
-                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
-
-                sourceBuffer.mode = 'segments'; // Use segment mode for efficient appending
-
-                // Fetch the video data in chunks (e.g., 1MB at a time)
+                let bufferQueue = [];
+                let isBufferUpdating = false;
                 const chunkSize = 1024 * 1024; // 1MB chunks
-                const response = await fetch('${encodeURIComponent(videoUrl)}');
-                const reader = response.body.getReader();
-                
-                async function readNextChunk() {
-                    const { done, value } = await reader.read();
-                    if (done) {
-                        // End the stream once all chunks are read
-                        mediaSource.endOfStream();
-                        return;
+
+                async function handleSourceOpen(event) {
+                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+                    sourceBuffer.mode = 'segments'; // Segment mode for efficient streaming
+
+                    // Fetch the video data directly from Firebase Storage URL
+                    const response = await fetch('${videoUrl}'); // Directly use videoUrl here
+                    const reader = response.body.getReader();
+
+                    async function readNextChunk() {
+                        const { done, value } = await reader.read();
+                        if (done) {
+                            checkAndEndStream();
+                            return;
+                        }
+
+                        bufferQueue.push(value);
+                        appendBuffer(sourceBuffer);
+
+                        readNextChunk(); // Continue reading next chunks
                     }
 
-                    // Add the current chunk to the buffer queue
-                    bufferQueue.push(value);
-                    appendBuffer(sourceBuffer);
-
-                    // Read the next chunk recursively
                     readNextChunk();
-                }
 
-                readNextChunk();
+                    sourceBuffer.addEventListener('updateend', () => {
+                        isBufferUpdating = false;
+                        appendBuffer(sourceBuffer);
+                    });
 
-                sourceBuffer.addEventListener('updateend', () => {
-                    isBufferUpdating = false;
-                    appendBuffer(sourceBuffer);
-                });
+                    sourceBuffer.addEventListener('error', (error) => {
+                        console.error('Error in SourceBuffer:', error);
+                        if (mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                        }
+                    });
 
-                sourceBuffer.addEventListener('error', (error) => {
-                    console.error('Error in SourceBuffer:', error);
-                    mediaSource.endOfStream();
-                });
+                    videoElement.addEventListener('canplay', () => {
+                        if (videoElement.paused) {
+                            videoElement.play();
+                        }
+                    });
 
-                // Ensure playback starts once some data is appended
-                videoElement.addEventListener('canplay', () => {
-                    if (videoElement.paused) {
-                        videoElement.play();
+                    function appendBuffer(sourceBuffer) {
+                        if (isBufferUpdating || bufferQueue.length === 0 || mediaSource.readyState !== 'open') {
+                            return;
+                        }
+                        isBufferUpdating = true;
+                        const nextChunk = bufferQueue.shift();
+                        sourceBuffer.appendBuffer(nextChunk);
                     }
-                });
 
-                function appendBuffer(sourceBuffer) {
-                    if (isBufferUpdating || bufferQueue.length === 0 || mediaSource.readyState !== 'open') {
-                        return;
-                    }
-                    isBufferUpdating = true;
-                    
-                    // Append the next chunk from the queue
-                    const nextChunk = bufferQueue.shift();
-                    sourceBuffer.appendBuffer(nextChunk);
-
-                    // Efficiently clear old buffered data to prevent stalls
-                    const currentTime = videoElement.currentTime;
-                    const bufferThreshold = 30; // seconds of buffered data to keep
-                    const startBuffered = sourceBuffer.buffered.start(0);
-                    if (currentTime - startBuffered > bufferThreshold) {
-                        sourceBuffer.remove(0, currentTime - bufferThreshold);
+                    function checkAndEndStream() {
+                        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                        }
                     }
                 }
-            }
-        <\/script> <!-- Use <\/script> to escape the closing tag -->
-    </body>
-    </html>
+            <\/script>
+        </body>
+        </html>
 `);
 
     newWindow.document.close(); // Close the document to ensure it is rendered
