@@ -100,9 +100,9 @@
        function openVideoInNewWindow(videoUrl) {
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
-           // Ensure we pass the correct Firebase URL directly
-    const firebaseUrl = decodeURIComponent(videoUrl); // Firebase URLs are already encoded, so just decode for safety
-newWindow.document.write(`
+        
+ // Directly use the videoUrl without decodeURIComponent()
+    newWindow.document.write(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -146,10 +146,9 @@ newWindow.document.write(`
                     sourceBuffer.mode = 'segments'; // Segment mode for efficient streaming
 
                     // Fetch the video data directly from Firebase Storage URL
-                    const response = await fetch('${firebaseUrl}');
+                    const response = await fetch('${videoUrl}'); // Directly use videoUrl here
                     const reader = response.body.getReader();
 
-                    // Read and buffer chunks progressively
                     async function readNextChunk() {
                         const { done, value } = await reader.read();
                         if (done) {
@@ -160,8 +159,7 @@ newWindow.document.write(`
                         bufferQueue.push(value);
                         appendBuffer(sourceBuffer);
 
-                        // Read next chunk recursively
-                        readNextChunk();
+                        readNextChunk(); // Continue reading next chunks
                     }
 
                     readNextChunk();
@@ -178,7 +176,6 @@ newWindow.document.write(`
                         }
                     });
 
-                    // Start playback when enough data is buffered
                     videoElement.addEventListener('canplay', () => {
                         if (videoElement.paused) {
                             videoElement.play();
@@ -190,44 +187,20 @@ newWindow.document.write(`
                             return;
                         }
                         isBufferUpdating = true;
-                        
                         const nextChunk = bufferQueue.shift();
                         sourceBuffer.appendBuffer(nextChunk);
-
-                        // Efficiently clear old buffered data to prevent stalls
-                        const currentTime = videoElement.currentTime;
-                        const bufferThreshold = 30; // seconds of buffered data to keep
-                        if (sourceBuffer.buffered.length > 0) {
-                            const startBuffered = sourceBuffer.buffered.start(0);
-                            if (currentTime - startBuffered > bufferThreshold) {
-                                try {
-                                    sourceBuffer.remove(0, currentTime - bufferThreshold);
-                                } catch (err) {
-                                    console.warn('Buffer removal failed:', err);
-                                }
-                            }
-                        }
                     }
 
                     function checkAndEndStream() {
-                        // Only call endOfStream when sourceBuffer is not updating
                         if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
                             mediaSource.endOfStream();
-                        } else {
-                            // Wait until sourceBuffer finishes updating
-                            sourceBuffer.addEventListener('updateend', () => {
-                                if (mediaSource.readyState === 'open') {
-                                    mediaSource.endOfStream();
-                                }
-                            });
                         }
                     }
                 }
-            <\/script> <!-- Use <\/script> to escape the closing tag -->
+            <\/script>
         </body>
         </html>
     `);
-           
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
