@@ -147,13 +147,19 @@ newWindow.document.write(`
                 // Fetch the video data in chunks (e.g., 1MB at a time)
                 const chunkSize = 1024 * 1024; // 1MB chunks
                 const response = await fetch('${encodeURIComponent(videoUrl)}');
+                if (!response.ok) {
+                    console.error('Failed to load video resource:', response.statusText);
+                    return;
+                }
                 const reader = response.body.getReader();
                 
                 async function readNextChunk() {
                     const { done, value } = await reader.read();
                     if (done) {
                         // End the stream once all chunks are read
-                        mediaSource.endOfStream();
+                        if (mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                        }
                         return;
                     }
 
@@ -174,7 +180,9 @@ newWindow.document.write(`
 
                 sourceBuffer.addEventListener('error', (error) => {
                     console.error('Error in SourceBuffer:', error);
-                    mediaSource.endOfStream();
+                    if (mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream();
+                    }
                 });
 
                 // Ensure playback starts once some data is appended
@@ -197,9 +205,17 @@ newWindow.document.write(`
                     // Efficiently clear old buffered data to prevent stalls
                     const currentTime = videoElement.currentTime;
                     const bufferThreshold = 30; // seconds of buffered data to keep
-                    const startBuffered = sourceBuffer.buffered.start(0);
-                    if (currentTime - startBuffered > bufferThreshold) {
-                        sourceBuffer.remove(0, currentTime - bufferThreshold);
+
+                    // Check if there is buffered data before accessing ranges
+                    if (sourceBuffer.buffered.length > 0) {
+                        const startBuffered = sourceBuffer.buffered.start(0);
+                        if (currentTime - startBuffered > bufferThreshold) {
+                            try {
+                                sourceBuffer.remove(0, currentTime - bufferThreshold);
+                            } catch (err) {
+                                console.warn('Failed to remove buffer:', err);
+                            }
+                        }
                     }
                 }
             }
