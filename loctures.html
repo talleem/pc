@@ -138,36 +138,29 @@ newWindow.document.write(`
 
             let bufferQueue = [];
             let isBufferUpdating = false;
+            const chunkSize = 1024 * 1024; // 1MB chunks
 
             async function handleSourceOpen(event) {
                 const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+                sourceBuffer.mode = 'segments'; // Segment mode for efficient streaming
 
-                sourceBuffer.mode = 'segments'; // Use segment mode for efficient appending
-
-                // Fetch the video data in chunks (e.g., 1MB at a time)
-                const chunkSize = 1024 * 1024; // 1MB chunks
                 const response = await fetch('${encodeURIComponent(videoUrl)}');
-                if (!response.ok) {
-                    console.error('Failed to load video resource:', response.statusText);
-                    return;
-                }
                 const reader = response.body.getReader();
-                
+
+                // Read and buffer chunks progressively
                 async function readNextChunk() {
                     const { done, value } = await reader.read();
                     if (done) {
-                        // End the stream once all chunks are read
                         if (mediaSource.readyState === 'open') {
                             mediaSource.endOfStream();
                         }
                         return;
                     }
 
-                    // Add the current chunk to the buffer queue
                     bufferQueue.push(value);
                     appendBuffer(sourceBuffer);
 
-                    // Read the next chunk recursively
+                    // Read next chunk recursively
                     readNextChunk();
                 }
 
@@ -185,7 +178,7 @@ newWindow.document.write(`
                     }
                 });
 
-                // Ensure playback starts once some data is appended
+                // Start playback when enough data is buffered
                 videoElement.addEventListener('canplay', () => {
                     if (videoElement.paused) {
                         videoElement.play();
@@ -198,22 +191,19 @@ newWindow.document.write(`
                     }
                     isBufferUpdating = true;
                     
-                    // Append the next chunk from the queue
                     const nextChunk = bufferQueue.shift();
                     sourceBuffer.appendBuffer(nextChunk);
 
                     // Efficiently clear old buffered data to prevent stalls
                     const currentTime = videoElement.currentTime;
                     const bufferThreshold = 30; // seconds of buffered data to keep
-
-                    // Check if there is buffered data before accessing ranges
                     if (sourceBuffer.buffered.length > 0) {
                         const startBuffered = sourceBuffer.buffered.start(0);
                         if (currentTime - startBuffered > bufferThreshold) {
                             try {
                                 sourceBuffer.remove(0, currentTime - bufferThreshold);
                             } catch (err) {
-                                console.warn('Failed to remove buffer:', err);
+                                console.warn('Buffer removal failed:', err);
                             }
                         }
                     }
@@ -223,6 +213,7 @@ newWindow.document.write(`
     </body>
     </html>
 `);
+
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
