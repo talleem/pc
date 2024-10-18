@@ -101,106 +101,126 @@
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
         
- // Directly use the videoUrl without decodeURIComponent()
-    newWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Lectures' Videos with MediaSource API</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #e0ffff;
-                }
-                h3 {
-                    text-align: center;
-                    margin-top: 20px;
-                }
-                video {
-                    display: block;
-                    margin: 20px auto;
-                    width: 640px;
-                    height: 480px;
-                    border: 1px solid #ccc;
-                }
-            </style>
-        </head>
-        <body>
-            <h3>Video Player with MediaSource API</h3>
-            <video id="myVideo" controls preload="auto"></video>
-            <script>
-                const videoElement = document.getElementById('myVideo');
-                const mediaSource = new MediaSource();
-                videoElement.src = URL.createObjectURL(mediaSource);
+// Directly use the videoUrl without decodeURIComponent()
+newWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lectures' Videos with MediaSource API</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #e0ffff;
+            }
+            h3 {
+                text-align: center;
+                margin-top: 20px;
+            }
+            video {
+                display: block;
+                margin: 20px auto;
+                width: 640px;
+                height: 480px;
+                border: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <h3>Video Player with MediaSource API</h3>
+        <video id="myVideo" controls preload="auto"></video>
+        <script>
+            const videoElement = document.getElementById('myVideo');
+            const mediaSource = new MediaSource();
+            videoElement.src = URL.createObjectURL(mediaSource);
 
-                mediaSource.addEventListener('sourceopen', handleSourceOpen);
+            mediaSource.addEventListener('sourceopen', handleSourceOpen);
 
-                let bufferQueue = [];
-                let isBufferUpdating = false;
-                const chunkSize = 1024 * 1024; // 1MB chunks
+            let bufferQueue = [];
+            let isBufferUpdating = false;
+            const chunkSize = 5 * 1024 * 1024; // Increased to 5MB chunks (Point 1)
 
-                async function handleSourceOpen(event) {
-                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
-                    sourceBuffer.mode = 'segments'; // Segment mode for efficient streaming
+            async function handleSourceOpen(event) {
+                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+                sourceBuffer.mode = 'segments'; // Segment mode for efficient streaming
 
-                    // Fetch the video data directly from Firebase Storage URL
-                    const response = await fetch('${videoUrl}'); // Directly use videoUrl here
+                let startByte = 0; // Start byte for Range request (Point 2)
+
+                async function fetchNextChunk() {
+                    // Use Range header to fetch specific parts of the video (Point 2)
+                    const range = \`bytes=\${startByte}-\${startByte + chunkSize - 1}\`;
+                    const response = await fetch('${videoUrl}', {
+                        headers: { 'Range': range }
+                    });
+
                     const reader = response.body.getReader();
+                    const { done, value } = await reader.read();
 
-                    async function readNextChunk() {
-                        const { done, value } = await reader.read();
-                        if (done) {
-                            checkAndEndStream();
-                            return;
-                        }
-
-                        bufferQueue.push(value);
-                        appendBuffer(sourceBuffer);
-
-                        readNextChunk(); // Continue reading next chunks
+                    if (done) {
+                        checkAndEndStream();
+                        return;
                     }
 
-                    readNextChunk();
+                    bufferQueue.push(value);
+                    appendBuffer(sourceBuffer);
 
-                    sourceBuffer.addEventListener('updateend', () => {
-                        isBufferUpdating = false;
-                        appendBuffer(sourceBuffer);
-                    });
+                    startByte += chunkSize; // Move to next chunk
+                }
 
-                    sourceBuffer.addEventListener('error', (error) => {
-                        console.error('Error in SourceBuffer:', error);
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                        }
-                    });
+                fetchNextChunk(); // Start fetching the first chunk
 
-                    videoElement.addEventListener('canplay', () => {
-                        if (videoElement.paused) {
-                            videoElement.play();
-                        }
-                    });
+                sourceBuffer.addEventListener('updateend', () => {
+                    isBufferUpdating = false;
+                    appendBuffer(sourceBuffer);
+                });
 
-                    function appendBuffer(sourceBuffer) {
-                        if (isBufferUpdating || bufferQueue.length === 0 || mediaSource.readyState !== 'open') {
-                            return;
-                        }
-                        isBufferUpdating = true;
-                        const nextChunk = bufferQueue.shift();
-                        sourceBuffer.appendBuffer(nextChunk);
+                sourceBuffer.addEventListener('error', (error) => {
+                    console.error('Error in SourceBuffer:', error);
+                    if (mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream();
                     }
+                });
 
-                    function checkAndEndStream() {
-                        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
+                videoElement.addEventListener('canplay', () => {
+                    if (videoElement.paused) {
+                        videoElement.play();
+                    }
+                });
+
+                function appendBuffer(sourceBuffer) {
+                    if (isBufferUpdating || bufferQueue.length === 0 || mediaSource.readyState !== 'open') {
+                        return;
+                    }
+                    isBufferUpdating = true;
+                    const nextChunk = bufferQueue.shift();
+                    sourceBuffer.appendBuffer(nextChunk);
+                }
+
+                // Lazy buffering: only fetch more chunks when the buffered time runs low (Point 6)
+                videoElement.addEventListener('timeupdate', () => {
+                    const buffered = videoElement.buffered;
+                    if (buffered.length > 0) {
+                        const end = buffered.end(buffered.length - 1);
+                        const currentTime = videoElement.currentTime;
+                        const bufferThreshold = 30; // Fetch more data if less than 30 seconds of buffer remains
+                        if (end - currentTime < bufferThreshold) {
+                            fetchNextChunk();
                         }
+                    }
+                });
+
+                function checkAndEndStream() {
+                    if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream();
                     }
                 }
-            <\/script>
-        </body>
-        </html>
-    `);
+            }
+        <\/script>
+    </body>
+    </html>
+`);
+
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
