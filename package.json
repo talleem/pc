@@ -1,9 +1,18 @@
 {
+  "name": "my-app",
+  "version": "1.0.0",
+  "main": "index.js",
   "engines": {
     "node": "18.x"
+  },
+  "scripts": {
+    "start": "electron ."
   },
   "dependencies": {
     "@ffmpeg/core": "^0.12.6",
     "@ffmpeg/ffmpeg": "^0.12.10"
+  },
+  "devDependencies": {
+    "electron": "^25.0.0"  // Version depends on latest Electron version when you install
   }
 }
