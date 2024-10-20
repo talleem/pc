@@ -10,19 +10,19 @@ function loadArabicContent(newWindow, events) {
         const description = event.description || 'لا يوجد ملاحظات';
         const hangoutLink = event.hangoutLink || 'لا يوجد رابط';
 
-        let recurrenceInfo = 'اجتماع فردي';
+        let recurrenceInfo = 'Single Meeting'; // Keep it in English
         if (event.recurrence) {
-            recurrenceInfo = 'اجتماع متكرر';
+            recurrenceInfo = 'Recurring Meeting'; // Keep it in English
 
             const recurrenceRule = event.recurrence[0];
             const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
             if (countMatch) {
-                recurrenceInfo += `، يحدث ${countMatch[1]} مرة`;
+                recurrenceInfo += `, occurs ${countMatch[1]} times`; // Keep it in English
             }
 
             const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
             if (freqMatch) {
-                recurrenceInfo += `، تكرار: ${freqMatch[1].toLowerCase()}`;
+                recurrenceInfo += `, frequency: ${freqMatch[1].toLowerCase()}`; // Keep it in English
             }
         }
 
@@ -33,47 +33,22 @@ function loadArabicContent(newWindow, events) {
                 <strong>ايميل مدير الاجتماع:</strong> ${creatorEmail}<br>
                 <strong>ملاحظات:</strong> ${description}<br>
                 <strong>رابط الاجتماع:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                <strong>نوع الاجتماع:</strong> ${recurrenceInfo}
+                <strong>نوع الاجتماع:</strong> ${recurrenceInfo} <!-- Remain in English -->
             </li>
         `);
     });
 
     newWindow.document.write('</ul>');
 
-    // Add Arabic "Start Recording" button
-    const recordButton = newWindow.document.createElement('button');
-    recordButton.id = 'recordmeet';
-    recordButton.textContent = 'بدء التسجيل';
-    recordButton.style.backgroundColor = 'green';
-    recordButton.style.color = 'white';
-    recordButton.style.position = 'fixed';
-    recordButton.style.top = '10px';
-    recordButton.style.right = '10px';
-    recordButton.style.padding = '10px 20px';
-    recordButton.style.fontWeight = 'bold';
-    recordButton.style.border = 'none';
-    recordButton.style.borderRadius = '5px';
-    recordButton.style.cursor = 'pointer';
-    recordButton.style.boxShadow = '0 4px #999';
+    // Translate the existing buttons
+    const recordButton = newWindow.document.getElementById('recordmeet');
+    const stopButton = newWindow.document.getElementById('stoprecord');
 
-    // Add Arabic "Stop Recording" button
-    const stopButton = newWindow.document.createElement('button');
-    stopButton.id = 'stoprecord';
-    stopButton.textContent = 'اخزن التسجيل';
-    stopButton.style.backgroundColor = 'red';
-    stopButton.style.color = 'white';
-    stopButton.style.position = 'fixed';
-    stopButton.style.top = '50px';
-    stopButton.style.right = '10px';
-    stopButton.style.padding = '10px 20px';
-    stopButton.style.fontWeight = 'bold';
-    stopButton.style.border = 'none';
-    stopButton.style.borderRadius = '5px';
-    stopButton.style.cursor = 'pointer';
-    stopButton.style.boxShadow = '0 4px #999';
-    stopButton.disabled = true; // Initially disabled
-
-    newWindow.document.body.appendChild(recordButton);
-    newWindow.document.body.appendChild(stopButton);
+    if (recordButton) {
+        recordButton.textContent = 'بدء التسجيل'; // Translate to Arabic
+    }
+    
+    if (stopButton) {
+        stopButton.textContent = 'انهاء التسجيل'; // Translate to Arabic
+    }
 }
-
