@@ -69,6 +69,6 @@ function loadArabicContent(newWindow, events) {
     }
     
     if (stopButton) {
-        stopButton.textContent = 'انهاء التسجيل'; // Translate to Arabic
+        stopButton.textContent = 'انهاء التسجيل'; // Translate to Arabi
     }
 }
