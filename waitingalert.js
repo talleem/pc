@@ -19,7 +19,7 @@ function showWaitingAlert(newWindow) {
     waitingAlert.style.fontWeight = 'bold';
     waitingAlert.innerHTML = 'Please wait while we save the video into the Database, don\'t close the browser until the operation is completed.';
 
-    document.body.appendChild(waitingAlert);
+    newWindow.document.body.appendChild(waitingAlert);
 }
 
 function hideWaitingAlert(newWindow) {
