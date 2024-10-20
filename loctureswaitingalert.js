@@ -2,7 +2,7 @@
 
 let waitingAlert;
 
-function showWaitingAlert(newWindow) {
+function showWaitingAlert() {
     waitingAlert = document.createElement('div');
     waitingAlert.id = 'waitingAlert';
     waitingAlert.style.position = 'fixed';
@@ -22,7 +22,7 @@ function showWaitingAlert(newWindow) {
    document.body.appendChild(waitingAlert);
 }
 
-function hideWaitingAlert(newWindow) {
+function hideWaitingAlert() {
     if (waitingAlert) {
         waitingAlert.remove();
     }
