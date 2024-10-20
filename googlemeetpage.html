@@ -327,52 +327,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
 
-                    if (arpage === 'ar') {
-                        loadArabicContent(newWindow, filteredEvents); // Use the Arabic content loading function
-                    } else {
-                        // Default English content
-                        newWindow.document.write('<html><head><title>Meetings</title></head><body>');
-                        newWindow.document.write('<h2>Meetings</h2>');
-                        newWindow.document.write('<ul>');
+                    // Default English content before buttons
+                    newWindow.document.write('<html><head><title>Meetings</title></head><body>');
+                    newWindow.document.write('<h2>Meetings</h2>');
+                    newWindow.document.write('<ul>');
 
-                        filteredEvents.forEach(event => {
-                            const startTime = new Date(event.start.dateTime).toLocaleString();
-                            const endTime = new Date(event.end.dateTime).toLocaleString();
-                            const creatorEmail = event.creator.email;
-                            localStorage.setItem('creatorEmail', creatorEmail);
-                            const description = event.description || 'No description';
-                            const hangoutLink = event.hangoutLink || 'No link available';
+                    filteredEvents.forEach(event => {
+                        const startTime = new Date(event.start.dateTime).toLocaleString();
+                        const endTime = new Date(event.end.dateTime).toLocaleString();
+                        const creatorEmail = event.creator.email;
+                        localStorage.setItem('creatorEmail', creatorEmail);
+                        const description = event.description || 'No description';
+                        const hangoutLink = event.hangoutLink || 'No link available';
 
-                            let recurrenceInfo = 'Single event';
-                            if (event.recurrence) {
-                                recurrenceInfo = 'Recurring event';
+                        let recurrenceInfo = 'Single event';
+                        if (event.recurrence) {
+                            recurrenceInfo = 'Recurring event';
 
-                                const recurrenceRule = event.recurrence[0];
-                                const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
-                                if (countMatch) {
-                                    recurrenceInfo += `, Occurs ${countMatch[1]} times`;
-                                }
-
-                                const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
-                                if (freqMatch) {
-                                    recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
-                                }
+                            const recurrenceRule = event.recurrence[0];
+                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                            if (countMatch) {
+                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
                             }
 
-                            newWindow.document.write(`
-                                <li>
-                                    <strong>Start Time:</strong> ${startTime}<br>
-                                    <strong>End Time:</strong> ${endTime}<br>
-                                    <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                    <strong>Description:</strong> ${description}<br>
-                                    <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                                    <strong>Meeting Type:</strong> ${recurrenceInfo}
-                                </li>
-                            `);
-                        });
+                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                            if (freqMatch) {
+                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                            }
+                        }
 
-                        newWindow.document.write('</ul>');
-                    }
+                        newWindow.document.write(`
+                            <li>
+                                <strong>Start Time:</strong> ${startTime}<br>
+                                <strong>End Time:</strong> ${endTime}<br>
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
+                                <strong>Description:</strong> ${description}<br>
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}
+                            </li>
+                        `);
+                    });
+
+                    newWindow.document.write('</ul>');
 
                     // Add the Start Recording button
                     const recordButton = newWindow.document.createElement('button');
@@ -430,6 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     });
 
+                    // Record button click event
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -500,6 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
 
+                    // Stop button click event
                     stopButton.addEventListener('click', function() {
                         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                             mediaRecorder.stop();
@@ -512,6 +510,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.body.appendChild(stopButton);
+
+                    // Call the Arabic translation function after buttons are created
+                    if (arpage === 'ar') {
+                        loadArabicContent(newWindow, filteredEvents); // Use the Arabic content loading function
+                    }
                 })
                 .catch(error => console.error("Error loading meetings:", error));
             }
@@ -523,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-           
+
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
                 font-weight: bold; /* Make font bold */
