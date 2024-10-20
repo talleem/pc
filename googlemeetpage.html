@@ -68,7 +68,7 @@
     });
 </script> 
     <script src="googlemeetpage_AR.js"></script>
-   
+    <script src="waitingalert.js"></script>
 </head>
 <body bgcolor="#ffffe0">
    <h4 style="font-weight:bold;color:#0000ff;">Enter:Google Meet list of attendees emails with the</h4>
@@ -446,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                       // Updated onstop to include video compression before upload 
 mediaRecorder.onstop = async function() {
+    showWaitingAlert();
     const blob = new Blob(chunks, { type: 'video/webm' });
 
     try {
@@ -466,6 +467,7 @@ mediaRecorder.onstop = async function() {
         });
 
         console.log("Recording saved to Firestore with URL:", downloadURL);
+        hideWaitingAlert(); 
         newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
     } catch (error) {
         console.error("Error saving video to Firebase:", error);
