@@ -1,6 +1,21 @@
 function loadArabicContent(newWindow, events) {
-    // Clear existing content in the new window
+    // Select the buttons to keep
+    const recordButton = newWindow.document.getElementById('recordmeet');
+    const stopButton = newWindow.document.getElementById('stoprecord');
+
+    // Clear the content of the body while keeping the buttons
+    const bodyContent = newWindow.document.body.innerHTML;
+
+    // Clear the entire body
     newWindow.document.body.innerHTML = '';
+
+    // Re-add the buttons to the body
+    if (recordButton) {
+        newWindow.document.body.appendChild(recordButton);
+    }
+    if (stopButton) {
+        newWindow.document.body.appendChild(stopButton);
+    }
 
     // Set the title and create the heading in Arabic
     newWindow.document.title = 'غرفة الاجتماعات';
@@ -49,9 +64,6 @@ function loadArabicContent(newWindow, events) {
     });
 
     // Translate existing button text to Arabic
-    const recordButton = newWindow.document.getElementById('recordmeet');
-    const stopButton = newWindow.document.getElementById('stoprecord');
-
     if (recordButton) {
         recordButton.textContent = 'بدء التسجيل'; // Translate to Arabic
     }
