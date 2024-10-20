@@ -301,6 +301,7 @@
 
 <script>
 const storage = firebase.storage();
+const db = firebase.firestore();
 
 document.addEventListener('DOMContentLoaded', function() {
     const loadInvitButton = document.getElementById('loadinvit');
@@ -308,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadInvitButton.addEventListener('click', function() {
         const accessToken = localStorage.getItem('accessToken');
         const loggedInEmail = localStorage.getItem('loggedInEmail');
+        const arpage = localStorage.getItem('arpage');
         console.log(loggedInEmail);
 
         if (accessToken && loggedInEmail) {
@@ -325,47 +327,53 @@ document.addEventListener('DOMContentLoaded', function() {
                     );
 
                     const newWindow = window.open('', '_blank', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
-                    newWindow.document.write('<html><head><title>Meetings</title></head><body>');
-                    newWindow.document.write('<h2>Meetings</h2>');
-                    newWindow.document.write('<ul>');
 
-                    filteredEvents.forEach(event => {
-                        const startTime = new Date(event.start.dateTime).toLocaleString();
-                        const endTime = new Date(event.end.dateTime).toLocaleString();
-                        const creatorEmail = event.creator.email;
-                        localStorage.setItem('creatorEmail', creatorEmail);
-                        const description = event.description || 'No description';
-                        const hangoutLink = event.hangoutLink || 'No link available';
+                    if (arpage === 'ar') {
+                        loadArabicContent(newWindow, filteredEvents); // Use the Arabic content loading function
+                    } else {
+                        // Default English content
+                        newWindow.document.write('<html><head><title>Meetings</title></head><body>');
+                        newWindow.document.write('<h2>Meetings</h2>');
+                        newWindow.document.write('<ul>');
 
-                        let recurrenceInfo = 'Single event';
-                        if (event.recurrence) {
-                            recurrenceInfo = 'Recurring event';
+                        filteredEvents.forEach(event => {
+                            const startTime = new Date(event.start.dateTime).toLocaleString();
+                            const endTime = new Date(event.end.dateTime).toLocaleString();
+                            const creatorEmail = event.creator.email;
+                            localStorage.setItem('creatorEmail', creatorEmail);
+                            const description = event.description || 'No description';
+                            const hangoutLink = event.hangoutLink || 'No link available';
 
-                            const recurrenceRule = event.recurrence[0];
-                            const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
-                            if (countMatch) {
-                                recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                            let recurrenceInfo = 'Single event';
+                            if (event.recurrence) {
+                                recurrenceInfo = 'Recurring event';
+
+                                const recurrenceRule = event.recurrence[0];
+                                const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
+                                if (countMatch) {
+                                    recurrenceInfo += `, Occurs ${countMatch[1]} times`;
+                                }
+
+                                const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
+                                if (freqMatch) {
+                                    recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
+                                }
                             }
 
-                            const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
-                            if (freqMatch) {
-                                recurrenceInfo += `, Frequency: ${freqMatch[1].toLowerCase()}`;
-                            }
-                        }
+                            newWindow.document.write(`
+                                <li>
+                                    <strong>Start Time:</strong> ${startTime}<br>
+                                    <strong>End Time:</strong> ${endTime}<br>
+                                    <strong>Creator's Email:</strong> ${creatorEmail}<br>
+                                    <strong>Description:</strong> ${description}<br>
+                                    <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+                                    <strong>Meeting Type:</strong> ${recurrenceInfo}
+                                </li>
+                            `);
+                        });
 
-                        newWindow.document.write(`
-                            <li>
-                                <strong>Start Time:</strong> ${startTime}<br>
-                                <strong>End Time:</strong> ${endTime}<br>
-                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                                <strong>Meeting Type:</strong> ${recurrenceInfo}
-                            </li>
-                        `);
-                    });
-
-                    newWindow.document.write('</ul>');
+                        newWindow.document.write('</ul>');
+                    }
 
                     // Add the Start Recording button
                     const recordButton = newWindow.document.createElement('button');
@@ -414,13 +422,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     let mediaRecorder;
                     let stream;
-                     // Attach click event to meeting links
+
+                    // Attach click event to meeting links
                     newWindow.document.querySelectorAll('.meeting-link').forEach(link => {
                         link.addEventListener('click', function(event) {
                             const clickedCreatorEmail = this.getAttribute('data-creator-email');
                             localStorage.setItem('creatorEmail', clickedCreatorEmail);
                         });
                     });
+
                     recordButton.addEventListener('click', function() {
                         const creatorEmail = localStorage.getItem('creatorEmail');
                         const loggedInEmail = localStorage.getItem('loggedInEmail');
@@ -433,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                     if (stream.getVideoTracks().length > 0 && stream.getVideoTracks()[0].enabled) {
                                         console.log("Cam is started");
-                                    
+
                                         // Start recording the video
                                         const options = { mimeType: 'video/webm; codecs=vp9' };
                                         mediaRecorder = new MediaRecorder(stream, options);
@@ -445,35 +455,34 @@ document.addEventListener('DOMContentLoaded', function() {
                                             }
                                         };
 
-                                      // Updated onstop to include video compression before upload 
-mediaRecorder.onstop = async function() {
-    showWaitingAlert(newWindow);
-    const blob = new Blob(chunks, { type: 'video/webm' });
+                                        mediaRecorder.onstop = async function() {
+                                            showWaitingAlert(newWindow);
+                                            const blob = new Blob(chunks, { type: 'video/webm' });
 
-    try {
-        // Directly save the recorded video blob to Firebase Storage without compression
-        const storageRef = storage.ref();
-        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);  // Keep the original WebM format
+                                            try {
+                                                // Directly save the recorded video blob to Firebase Storage without compression
+                                                const storageRef = storage.ref();
+                                                const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);  // Keep the original WebM format
 
-        // Upload the recorded video Blob to Firebase Storage
-        const snapshot = await videoRef.put(blob);
-        const downloadURL = await snapshot.ref.getDownloadURL();
+                                                // Upload the recorded video Blob to Firebase Storage
+                                                const snapshot = await videoRef.put(blob);
+                                                const downloadURL = await snapshot.ref.getDownloadURL();
 
-        // Save the download URL in Firestore
-        await db.collection('meetings_his_tbl').add({
-            creatorEmail: loggedInEmail,
-            stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
-            videoURL: downloadURL,
-            Notes: null  // Add the Notes field as null
-        });
+                                                // Save the download URL in Firestore
+                                                await db.collection('meetings_his_tbl').add({
+                                                    creatorEmail: loggedInEmail,
+                                                    stopRecordingTime: firebase.firestore.FieldValue.serverTimestamp(),
+                                                    videoURL: downloadURL,
+                                                    Notes: null  // Add the Notes field as null
+                                                });
 
-        console.log("Recording saved to Firestore with URL:", downloadURL);
-        hideWaitingAlert(newWindow); 
-        newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
-    } catch (error) {
-        console.error("Error saving video to Firebase:", error);
-    }
-};
+                                                console.log("Recording saved to Firestore with URL:", downloadURL);
+                                                hideWaitingAlert(newWindow); 
+                                                newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
+                                            } catch (error) {
+                                                console.error("Error saving video to Firebase:", error);
+                                            }
+                                        };
 
                                         mediaRecorder.start();
                                         stopButton.disabled = false;
@@ -507,13 +516,13 @@ mediaRecorder.onstop = async function() {
                 })
                 .catch(error => console.error("Error loading meetings:", error));
             }
-            
+
             loadMeetings();
         } else {
             alert('Please log in to load invitations.');
         }
     });
-});   
+});
 </script>
            
      <button id="updateinvit" style=" height: 35px; 
