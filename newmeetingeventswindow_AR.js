@@ -42,7 +42,7 @@ function loadArabicContent(newWindow, events) {
 
     newWindow.document.write('</ul>');
 
-    // Get existing buttons and translate their text
+    // Get existing buttons by ID and translate their text
     const recordButton = newWindow.document.getElementById('recordmeet');
     const stopButton = newWindow.document.getElementById('stoprecord');
 
