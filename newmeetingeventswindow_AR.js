@@ -1,20 +1,16 @@
 function loadArabicContent(newWindow, events) {
-    // Update the title and heading to Arabic
+    // Clear existing content in the new window
+    newWindow.document.body.innerHTML = '';
+
+    // Set the title and create the heading in Arabic
     newWindow.document.title = 'غرفة الاجتماعات';
     const heading = newWindow.document.createElement('h2');
     heading.textContent = 'غرفة الاجتماعات';
     newWindow.document.body.appendChild(heading);
 
-    // Create a list for events if it doesn't already exist
-    let eventList = newWindow.document.getElementById('eventList');
-    if (!eventList) {
-        eventList = newWindow.document.createElement('ul');
-        eventList.id = 'eventList';
-        newWindow.document.body.appendChild(eventList);
-    }
-
-    // Clear the previous event list items
-    eventList.innerHTML = '';
+    // Create a list for events
+    const eventList = newWindow.document.createElement('ul');
+    newWindow.document.body.appendChild(eventList);
 
     events.forEach(event => {
         const startTime = new Date(event.start.dateTime).toLocaleString();
@@ -23,19 +19,20 @@ function loadArabicContent(newWindow, events) {
         const description = event.description || 'لا يوجد ملاحظات';
         const hangoutLink = event.hangoutLink || 'لا يوجد رابط';
 
-        let recurrenceInfo = 'Single Meeting'; // Keep it in English
+        // Keep recurrenceInfo in English
+        let recurrenceInfo = 'Single Meeting'; // Default to English
         if (event.recurrence) {
-            recurrenceInfo = 'Recurring Meeting'; // Keep it in English
+            recurrenceInfo = 'Recurring Meeting'; // Default to English
 
             const recurrenceRule = event.recurrence[0];
             const countMatch = recurrenceRule.match(/COUNT=(\d+)/);
             if (countMatch) {
-                recurrenceInfo += `, occurs ${countMatch[1]} times`; // Keep it in English
+                recurrenceInfo += `, occurs ${countMatch[1]} times`; // Keep in English
             }
 
             const freqMatch = recurrenceRule.match(/FREQ=(\w+)/);
             if (freqMatch) {
-                recurrenceInfo += `, frequency: ${freqMatch[1].toLowerCase()}`; // Keep it in English
+                recurrenceInfo += `, frequency: ${freqMatch[1].toLowerCase()}`; // Keep in English
             }
         }
 
