@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                       // Updated onstop to include video compression before upload 
 mediaRecorder.onstop = async function() {
-    showWaitingAlert();
+    showWaitingAlert(newWindow);
     const blob = new Blob(chunks, { type: 'video/webm' });
 
     try {
@@ -467,7 +467,7 @@ mediaRecorder.onstop = async function() {
         });
 
         console.log("Recording saved to Firestore with URL:", downloadURL);
-        hideWaitingAlert(); 
+        hideWaitingAlert(newWindow); 
         newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
     } catch (error) {
         console.error("Error saving video to Firebase:", error);
