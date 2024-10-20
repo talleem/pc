@@ -1,7 +1,20 @@
 function loadArabicContent(newWindow, events) {
-    newWindow.document.write('<html><head><title>غرفة الاجتماعات</title></head><body>');
-    newWindow.document.write('<h2>غرفة الاجتماعات</h2>');
-    newWindow.document.write('<ul>');
+    // Update the title and heading to Arabic
+    newWindow.document.title = 'غرفة الاجتماعات';
+    const heading = newWindow.document.createElement('h2');
+    heading.textContent = 'غرفة الاجتماعات';
+    newWindow.document.body.appendChild(heading);
+
+    // Create a list for events if it doesn't already exist
+    let eventList = newWindow.document.getElementById('eventList');
+    if (!eventList) {
+        eventList = newWindow.document.createElement('ul');
+        eventList.id = 'eventList';
+        newWindow.document.body.appendChild(eventList);
+    }
+
+    // Clear the previous event list items
+    eventList.innerHTML = '';
 
     events.forEach(event => {
         const startTime = new Date(event.start.dateTime).toLocaleString();
@@ -26,21 +39,19 @@ function loadArabicContent(newWindow, events) {
             }
         }
 
-        newWindow.document.write(`
-            <li>
-                <strong>وقت البدء:</strong> ${startTime}<br>
-                <strong>وقت الانتهاء:</strong> ${endTime}<br>
-                <strong>ايميل مدير الاجتماع:</strong> ${creatorEmail}<br>
-                <strong>ملاحظات:</strong> ${description}<br>
-                <strong>رابط الاجتماع:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                <strong>نوع الاجتماع:</strong> ${recurrenceInfo} <!-- Remain in English -->
-            </li>
-        `);
+        const listItem = newWindow.document.createElement('li');
+        listItem.innerHTML = `
+            <strong>وقت البدء:</strong> ${startTime}<br>
+            <strong>وقت الانتهاء:</strong> ${endTime}<br>
+            <strong>ايميل مدير الاجتماع:</strong> ${creatorEmail}<br>
+            <strong>ملاحظات:</strong> ${description}<br>
+            <strong>رابط الاجتماع:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
+            <strong>نوع الاجتماع:</strong> ${recurrenceInfo} <!-- Remain in English -->
+        `;
+        eventList.appendChild(listItem);
     });
 
-    newWindow.document.write('</ul>');
-
-    // Append the existing buttons by ID and translate their text
+    // Translate existing button text to Arabic
     const recordButton = newWindow.document.getElementById('recordmeet');
     const stopButton = newWindow.document.getElementById('stoprecord');
 
@@ -51,6 +62,4 @@ function loadArabicContent(newWindow, events) {
     if (stopButton) {
         stopButton.textContent = 'انهاء التسجيل'; // Translate to Arabic
     }
-
-    newWindow.document.write('</body></html>'); // Close the HTML document
 }
