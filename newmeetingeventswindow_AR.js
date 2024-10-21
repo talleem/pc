@@ -9,7 +9,7 @@ function translateToArabic(updateWindow) {
         'Number of Occurrences': 'عدد مرات التكرار'
     };
 
-    // Loop through all <strong> elements and check if their text content matches
+    // Loop through all <strong> elements and check if their text content matchs
     Object.keys(fieldTranslations).forEach(function(text) {
         const elements = updateWindow.document.querySelectorAll('strong');  // Get all <strong> elements
         elements.forEach(function(element) {
