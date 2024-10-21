@@ -28,11 +28,13 @@ function translateToArabic_up(updateWindow) {
         }
     });
 
-    // Translate fields and headings
+    // Translate fields and headings by looking for matching textContent
     Object.keys(fieldTranslations).forEach(function(text) {
-        const elements = updateWindow.document.querySelectorAll(`strong:contains('${text}')`);
+        const elements = updateWindow.document.querySelectorAll('strong');
         elements.forEach(function(element) {
-            element.textContent = fieldTranslations[text];
+            if (element.textContent.includes(text)) {
+                element.textContent = fieldTranslations[text];
+            }
         });
     });
 
