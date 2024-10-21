@@ -752,13 +752,12 @@ document.getElementById("updateinvit").onclick = function() {
             };
             xhrDelete.send();
         };
-            // Translate the content into Arabic
-        translateToArabic_up(updateWindow);
-    }
-
+         
     if (localStorage.getItem('arpage') === 'ar') {
             translateToArabic_up(updateWindow);
         }
+    }
+ loadMeetings();
 };
      </script>
 
