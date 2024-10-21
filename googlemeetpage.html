@@ -756,7 +756,9 @@ document.getElementById("updateinvit").onclick = function() {
         translateToArabic_up(updateWindow);
     }
 
-    loadMeetings();
+    if (localStorage.getItem('arpage') === 'ar') {
+            translateToArabic_up(updateWindow);
+        }
 };
      </script>
 
