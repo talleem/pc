@@ -1,4 +1,4 @@
-function translateToArabic(updateWindow) {
+function translateToArabic_up(updateWindow) {
     // Translate field labels
     const fieldTranslations = {
         'Description': 'ملاحظات',
