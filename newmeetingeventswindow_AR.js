@@ -1,5 +1,5 @@
 // In updatemeetingwindow_AR.js
-function translateToArabic_up(updateWindow) {
+function translateToArabic(updateWindow) {
     const fieldTranslations = {
         'Description': 'ملاحظات',
         'Start Time': 'وقت البدء',
