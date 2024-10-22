@@ -34,7 +34,11 @@ function loadMeetings() {
                 const timeBeforeStart = (eventStart - now) / 1000 / 60; // Convert to minutes
 
                 // Check various conditions for notification timing
-                if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
+                 if (timeBeforeStart <= 15 && timeBeforeStart >= -5) {
+                  // Add your action here, for example, showNotification(event) if needed
+                    showNotification(event); // Or handle it as needed
+                 }
+                  else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
                     showNotification(event);
                 } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 13) {
                     showNotification(event);
@@ -42,15 +46,15 @@ function loadMeetings() {
                     showNotification(event);
                 } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 9) {
                     showNotification(event);
-                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 7) {
+                } else if (timeBeforeStart < 0 && Math.floor(timeBeforeStart) === 7) {
                     showNotification(event);
-                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 5) {
-                    showNotification(event);
-                }
-                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 3) {
+                } else if (timeBeforeStart < 0 && Math.floor(timeBeforeStart) === 5) {
                     showNotification(event);
                 }
-                else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 1) {
+                 else if (timeBeforeStart < 0 && Math.floor(timeBeforeStart) === 3) {
+                    showNotification(event);
+                }
+                else if (timeBeforeStart < 0 && Math.floor(timeBeforeStart) === 1) {
                     showNotification(event);
                 }
                  else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
