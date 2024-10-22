@@ -46,20 +46,15 @@ function loadMeetings() {
                     showNotification(event);
                 } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 5) {
                     showNotification(event);
-                }
-                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 3) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 3) {
                     showNotification(event);
-                }
-                else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 1) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 1) {
                     showNotification(event);
-                }
-                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
                     showNotification(event);
-                }
-                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -3) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -3) {
                     showNotification(event);
-                }
-                 else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
                     showNotification(event);
                     clearInterval(checkNotificationTiming); // Stop the loop after the last notification
                 }
@@ -98,13 +93,22 @@ function showNotification(event) {
     const description = event.description || 'No description';
     const hangoutLink = event.hangoutLink || 'No link available';
 
+    // Check for Arabic language preference
+    const isArabic = localStorage.getItem('arpage') === 'ar';
+
+    const startTimeLabel = isArabic ? 'وقت البدء' : 'Start Time';
+    const endTimeLabel = isArabic ? 'وقت الانتهاء' : 'End Time';
+    const creatorEmailLabel = isArabic ? 'ايميل مدير الاجتماع' : "Creator's Email";
+    const descriptionLabel = isArabic ? 'الملاحظات' : 'Description';
+    const meetingLinkLabel = isArabic ? 'رابط الاجتماع' : 'Meeting Link';
+
     notificationContainer.innerHTML = `
         <div style="position: relative; padding-right: 20px;">
-            <strong>Start Time:</strong> ${startTime}<br>
-            <strong>End Time:</strong> ${endTime}<br>
-            <strong>Creator's Email:</strong> ${creatorEmail}<br>
-            <strong>Description:</strong> ${description}<br>
-            <strong>Meeting Link:</strong> <a href="#" class="meeting-link" data-hangout-link="${hangoutLink}" data-creator-email="${creatorEmail}">${hangoutLink}</a><br>
+            <strong>${startTimeLabel}:</strong> ${startTime}<br>
+            <strong>${endTimeLabel}:</strong> ${endTime}<br>
+            <strong>${creatorEmailLabel}:</strong> ${creatorEmail}<br>
+            <strong>${descriptionLabel}:</strong> ${description}<br>
+            <strong>${meetingLinkLabel}:</strong> <a href="#" class="meeting-link" data-hangout-link="${hangoutLink}" data-creator-email="${creatorEmail}">${hangoutLink}</a><br>
         </div>
         <button style="position: absolute; top: 5px; right: 5px; border: none; background: transparent; cursor: pointer;">&times;</button>
     `;
@@ -143,18 +147,9 @@ function openRecordingWindow(hangoutLink) {
     const top = (screen.height / 2) - (height / 2);
 
     // Open a new popup window in the center with custom properties
-    const newWindow = window.open('', '_blank', `
-        width=${width},
-        height=${height},
-        top=${top},
-        left=${left},
-        resizable=no,
-        scrollbars=no,
-        toolbar=no,
-        menubar=no,
-        status=no,
-        alwaysRaised=yes
-    `);
+    const newWindow = window.open('', '_blank', 
+        `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,toolbar=no,menubar=no,status=no,alwaysRaised=yes`
+    );
 
     // Write the content of the new window (only start and stop recording buttons)
     newWindow.document.write(`
@@ -207,7 +202,7 @@ function openRecordingWindow(hangoutLink) {
                                 Notes: null
                             });
 
-                            newWindow.alert("Recording saved in Firestroe DB ");
+                            newWindow.alert("Recording saved in Firestore DB");
                         } catch (error) {
                             console.error("Error saving recording: ", error);
                         }
@@ -220,37 +215,15 @@ function openRecordingWindow(hangoutLink) {
                 })
                 .catch(error => console.error("Error accessing camera: ", error));
         } else {
-            newWindow.alert("You are not authorized to start the recording.");
+            newWindow.alert("Only the meeting creator can start the recording.");
         }
     });
 
     stopButton.addEventListener('click', () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.stop();
-            stream.getTracks().forEach(track => track.stop());
-            startButton.disabled = false;
-            stopButton.disabled = true;
-            newWindow.alert("Recording stopped");
-        }
-    });
-
-    // Disable close button and minimize/maximize ability
-    newWindow.onbeforeunload = function () {
-        return "This window cannot be closed.";
-    };
-
-    // Focus and make sure the window stays on top
-    newWindow.focus();
-    const intervalId = setInterval(() => {
-        newWindow.focus();
-    }, 1000);
-
-    // Clear the interval when the window is closed
-    newWindow.addEventListener('beforeunload', () => {
-        clearInterval(intervalId);
+        mediaRecorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+        stopButton.disabled = true;
+        startButton.disabled = false;
+        newWindow.alert("Recording stopped and saved.");
     });
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    meetingeventnotification();
-});
