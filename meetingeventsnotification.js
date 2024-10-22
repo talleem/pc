@@ -1,20 +1,21 @@
 function meetingeventnotification() {
+    console.log('Meeting event notification started');
     const accessToken = localStorage.getItem('accessToken');
     const loggedInEmail = localStorage.getItem('loggedInEmail');
 
     if (accessToken && loggedInEmail) {
-        console.log('Access token and logged in email found. Loading meetings...');
+        console.log('Access token and logged in email found, loading meetings...');
         loadMeetings();
     } else {
-        console.log('Access token or logged in email missing.');
+        console.log('Access token or logged in email not found');
         alert('Please log in to load invitations.');
     }
 }
 
 function loadMeetings() {
     const accessToken = localStorage.getItem('accessToken');
+    console.log('Loading meetings with access token:', accessToken);
 
-    console.log('Fetching meetings from Google Calendar...');
     fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
         method: 'GET',
         headers: {
@@ -22,47 +23,56 @@ function loadMeetings() {
         }
     })
     .then(response => {
-        console.log('Received response from Calendar API');
+        console.log('Response received from API:', response);
         return response.json();
     })
     .then(data => {
-        console.log('Data received:', data);
-
+        console.log('Data received from API:', data);
         const loggedInEmail = localStorage.getItem('loggedInEmail');
         const filteredEvents = data.items.filter(event =>
             event.attendees && event.attendees.some(attendee => attendee.email === loggedInEmail)
         );
+        console.log('Filtered events for logged in user:', filteredEvents);
 
-        console.log('Filtered events for the logged in user:', filteredEvents);
-
-        // Check each event and schedule notifications
+        // Schedule notifications for each event
         filteredEvents.forEach(event => {
             const eventStart = new Date(event.start.dateTime);
-            console.log(`Event start time: ${eventStart}`);
+            console.log('Event start time:', eventStart);
 
             const checkNotificationTiming = setInterval(() => {
                 const now = new Date();
                 const timeBeforeStart = (eventStart - now) / 1000 / 60; // Convert to minutes
-                console.log(`Time before event starts (in minutes): ${Math.floor(timeBeforeStart)}`);
+                console.log('Time before event start (minutes):', timeBeforeStart);
 
-                // Check various conditions for notification timing
+                // Check notification timing conditions
                 if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 15) {
-                    console.log('Showing notification for event 15 minutes before start.');
                     showNotification(event);
-                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 5) {
-                    console.log('Showing notification for event 5 minutes before start.');
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 13) {
+                    showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 11) {
+                    showNotification(event);
+                } else if (timeBeforeStart > 0 && Math.floor(timeBeforeStart) === 9) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 7) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 5) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 3) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === 1) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -1) {
+                    showNotification(event);
+                } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -3) {
                     showNotification(event);
                 } else if (timeBeforeStart < 0 && Math.ceil(timeBeforeStart) === -5) {
-                    console.log('Showing notification for event 5 minutes after start.');
                     showNotification(event);
                     clearInterval(checkNotificationTiming); // Stop the loop after the last notification
                 }
             }, 60000); // Check every minute
         });
     })
-    .catch(error => {
-        console.error('Error loading meetings:', error);
-    });
+    .catch(error => console.error("Error loading meetings:", error));
 }
 
 function showNotification(event) {
@@ -85,6 +95,7 @@ function showNotification(event) {
         display: block;
     `;
 
+    // Position notifications properly
     document.querySelectorAll('.notification').forEach((n, i) => {
         n.style.bottom = `${(i + 1) * 110}px`;
     });
@@ -95,9 +106,8 @@ function showNotification(event) {
     const description = event.description || 'No description';
     const hangoutLink = event.hangoutLink || 'No link available';
 
-    // Check for Arabic language preference
     const isArabic = localStorage.getItem('arpage') === 'ar';
-    console.log('Arabic page:', isArabic);
+    console.log('Language preference is Arabic:', isArabic);
 
     const startTimeLabel = isArabic ? 'وقت البدء' : 'Start Time';
     const endTimeLabel = isArabic ? 'وقت الانتهاء' : 'End Time';
@@ -123,14 +133,15 @@ function showNotification(event) {
     closeButton.addEventListener('click', () => {
         notificationContainer.remove();
         repositionNotifications();
+        console.log('Notification closed and removed');
     });
 
-    // Add click event to meeting link
     const meetingLink = notificationContainer.querySelector('.meeting-link');
     meetingLink.addEventListener('click', function (e) {
         e.preventDefault();
         const hangoutLink = this.getAttribute('data-hangout-link');
-        openRecordingWindow(hangoutLink); // Open the recording controls window
+        console.log('Meeting link clicked:', hangoutLink);
+        openRecordingWindow(hangoutLink); // Open recording controls
         window.open(hangoutLink, '_blank'); // Open the meeting link in a new tab
     });
 }
@@ -139,24 +150,22 @@ function repositionNotifications() {
     const notifications = document.querySelectorAll('.notification');
     notifications.forEach((n, i) => {
         n.style.bottom = `${i * 110}px`;
+        console.log('Notification repositioned');
     });
 }
 
 function openRecordingWindow(hangoutLink) {
     console.log('Opening recording window for link:', hangoutLink);
 
-    // Calculate window position (center of the screen)
     const width = 420;
     const height = 140;
     const left = (screen.width / 2) - (width / 2);
     const top = (screen.height / 2) - (height / 2);
 
-    // Open a new popup window in the center with custom properties
     const newWindow = window.open('', '_blank', 
         `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,toolbar=no,menubar=no,status=no,alwaysRaised=yes`
     );
 
-    // Write the content of the new window (only start and stop recording buttons)
     newWindow.document.write(`
         <html>
         <head><title>Recording Controls</title></head>
@@ -167,6 +176,71 @@ function openRecordingWindow(hangoutLink) {
         </body>
         </html>
     `);
+    console.log('Recording window created');
 
-    // Rest of the recording logic here...
+    const startButton = newWindow.document.getElementById('startRecording');
+    const stopButton = newWindow.document.getElementById('stopRecording');
+    let mediaRecorder;
+    let stream;
+
+    startButton.addEventListener('click', () => {
+        console.log('Start recording clicked');
+        const creatorEmail = localStorage.getItem('creatorEmail');
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
+
+        if (creatorEmail === loggedInEmail) {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then((mediaStream) => {
+                    console.log('User media obtained');
+                    stream = mediaStream;
+                    mediaRecorder = new MediaRecorder(stream);
+                    const chunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            chunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        console.log('Media recording stopped');
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const storageRef = firebase.storage().ref();
+                        const videoRef = storageRef.child(`meetings_videos/${new Date().getTime()}_meeting_recording.webm`);
+                        const db = firebase.firestore();
+
+                        try {
+                            const snapshot = await videoRef.put(blob);
+                            const downloadURL = await snapshot.ref.getDownloadURL();
+                            console.log('Recording saved to Firebase at URL:', downloadURL);
+                            await db.collection('meetings').add({
+                                downloadURL,
+                                creator: loggedInEmail,
+                                created: new Date().toISOString()
+                            });
+                            alert('Recording uploaded successfully');
+                        } catch (error) {
+                            console.error('Error saving recording:', error);
+                        }
+                    };
+
+                    mediaRecorder.start();
+                    console.log('Recording started');
+                    startButton.disabled = true;
+                    stopButton.disabled = false;
+                })
+                .catch((err) => console.error('Error accessing media devices:', err));
+        } else {
+            alert('Only the meeting organizer can start the recording');
+        }
+    });
+
+    stopButton.addEventListener('click', () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            console.log('Stop recording clicked and recording stopped');
+            stream.getTracks().forEach(track => track.stop());
+            stopButton.disabled = true;
+        }
+    });
 }
