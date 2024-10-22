@@ -71,6 +71,31 @@ function loadMeetings() {
 
 function showNotification(event) {
     console.log('showNotification called');
+
+    const startTime = new Date(event.start.dateTime).toLocaleString();
+    const endTime = new Date(event.end.dateTime).toLocaleString();
+    const creatorEmail = event.creator.email;
+    const description = event.description || 'No description';
+    const hangoutLink = event.hangoutLink || 'No link available';
+
+    // Variables for field labels
+    let startTime_var, endTime_var, creatorEmail_var, description_var, hangoutLink_var;
+
+    // Check if the page is in Arabic
+    if (localStorage.getItem('arpage') === 'ar') {
+        startTime_var = 'وقت البدء';
+        endTime_var = 'وقت الانتهاء';
+        creatorEmail_var = 'ايميل مدير الاجتماع';
+        description_var = 'ملاحظات';
+        hangoutLink_var = 'رابط الاجتماع';
+    } else {
+        startTime_var = 'Start Time';
+        endTime_var = 'End Time';
+        creatorEmail_var = "Creator's Email";
+        description_var = 'Description';
+        hangoutLink_var = 'Meeting Link';
+    }
+
     const notificationContainer = document.createElement('div');
     notificationContainer.classList.add('notification');
     notificationContainer.style.cssText = `
@@ -92,19 +117,13 @@ function showNotification(event) {
         n.style.bottom = `${(i + 1) * 110}px`;
     });
 
-    const startTime = new Date(event.start.dateTime).toLocaleString();
-    const endTime = new Date(event.end.dateTime).toLocaleString();
-    const creatorEmail = event.creator.email;
-    const description = event.description || 'No description';
-    const hangoutLink = event.hangoutLink || 'No link available';
-
     notificationContainer.innerHTML = `
         <div style="position: relative; padding-right: 20px;">
-            <strong>Start Time:</strong> ${startTime}<br>
-            <strong>End Time:</strong> ${endTime}<br>
-            <strong>Creator's Email:</strong> ${creatorEmail}<br>
-            <strong>Description:</strong> ${description}<br>
-            <strong>Meeting Link:</strong> <a href="#" class="meeting-link" data-hangout-link="${hangoutLink}" data-creator-email="${creatorEmail}">${hangoutLink}</a><br>
+            <strong>${startTime_var}:</strong> ${startTime}<br>
+            <strong>${endTime_var}:</strong> ${endTime}<br>
+            <strong>${creatorEmail_var}:</strong> ${creatorEmail}<br>
+            <strong>${description_var}:</strong> ${description}<br>
+            <strong>${hangoutLink_var}:</strong> <a href="#" class="meeting-link" data-hangout-link="${hangoutLink}" data-creator-email="${creatorEmail}">${hangoutLink}</a><br>
         </div>
         <button style="position: absolute; top: 5px; right: 5px; border: none; background: transparent; cursor: pointer;">&times;</button>
     `;
@@ -136,13 +155,11 @@ function repositionNotifications() {
 }
 
 function openRecordingWindow(hangoutLink) {
-    // Calculate window position (center of the screen)
     const width = 420;
     const height = 140;
     const left = (screen.width / 2) - (width / 2);
     const top = (screen.height / 2) - (height / 2);
 
-    // Open a new popup window in the center with custom properties
     const newWindow = window.open('', '_blank', `
         width=${width},
         height=${height},
@@ -156,7 +173,6 @@ function openRecordingWindow(hangoutLink) {
         alwaysRaised=yes
     `);
 
-    // Write the content of the new window (only start and stop recording buttons)
     newWindow.document.write(`
         <html>
         <head><title>Recording Controls</title></head>
@@ -207,20 +223,23 @@ function openRecordingWindow(hangoutLink) {
                                 Notes: null
                             });
 
-                            newWindow.alert("Recording saved in Firestroe DB ");
+                            newWindow.alert("Recording saved in Firestore DB ");
                         } catch (error) {
                             console.error("Error saving recording: ", error);
                         }
                     };
 
                     mediaRecorder.start();
-                    stopButton.disabled = false;
                     startButton.disabled = true;
+                    stopButton.disabled = false;
                     newWindow.alert("Recording started");
+
                 })
-                .catch(error => console.error("Error accessing camera: ", error));
+                .catch((error) => {
+                    console.error("Error accessing media devices: ", error);
+                });
         } else {
-            newWindow.alert("You are not authorized to start the recording.");
+            newWindow.alert("You are not authorized to start recording.");
         }
     });
 
