@@ -99,48 +99,55 @@
             return match ? match[1].toLowerCase() : '';
         }
 
-       function openVideoInNewWindow(videoUrl) {
+ function openVideoInNewWindow(videoUrl) {
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
 
-// Ensure the videoUrl is escaped properly for use in the script
-newWindow.document.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Lectures' Videos with MediaSource API</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #e0ffff;
-            }
-            h3 {
-                text-align: center;
-                margin-top: 20px;
-            }
-            video {
-                display: block;
-                margin: 20px auto;
-                width: 640px;
-                height: 480px;
-                border: 1px solid #ccc;
-            }
-        </style>
-    </head>
-    <body>
-        <h3>Video Player with MediaSource API</h3>
-        <video id="myVideo" controls preload="auto"></video>
-        <script>
-            const videoElement = document.getElementById('myVideo');
+    // Ensure the videoUrl is escaped properly for use in the script
+    newWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Lectures' Videos</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #e0ffff;
+                }
+                h3 {
+                    text-align: center;
+                    margin-top: 20px;
+                }
+                video {
+                    display: block;
+                    margin: 20px auto;
+                    width: 640px;
+                    height: 480px;
+                    border: 1px solid #ccc;
+                }
+            </style>
+        </head>
+        <body>
+            <h3>Video Player</h3>
+            <video id="myVideo" controls preload="auto"></video>
+            <script>
+                const videoElement = document.getElementById('myVideo');
+    `);
+
+    // If the file extension is MP4, load the video directly into the HTML5 video player
+    if (fileExtension === 'mp4') {
+        newWindow.document.write(`
+                videoElement.src = '${videoUrl}';
+                videoElement.play();
+        `);
+    } else if (fileExtension === 'webm') {
+        // If the file extension is WebM, use the MediaSource API to stream it
+        newWindow.document.write(`
             const mediaSource = new MediaSource();
-
             videoElement.src = URL.createObjectURL(mediaSource);
-
-            mediaSource.addEventListener('sourceopen', handleSourceOpen);
-
-            async function handleSourceOpen(event) {
+            mediaSource.addEventListener('sourceopen', async function handleSourceOpen() {
                 const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
 
                 const response = await fetch('${videoUrl}');
@@ -150,24 +157,25 @@ newWindow.document.write(`
                 sourceBuffer.appendBuffer(videoBuffer);
 
                 sourceBuffer.addEventListener('updateend', () => {
-                    if (!sourceBuffer.updating) {
-                        // Check if the MediaSource is still open before ending the stream
-                        if (mediaSource.readyState === 'open') {
-                            mediaSource.endOfStream();
-                            videoElement.play(); // Start playback when the stream ends
-                        }
+                    if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                        mediaSource.endOfStream();
+                        videoElement.play();
                     }
                 });
 
                 sourceBuffer.addEventListener('error', (error) => {
                     console.error('Error in SourceBuffer:', error);
-                    mediaSource.endOfStream(); // Stop if there's an error
+                    mediaSource.endOfStream();
                 });
-            }
-        <\/script> <!-- Use <\/script> to escape the closing tag -->
-    </body>
-    </html>
-`);
+            });
+        `);
+    }
+
+    newWindow.document.write(`
+            <\/script> <!-- Escape the closing script tag -->
+        </body>
+        </html>
+    `);
 
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
