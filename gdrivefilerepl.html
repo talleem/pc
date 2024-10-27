@@ -4,23 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Google Drive Files</title>
-    <style>
-        table {
+      table {
             width: 55%;
             border-collapse: collapse; /* Merge borders for a cleaner look */
         }
-        th, td {
+        th {
+            border: 1px solid black; /* Border for table headers */
+            padding: 8px; /* Space around header content */
+            text-align: left; /* Align text to the left */
+            width: 150px; /* Static width for headers */
+            background-color: #f2f2f2; /* Light background for headers */
+        }
+        td {
             border: 1px solid #ddd; /* Border for table cells */
             padding: 8px; /* Space around cell content */
             text-align: left; /* Align text to the left */
-            max-width: 1.5em; /* Limit the cell width to 1.5 times the size of content */
+            width: 150px; /* Static width for cells */
+            background-color: rgba(0, 255, 255, 0.2); /* Light aqua background with transparency */
             overflow: hidden; /* Hide overflow text */
             text-overflow: ellipsis; /* Show ellipsis for truncated text */
             white-space: nowrap; /* Prevent line breaks within cells */
-        }
-        th {
-            background-color: #f2f2f2; /* Light background for headers */
-            border: 1px solid black; /* Border for table cells */
         }
     </style>
    <script src="gdrivefilerepl.js"></script>
