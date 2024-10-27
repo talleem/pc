@@ -13,6 +13,10 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            max-width: calc(1.5em + 1.5ch); /* Restricts cell width */
+            overflow: hidden; /* Prevents overflow */
+            text-overflow: ellipsis; /* Adds ellipsis for overflowed text */
+            white-space: nowrap; /* Prevents text wrapping */
         }
         th {
             background-color: #f2f2f2;
