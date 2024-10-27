@@ -7,19 +7,19 @@
     <style>
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: collapse; /* Merge borders for a cleaner look */
         }
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-            max-width: calc(1.5em + 1.5ch); /* Restricts cell width */
-            overflow: hidden; /* Prevents overflow */
-            text-overflow: ellipsis; /* Adds ellipsis for overflowed text */
-            white-space: nowrap; /* Prevents text wrapping */
+            border: 1px solid #ddd; /* Border for table cells */
+            padding: 8px; /* Space around cell content */
+            text-align: left; /* Align text to the left */
+            max-width: 1.5em; /* Limit the cell width to 1.5 times the size of content */
+            overflow: hidden; /* Hide overflow text */
+            text-overflow: ellipsis; /* Show ellipsis for truncated text */
+            white-space: nowrap; /* Prevent line breaks within cells */
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #f2f2f2; /* Light background for headers */
         }
     </style>
    <script src="gdrivefilerepl.js"></script>
