@@ -38,12 +38,31 @@
             text-overflow: ellipsis; /* Show ellipsis for truncated text */
             white-space: nowrap; /* Prevent line breaks within cells */
         }
+         .button-container {
+            margin-left: 5%;
+            margin-top: 20px;
+        }
+        .mergetofirestore {
+            padding: 10px 20px;
+            background-color: #007bff; /* Button background color */
+            color: white; /* Button text color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Font size */
+        }
+        .mergetofirestore:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+        }
     </style>
      <script src="loadattendeailfromfirestore.js"></script>
    <script src="gdrivefilerepl.js"></script>
 </head>
 <body>
     <h1>Google Drive Files</h1>
+    <div class="button-container">
+        <button class="mergetofirestore" onclick="mergeToFirestore()">mergetofirestore</button>
+    </div>
     <table id="fileTable">
         <tr>
             <th>File Name</th>
