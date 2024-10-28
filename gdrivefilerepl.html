@@ -38,7 +38,10 @@
             text-overflow: ellipsis; /* Show ellipsis for truncated text */
             white-space: nowrap; /* Prevent line breaks within cells */
         }
-         .button-container {
+        .header-container {
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Center align items vertically */
+            justify-content: space-between; /* Space out items */
             margin-left: 5%;
             margin-top: 20px;
         }
@@ -60,9 +63,7 @@
 </head>
 <body>
     <h1>Google Drive Files</h1>
-    <div class="button-container">
-        <button class="mergetofirestore" onclick="mergeToFirestore()">mergetofirestore</button>
-    </div>
+     <div class="header-container">
     <table id="fileTable">
         <tr>
             <th>File Name</th>
@@ -70,6 +71,8 @@
             <th>Date</th>
         </tr>
     </table>
+           <button class="mergetofirestore" onclick="mergeToFirestore()">mergetofirestore</button>
+          </div>
 </body>
 </html>
 
