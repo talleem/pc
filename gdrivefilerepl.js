@@ -2,6 +2,7 @@ function listFiles() {
     const accessToken = localStorage.getItem('accessToken');
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Assuming Firebase is already initialized
+        const storage = firebase.storage();
 
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName), createdTime)`, {
         headers: { Authorization: `Bearer ${accessToken}` }
