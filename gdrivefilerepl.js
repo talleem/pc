@@ -2,7 +2,6 @@ function listFiles() {
     const accessToken = localStorage.getItem('accessToken');
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Assuming Firebase is already initialized
-        const storage = firebase.storage();
 
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName), createdTime)`, {
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -35,6 +34,8 @@ function listFiles() {
                         statusCell.textContent = 'Yes';
                     } else {
                         statusCell.textContent = 'No';
+                        // Change the background color of the entire row to yellow
+                        row.style.backgroundColor = 'yellow';
                     }
                 })
                 .catch(error => console.error('Error checking Firestore:', error));
