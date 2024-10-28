@@ -15,6 +15,11 @@ function listFiles() {
             const createdTime = new Date(file.createdTime).toLocaleString();
             const row = document.createElement('tr');
 
+            // Add a click event to select the row
+            row.addEventListener('click', () => {
+                row.classList.toggle('selected'); // Toggle the selected class on click
+            });
+
             row.innerHTML = `
                 <td>${file.name}</td>
                 <td>${file.owners[0].displayName}</td>
