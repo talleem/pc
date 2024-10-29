@@ -15,7 +15,7 @@ function mergeToFirestore() {
             const createdTime = new Date(cells[2].innerText).toISOString(); // Format created time for Firestore
 
             // Firestore collection reference
-            const collectionRef = firestore.collection('meeting_his_tbl');
+            const collectionRef = firestore.collection('meetings_his_tbl');
 
             // Check if the record already exists
             collectionRef.where('creatorEmail', '==', creatorEmail)
