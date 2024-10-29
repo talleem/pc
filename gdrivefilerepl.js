@@ -9,30 +9,31 @@ function listFiles() {
     .then(response => response.json())
     .then(data => {
         const table = document.getElementById('fileTable');
-        table.innerHTML = '<tr><th>File Name</th><th>Owner</th><th>Date</th><th>Exists in Firestore</th></tr>';
+        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th></tr>';
 
         data.files.forEach(file => {
             const createdTime = new Date(file.createdTime).toLocaleString();
             const row = document.createElement('tr');
-            
-            // Add a click event to select the row
+
+            // Toggle the selected class on click
             row.addEventListener('click', () => {
-                row.classList.toggle('selected'); // Toggle the selected class on click
+                row.classList.toggle('selected');
             });
 
+            // Display the email address directly instead of the display name
+            const emailAddress = file.owners[0].emailAddress || 'N/A';
             row.innerHTML = `
                 <td>${file.name}</td>
-                <td data-email="${file.owners[0].emailAddress || 'N/A'}">${file.owners[0].displayName}</td>
+                <td>${emailAddress}</td>
                 <td>${createdTime}</td>
                 <td id="status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
 
-            // Check if the record exists in Firestore using the emailAddress field
-            const creatorEmail = file.owners[0].emailAddress; // Get the real email address of the file owner
-            if (creatorEmail) {
+            // Firestore check using the email address
+            if (emailAddress !== 'N/A') {
                 firestore.collection('meeting_his_tbl')
-                    .where('creatorEmail', '==', creatorEmail)
+                    .where('creatorEmail', '==', emailAddress)
                     .where('stopRecordingTime', '==', file.createdTime)
                     .get()
                     .then(querySnapshot => {
@@ -41,7 +42,7 @@ function listFiles() {
                             statusCell.textContent = 'Yes';
                         } else {
                             statusCell.textContent = 'No';
-                            // Change the background color of the entire row to yellow
+                            // Change the background color of the row to yellow if it doesn’t exist in Firestore
                             row.style.backgroundColor = 'yellow';
                         }
                     })
