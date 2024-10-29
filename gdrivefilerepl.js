@@ -36,26 +36,34 @@ function listFiles() {
 
             // Firestore check using the email address
             if (emailAddress !== 'N/A') {
-                console.log(`Checking Firestore for: Email - ${emailAddress}, Time - ${createdTime}`);
-                firestore.collection('meetings_his_tbl')
-                    .where('creatorEmail', '==', emailAddress)
-                    .where('stopRecordingTime', '==', firebase.firestore.Timestamp.fromDate(createdTime)) // Ensure we convert to Firestore Timestamp
-                    .get()
-                    .then(querySnapshot => {
-                        const statusCell = document.getElementById(`status-${file.name}`);
-                        console.log(`Query snapshot empty: ${querySnapshot.empty}`);
+                // Use the displayed date from the cell for Firestore check
+                const statusCell = document.getElementById(`status-${file.name}`);
+                
+                // Delay Firestore check until the row is added to the table
+                setTimeout(() => {
+                    const createdTimeFromTable = new Date(createdTimeString); // Get date from displayed string
+                    const createdTimestamp = firebase.firestore.Timestamp.fromDate(createdTimeFromTable); // Convert to Firestore Timestamp
 
-                        if (!querySnapshot.empty) {
-                            statusCell.textContent = 'Yes';
-                            row.style.backgroundColor = 'aqua';
-                            row.dataset.existsInFirestore = 'true';
-                        } else {
-                            statusCell.textContent = 'No';
-                            row.style.backgroundColor = 'yellow';
-                            row.dataset.existsInFirestore = 'false';
-                        }
-                    })
-                    .catch(error => console.error('Error checking Firestore:', error));
+                    console.log(`Checking Firestore for: Email - ${emailAddress}, Time - ${createdTimeFromTable}`);
+                    firestore.collection('meetings_his_tbl')
+                        .where('creatorEmail', '==', emailAddress)
+                        .where('stopRecordingTime', '==', createdTimestamp) // Use converted Firestore Timestamp
+                        .get()
+                        .then(querySnapshot => {
+                            console.log(`Query snapshot empty: ${querySnapshot.empty}`);
+
+                            if (!querySnapshot.empty) {
+                                statusCell.textContent = 'Yes';
+                                row.style.backgroundColor = 'aqua';
+                                row.dataset.existsInFirestore = 'true';
+                            } else {
+                                statusCell.textContent = 'No';
+                                row.style.backgroundColor = 'yellow';
+                                row.dataset.existsInFirestore = 'false';
+                            }
+                        })
+                        .catch(error => console.error('Error checking Firestore:', error));
+                }, 0); // Ensures Firestore check happens after table is populated
             } else {
                 console.warn(`No email address found for file owner of ${file.name}`);
             }
