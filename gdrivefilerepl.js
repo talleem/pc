@@ -24,16 +24,21 @@ function listFiles() {
                 if (!event.target.closest('a, button')) {
                     // Deselect the last selected row
                     if (lastSelectedRow && lastSelectedRow !== row) {
+                        // Reset background color based on existence in Firestore
+                        if (lastSelectedRow.dataset.existsInFirestore === 'true') {
+                            lastSelectedRow.style.backgroundColor = 'aqua'; // Exists in Firestore
+                        } else {
+                            lastSelectedRow.style.backgroundColor = 'yellow'; // Does not exist in Firestore
+                        }
                         lastSelectedRow.classList.remove('selected');
-                        lastSelectedRow.style.backgroundColor = ''; // Reset background color
                     }
 
-                    // Toggle selection for the current row
-                    row.classList.toggle('selected');
-                    row.style.backgroundColor = row.classList.contains('selected') ? 'yellow' : '';
+                    // Set the background color of the current row to light gray
+                    row.style.backgroundColor = 'lightgray';
+                    row.classList.add('selected');
                     
                     // Update the last selected row reference
-                    lastSelectedRow = row.classList.contains('selected') ? row : null;
+                    lastSelectedRow = row;
                 }
             });
 
@@ -66,11 +71,11 @@ function listFiles() {
 
                             if (!querySnapshot.empty) {
                                 statusCell.textContent = 'Yes';
-                                row.style.backgroundColor = 'aqua';
+                                row.style.backgroundColor = 'aqua'; // Exists in Firestore
                                 row.dataset.existsInFirestore = 'true';
                             } else {
                                 statusCell.textContent = 'No';
-                                row.style.backgroundColor = 'yellow';
+                                row.style.backgroundColor = 'yellow'; // Does not exist in Firestore
                                 row.dataset.existsInFirestore = 'false';
                             }
                         })
