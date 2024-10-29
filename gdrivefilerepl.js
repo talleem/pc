@@ -3,7 +3,7 @@ function listFiles() {
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Assuming Firebase is already initialized
 
-    fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName), createdTime)`, {
+    fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName, emailAddress), createdTime)`, {
         headers: { Authorization: `Bearer ${accessToken}` }
     })
     .then(response => response.json())
@@ -14,7 +14,7 @@ function listFiles() {
         data.files.forEach(file => {
             const createdTime = new Date(file.createdTime).toLocaleString();
             const row = document.createElement('tr');
-
+            
             // Add a click event to select the row
             row.addEventListener('click', () => {
                 row.classList.toggle('selected'); // Toggle the selected class on click
@@ -22,15 +22,15 @@ function listFiles() {
 
             row.innerHTML = `
                 <td>${file.name}</td>
-                <td>${file.owners[0].displayName}</td>
+                <td data-email="${file.owners[0].emailAddress}">${file.owners[0].displayName}</td>
                 <td>${createdTime}</td>
                 <td id="status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
 
             // Check if the record exists in Firestore
-            firestore.collection('meetings_his_tbl')
-                .where('creatorEmail', '==', file.owners[0].displayName)
+            firestore.collection('meeting_his_tbl')
+                .where('creatorEmail', '==', file.owners[0].emailAddress)
                 .where('stopRecordingTime', '==', file.createdTime)
                 .get()
                 .then(querySnapshot => {
