@@ -12,21 +12,21 @@ function mergeToFirestore() {
             const cells = row.getElementsByTagName('td');
             const fileName = cells[0].innerText;
             const creatorEmail = cells[1].innerText;
-            const createdTime = new Date(cells[2].innerText).toISOString(); // Format created time for Firestore
+            const createdTime = new Date(cells[2].innerText);
 
             // Firestore collection reference
             const collectionRef = firestore.collection('meetings_his_tbl');
 
             // Check if the record already exists
             collectionRef.where('creatorEmail', '==', creatorEmail)
-                .where('stopRecordingTime', '==', createdTime)
+                .where('stopRecordingTime', '==', firebase.firestore.Timestamp.fromDate(createdTime))
                 .get()
                 .then(querySnapshot => {
                     if (querySnapshot.empty) {
                         // If the record doesn't exist, add it to Firestore
                         collectionRef.add({
                             creatorEmail: creatorEmail,
-                            stopRecordingTime: createdTime,
+                            stopRecordingTime: firebase.firestore.Timestamp.fromDate(createdTime),
                             fileName: fileName,
                             // Add any additional fields as necessary
                         })
