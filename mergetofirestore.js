@@ -10,7 +10,7 @@ function mergeToFirestore() {
         // Check if the row is selected
         if (row.classList.contains('selected')) {
             const cells = row.getElementsByTagName('td');
-            const creatorEmail = cells[1].innerText.trim(); // Ensure correct email is fetched
+            const creatorEmail = cells[1].innerText.trim();
             const createdTime = new Date(cells[2].innerText);
 
             // Firestore collection reference
@@ -38,7 +38,9 @@ function mergeToFirestore() {
                             alert('Error adding record to Firestore. See console for details.');
                         });
                     } else {
+                        // Notify that the record already exists
                         console.log(`Record already exists for creatorEmail: ${creatorEmail}`);
+                        alert(`Record for ${creatorEmail} with time ${createdTime.toLocaleString()} already exists in Firestore.`);
                     }
                 })
                 .catch(error => {
