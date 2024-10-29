@@ -12,7 +12,8 @@ function listFiles() {
         table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th></tr>';
 
         data.files.forEach(file => {
-            const createdTime = new Date(file.createdTime).toLocaleString();
+            const createdTime = new Date(file.createdTime);
+            const createdTimeString = createdTime.toLocaleString(); // String for display
             const row = document.createElement('tr');
 
             // Apply selection styling to the row when clicked
@@ -27,7 +28,7 @@ function listFiles() {
             row.innerHTML = `
                 <td>${file.name}</td>
                 <td>${emailAddress}</td>
-                <td>${createdTime}</td>
+                <td>${createdTimeString}</td>
                 <td id="status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
@@ -36,7 +37,7 @@ function listFiles() {
             if (emailAddress !== 'N/A') {
                 firestore.collection('meeting_his_tbl')
                     .where('creatorEmail', '==', emailAddress)
-                    .where('stopRecordingTime', '==', file.createdTime)
+                    .where('stopRecordingTime', '==', firebase.firestore.Timestamp.fromDate(createdTime)) // Ensure we convert to Firestore Timestamp
                     .get()
                     .then(querySnapshot => {
                         const statusCell = document.getElementById(`status-${file.name}`);
