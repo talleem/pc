@@ -11,6 +11,8 @@ function listFiles() {
     .then(data => {
         const table = document.getElementById('fileTable');
         table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th></tr>';
+        
+        let lastSelectedRow = null; // Keep track of the last selected row
 
         data.files.forEach(file => {
             const createdTime = new Date(file.createdTime);
@@ -20,8 +22,18 @@ function listFiles() {
             // Apply selection styling to the row when clicked
             row.addEventListener('click', (event) => {
                 if (!event.target.closest('a, button')) {
+                    // Deselect the last selected row
+                    if (lastSelectedRow && lastSelectedRow !== row) {
+                        lastSelectedRow.classList.remove('selected');
+                        lastSelectedRow.style.backgroundColor = ''; // Reset background color
+                    }
+
+                    // Toggle selection for the current row
                     row.classList.toggle('selected');
-                    row.style.backgroundColor = row.classList.contains('selected') ? 'rgba(128, 128, 128, 0.3)' : row.dataset.existsInFirestore === 'true' ? 'aqua' : 'yellow';
+                    row.style.backgroundColor = row.classList.contains('selected') ? 'yellow' : '';
+                    
+                    // Update the last selected row reference
+                    lastSelectedRow = row.classList.contains('selected') ? row : null;
                 }
             });
 
