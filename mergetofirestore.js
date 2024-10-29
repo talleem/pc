@@ -30,6 +30,7 @@ function mergeToFirestore() {
                         .then(() => {
                             console.log(`Record added for creatorEmail: ${creatorEmail}`);
                             alert(`Record for ${creatorEmail} added to Firestore.`);
+                            listFiles();
                         })
                         .catch(error => {
                             console.error('Error adding record to Firestore:', error);
