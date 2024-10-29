@@ -37,7 +37,7 @@ function listFiles() {
             // Firestore check using the email address
             if (emailAddress !== 'N/A') {
                 console.log(`Checking Firestore for: Email - ${emailAddress}, Time - ${createdTime}`);
-                firestore.collection('meeting_his_tbl')
+                firestore.collection('meetings_his_tbl')
                     .where('creatorEmail', '==', emailAddress)
                     .where('stopRecordingTime', '==', firebase.firestore.Timestamp.fromDate(createdTime)) // Ensure we convert to Firestore Timestamp
                     .get()
