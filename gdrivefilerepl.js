@@ -3,6 +3,7 @@ function listFiles() {
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Ensure Firestore is initialized
 
+    // Fetch files from Google Drive
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName, emailAddress), createdTime)`, {
         headers: { Authorization: `Bearer ${accessToken}` }
     })
@@ -35,12 +36,15 @@ function listFiles() {
 
             // Firestore check using the email address
             if (emailAddress !== 'N/A') {
+                console.log(`Checking Firestore for: Email - ${emailAddress}, Time - ${createdTime}`);
                 firestore.collection('meeting_his_tbl')
                     .where('creatorEmail', '==', emailAddress)
                     .where('stopRecordingTime', '==', firebase.firestore.Timestamp.fromDate(createdTime)) // Ensure we convert to Firestore Timestamp
                     .get()
                     .then(querySnapshot => {
                         const statusCell = document.getElementById(`status-${file.name}`);
+                        console.log(`Query snapshot empty: ${querySnapshot.empty}`);
+
                         if (!querySnapshot.empty) {
                             statusCell.textContent = 'Yes';
                             row.style.backgroundColor = 'aqua';
