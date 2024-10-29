@@ -10,9 +10,10 @@ function mergeToFirestore() {
         // Check if the row is selected
         if (row.classList.contains('selected')) {
             const cells = row.getElementsByTagName('td');
-            const fileName = cells[0].innerText;
-            const creatorEmail = cells[1].innerText;
             const createdTime = new Date(cells[2].innerText);
+
+            // Get the real email of the Google Drive file owner
+            const creatorEmail = cells[1].getAttribute('data-email'); // Assume email is stored as data attribute
 
             // Firestore collection reference
             const collectionRef = firestore.collection('meetings_his_tbl');
@@ -27,19 +28,19 @@ function mergeToFirestore() {
                         collectionRef.add({
                             creatorEmail: creatorEmail,
                             stopRecordingTime: firebase.firestore.Timestamp.fromDate(createdTime),
-                            fileName: fileName,
-                            // Add any additional fields as necessary
+                            Notes: null,         // Adding Notes as null
+                            videoURL: "",        // Adding videoURL as empty string
                         })
                         .then(() => {
-                            console.log(`Record added: ${fileName}`);
-                            alert(`Record for ${fileName} added to Firestore.`);
+                            console.log(`Record added for creatorEmail: ${creatorEmail}`);
+                            alert(`Record for ${creatorEmail} added to Firestore.`);
                         })
                         .catch(error => {
                             console.error('Error adding record to Firestore:', error);
                             alert('Error adding record to Firestore. See console for details.');
                         });
                     } else {
-                        console.log(`Record already exists: ${fileName}`);
+                        console.log(`Record already exists for creatorEmail: ${creatorEmail}`);
                     }
                 })
                 .catch(error => {
