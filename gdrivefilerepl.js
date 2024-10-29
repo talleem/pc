@@ -22,28 +22,33 @@ function listFiles() {
 
             row.innerHTML = `
                 <td>${file.name}</td>
-                <td data-email="${file.owners[0].emailAddress}">${file.owners[0].displayName}</td>
+                <td data-email="${file.owners[0].emailAddress || 'N/A'}">${file.owners[0].displayName}</td>
                 <td>${createdTime}</td>
                 <td id="status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
 
-            // Check if the record exists in Firestore
-            firestore.collection('meeting_his_tbl')
-                .where('creatorEmail', '==', file.owners[0].emailAddress)
-                .where('stopRecordingTime', '==', file.createdTime)
-                .get()
-                .then(querySnapshot => {
-                    const statusCell = document.getElementById(`status-${file.name}`);
-                    if (!querySnapshot.empty) {
-                        statusCell.textContent = 'Yes';
-                    } else {
-                        statusCell.textContent = 'No';
-                        // Change the background color of the entire row to yellow
-                        row.style.backgroundColor = 'yellow';
-                    }
-                })
-                .catch(error => console.error('Error checking Firestore:', error));
+            // Check if the record exists in Firestore using the emailAddress field
+            const creatorEmail = file.owners[0].emailAddress; // Get the real email address of the file owner
+            if (creatorEmail) {
+                firestore.collection('meeting_his_tbl')
+                    .where('creatorEmail', '==', creatorEmail)
+                    .where('stopRecordingTime', '==', file.createdTime)
+                    .get()
+                    .then(querySnapshot => {
+                        const statusCell = document.getElementById(`status-${file.name}`);
+                        if (!querySnapshot.empty) {
+                            statusCell.textContent = 'Yes';
+                        } else {
+                            statusCell.textContent = 'No';
+                            // Change the background color of the entire row to yellow
+                            row.style.backgroundColor = 'yellow';
+                        }
+                    })
+                    .catch(error => console.error('Error checking Firestore:', error));
+            } else {
+                console.warn(`No email address found for file owner of ${file.name}`);
+            }
         });
     })
     .catch(error => console.error('Error fetching files:', error));
