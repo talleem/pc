@@ -1,7 +1,7 @@
 function listFiles() {
     const accessToken = localStorage.getItem('accessToken');
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
-    const firestore = firebase.firestore(); // Assuming Firebase is already initialized
+    const firestore = firebase.firestore(); // Ensure Firestore is initialized
 
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName, emailAddress), createdTime)`, {
         headers: { Authorization: `Bearer ${accessToken}` }
@@ -15,12 +15,15 @@ function listFiles() {
             const createdTime = new Date(file.createdTime).toLocaleString();
             const row = document.createElement('tr');
 
-            // Toggle the selected class on click
-            row.addEventListener('click', () => {
-                row.classList.toggle('selected');
+            // Apply selection styling to the row when clicked
+            row.addEventListener('click', (event) => {
+                // Prevent selection only if clicking on the row, not on a specific link or button
+                if (!event.target.closest('a, button')) {
+                    row.classList.toggle('selected');
+                    row.style.backgroundColor = row.classList.contains('selected') ? 'yellow' : ''; // Toggle yellow color on selection
+                }
             });
 
-            // Display the email address directly instead of the display name
             const emailAddress = file.owners[0].emailAddress || 'N/A';
             row.innerHTML = `
                 <td>${file.name}</td>
@@ -42,7 +45,7 @@ function listFiles() {
                             statusCell.textContent = 'Yes';
                         } else {
                             statusCell.textContent = 'No';
-                            // Change the background color of the row to yellow if it doesn’t exist in Firestore
+                            // Initial yellow background for non-existing records (overwritten on selection)
                             row.style.backgroundColor = 'yellow';
                         }
                     })
