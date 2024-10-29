@@ -29,7 +29,7 @@ function listFiles() {
             table.appendChild(row);
 
             // Check if the record exists in Firestore
-            firestore.collection('meeting_his_tbl')
+            firestore.collection('meetings_his_tbl')
                 .where('creatorEmail', '==', file.owners[0].displayName)
                 .where('stopRecordingTime', '==', file.createdTime)
                 .get()
