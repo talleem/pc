@@ -10,7 +10,7 @@ function listFiles() {
     .then(response => response.json())
     .then(data => {
         const table = document.getElementById('fileTable');
-        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th></tr>';
+        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th><th>Exists in YouTube Channel</th></tr>'; // Added new header
         
         let lastSelectedRow = null; // Keep track of the last selected row
 
@@ -48,6 +48,7 @@ function listFiles() {
                 <td>${emailAddress}</td>
                 <td>${createdTimeString}</td>
                 <td id="status-${file.name}">Checking...</td>
+                <td id="youtube-status-${file.name}"></td> <!-- New cell for YouTube status -->
             `;
             table.appendChild(row);
 
@@ -78,6 +79,10 @@ function listFiles() {
                                 row.style.backgroundColor = 'yellow'; // Does not exist in Firestore
                                 row.dataset.existsInFirestore = 'false';
                             }
+
+                            // YouTube check logic can be added here if needed
+                            const youtubeStatusCell = document.getElementById(`youtube-status-${file.name}`);
+                            // You can implement the YouTube check logic here and update youtubeStatusCell accordingly
                         })
                         .catch(error => console.error('Error checking Firestore:', error));
                 }, 0); // Ensures Firestore check happens after table is populated
