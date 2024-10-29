@@ -17,10 +17,9 @@ function listFiles() {
 
             // Apply selection styling to the row when clicked
             row.addEventListener('click', (event) => {
-                // Prevent selection only if clicking on the row, not on a specific link or button
                 if (!event.target.closest('a, button')) {
                     row.classList.toggle('selected');
-                    row.style.backgroundColor = row.classList.contains('selected') ? 'yellow' : ''; // Toggle yellow color on selection
+                    row.style.backgroundColor = row.classList.contains('selected') ? 'rgba(128, 128, 128, 0.3)' : row.dataset.existsInFirestore === 'true' ? 'aqua' : 'yellow';
                 }
             });
 
@@ -43,10 +42,12 @@ function listFiles() {
                         const statusCell = document.getElementById(`status-${file.name}`);
                         if (!querySnapshot.empty) {
                             statusCell.textContent = 'Yes';
+                            row.style.backgroundColor = 'aqua';
+                            row.dataset.existsInFirestore = 'true';
                         } else {
                             statusCell.textContent = 'No';
-                            // Initial yellow background for non-existing records (overwritten on selection)
                             row.style.backgroundColor = 'yellow';
+                            row.dataset.existsInFirestore = 'false';
                         }
                     })
                     .catch(error => console.error('Error checking Firestore:', error));
