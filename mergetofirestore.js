@@ -85,6 +85,7 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
         }
 
         const driveFileId = driveFile.files[0].id;
+        console.log("Drive File ID:", driveFileId); // Debugging log
         const uploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status`;
         const metadata = {
             snippet: {
@@ -116,10 +117,12 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
         .then(youtubeResponse => youtubeResponse.json())
         .then(youtubeResponse => {
             if (youtubeResponse.id) {
+                console.log("YouTube Video ID:", youtubeResponse.id); // Debugging log
                 return youtubeResponse.id; // Return YouTube video ID
             } else {
                 console.error('YouTube upload failed:', youtubeResponse);
-                throw new Error('Failed to upload to YouTube');
+                alert('Failed to upload to YouTube. See console for details.');
+                return null; // Return null to indicate failure
             }
         });
     })
