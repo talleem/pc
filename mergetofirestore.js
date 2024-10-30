@@ -91,8 +91,7 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
             snippet: {
                 title: creatorEmail,
                 description: `Video uploaded on behalf of ${creatorEmail}`,
-                publishedAt: createdTime.toISOString(),
-                channelId: 'UCJOvVz-e14vUFpSo37O8VPw' // Replace with actual channel ID
+                publishedAt: createdTime.toISOString()
             },
             status: {
                 privacyStatus: "private"
@@ -120,7 +119,7 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
                 console.log("YouTube Video ID:", youtubeResponse.id); // Debugging log
                 return youtubeResponse.id; // Return YouTube video ID
             } else {
-                console.error('YouTube upload failed:', youtubeResponse);
+                console.error('YouTube upload failed:', youtubeResponse); // Log entire response
                 alert('Failed to upload to YouTube. See console for details.');
                 return null; // Return null to indicate failure
             }
@@ -128,6 +127,7 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
     })
     .catch(error => {
         console.error('Error during YouTube upload:', error);
-        throw error;
+        alert('YouTube upload encountered an error. Check console for details.');
+        return null; // Return null to prevent further errors
     });
 }
