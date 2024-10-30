@@ -95,7 +95,7 @@ function listFiles() {
 
 // Function to check video existence in YouTube
 function checkYouTubeVideo(channelId, creatorEmail, createdTimeString, youtubeStatusCell, row) {
-    const youtubeAccessToken = localStorage.getItem('youtubeAccessToken');
+    const youtubeAccessToken = localStorage.getItem('accessToken');
     const publishedDate = new Date(createdTimeString).toISOString();
 
     fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=${creatorEmail}&type=video&maxResults=10`, {
