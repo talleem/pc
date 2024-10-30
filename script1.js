@@ -58,8 +58,8 @@ function isAccessTokenValid() {
 function refreshToken() {
     const refreshToken = localStorage.getItem('refreshToken');
     const tokenUrl = 'https://oauth2.googleapis.com/token';
-    const clientId = '3417436095-1elm2ai5ao28g309iolr175i721qockc.apps.googleusercontent.com';
-    const clientSecret = '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';
+    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com';
+    const clientSecret = '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';
     const requestBody = {
         refresh_token: refreshToken,
         client_id: clientId,
