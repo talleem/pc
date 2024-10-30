@@ -4,7 +4,7 @@ document.getElementById('oauthButton').addEventListener('click', function() {
     // Example OAuth flow steps (simplified for demonstration):
 
     // Step 1: Redirect users to Google OAuth consent page
-    const clientId = '919212619443-d2ck4cv25sfhvvg5n1rj82ob81h56362.apps.googleusercontent.com'; // Replace with your Google OAuth client ID
+    const clientId = '3417436095-1elm2ai5ao28g309iolr175i721qockc.apps.googleusercontent.com'; // Replace with your Google OAuth client ID
     const redirectUri = 'https://engineerr1983.github.io/hello-world-page/callback'; // Replace with your redirect URI
       // Specify the scopes you need, comma-separated
     const scopes = 'https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/gmail.send https://mail.google.com https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/profile.emails.read https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/meetings.space.readonly https://www.googleapis.com/auth/meetings.media.readonly https://www.googleapis.com/auth/meetings https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/devstorage.read_only https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/monitoring.read https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtubepartner https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly';
