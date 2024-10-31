@@ -89,9 +89,12 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
         const driveFileId = driveFile.files[0].id;
         console.log("Drive File ID:", driveFileId); // Debugging log
         const uploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status`;
+        
+        // Formatting creation time for readability in the title
+        const formattedCreatedTime = createdTime.toISOString().replace("T", " ").split(".")[0];
         const metadata = {
             snippet: {
-                title: creatorEmail,
+                title: `${creatorEmail} - ${formattedCreatedTime}`, // Title with email and creation time
                 description: `Video uploaded on behalf of ${creatorEmail}`,
                 publishedAt: createdTime.toISOString()
             },
