@@ -23,14 +23,14 @@ function mergeToFirestore() {
                 .get()
                 .then(querySnapshot => {
                     if (querySnapshot.empty) {
-                        // Add record to Firestore
+                        // Add record to Firestore and retrieve its ID immediately
                         collectionRef.add({
                             creatorEmail: creatorEmail,
                             stopRecordingTime: firebase.firestore.Timestamp.fromDate(createdTime),
                             Notes: null,
                             videoURL: ""
                         })
-                        .then(() => {
+                        .then(docRef => {
                             console.log(`Record added for creatorEmail: ${creatorEmail}`);
                             alert(`Record for ${creatorEmail} added to Firestore.`);
 
@@ -39,7 +39,9 @@ function mergeToFirestore() {
                                 .then(youtubeVideoId => {
                                     if (youtubeVideoId) {
                                         const videoURL = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
-                                        collectionRef.doc(querySnapshot.docs[0].id).update({ videoURL })
+                                        
+                                        // Use the newly created document's ID to update the videoURL field
+                                        docRef.update({ videoURL })
                                             .then(() => {
                                                 alert(`Video uploaded to YouTube successfully for ${creatorEmail} and record updated in Firestore.`);
                                                 listFiles();
@@ -94,7 +96,7 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
                 publishedAt: createdTime.toISOString()
             },
             status: {
-                privacyStatus: "private"
+                privacyStatus: "public"
             }
         };
 
