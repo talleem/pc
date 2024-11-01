@@ -1,3 +1,4 @@
+// Function to populate table and compare values with YouTube
 function listFiles() {
     const accessToken = localStorage.getItem('accessToken');
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
@@ -25,8 +26,11 @@ function listFiles() {
                 if (!event.target.closest('a, button')) {
                     // Deselect the last selected row
                     if (lastSelectedRow && lastSelectedRow !== row) {
-                        // Reset background color based on existence in Firestore
-                        lastSelectedRow.style.backgroundColor = lastSelectedRow.dataset.existsInFirestore === 'true' ? 'aqua' : 'yellow';
+                        if (lastSelectedRow.dataset.existsInFirestore === 'true') {
+                            lastSelectedRow.style.backgroundColor = 'aqua'; // Exists in Firestore
+                        } else {
+                            lastSelectedRow.style.backgroundColor = 'yellow'; // Does not exist in Firestore
+                        }
                         lastSelectedRow.classList.remove('selected');
                     }
 
@@ -49,12 +53,14 @@ function listFiles() {
             `;
             table.appendChild(row);
 
+            // Firestore check using the email address
             if (emailAddress !== 'N/A') {
                 const statusCell = document.getElementById(`status-${file.name}`);
                 const youtubeStatusCell = document.getElementById(`youtube-status-${file.name}`);
                 
                 setTimeout(() => {
-                    const createdTimestamp = firebase.firestore.Timestamp.fromDate(createdTime);
+                    const createdTimeFromTable = new Date(createdTimeString);
+                    const createdTimestamp = firebase.firestore.Timestamp.fromDate(createdTimeFromTable);
 
                     firestore.collection('meetings_his_tbl')
                         .where('creatorEmail', '==', emailAddress)
@@ -65,14 +71,13 @@ function listFiles() {
                                 statusCell.textContent = 'Yes';
                                 row.style.backgroundColor = 'aqua';
                                 row.dataset.existsInFirestore = 'true';
-
-                                // Only check YouTube if Firestore entry exists
-                                checkYouTubeVideo(youtubeChannelId, emailAddress, createdTimeString, youtubeStatusCell, row);
                             } else {
                                 statusCell.textContent = 'No';
                                 row.dataset.existsInFirestore = 'false';
-                                youtubeStatusCell.textContent = 'N/A';
                             }
+
+                            // YouTube check logic
+                            checkYouTubeVideo(youtubeChannelId, emailAddress, createdTimeString, youtubeStatusCell, row);
                         })
                         .catch(error => console.error('Error checking Firestore:', error));
                 }, 0);
@@ -85,21 +90,31 @@ function listFiles() {
 }
 
 // Function to check video existence in YouTube
-function checkYouTubeVideo(channelId, creatorEmail, createdTimeString, youtubeStatusCell, row) {
+function checkYouTubeVideo(channelId, tableCreatorEmail, tableCreateTime, youtubeStatusCell, row) {
     const youtubeAccessToken = localStorage.getItem('accessToken');
 
-    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q="${creatorEmail}" "${createdTimeString}"&type=video&maxResults=10`, {
+    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=${tableCreatorEmail}&type=video&maxResults=10`, {
         headers: { Authorization: `Bearer ${youtubeAccessToken}` }
     })
     .then(response => response.json())
     .then(data => {
-        const foundVideo = data.items.some(item => {
-            const videoTitle = item.snippet.title;
-            const expectedTitle = `${creatorEmail} ${createdTimeString}`; // Expecting email + created time in title
-            return videoTitle.includes(expectedTitle);
+        let matchFound = false;
+
+        data.items.forEach(item => {
+            // Split YouTube video title into creatorEmail and createTime
+            const [creatorEmail, createTime] = item.snippet.title.split(" / ");
+            
+            // Log the extracted values for debugging
+            console.log("YouTube Creator Email:", creatorEmail);
+            console.log("YouTube Create Time:", createTime);
+
+            // Compare with values from the table
+            if (creatorEmail === tableCreatorEmail && createTime === tableCreateTime) {
+                matchFound = true;
+            }
         });
 
-        if (foundVideo) {
+        if (matchFound) {
             youtubeStatusCell.textContent = 'Yes';
             row.style.backgroundColor = row.dataset.existsInFirestore === 'true' ? 'aqua' : 'yellow';
         } else {
