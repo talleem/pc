@@ -109,94 +109,94 @@
         }
 
 function openVideoInNewWindow(videoUrl) {
-     console.log("Video URL:", videoUrl); // Log the videoUrl to check its value
+    console.log("Video URL:", videoUrl); // Log the videoUrl to check its value
+
     // Check if the videoUrl contains 'youtube.com'
-   if (videoUrl.trim().includes('youtube.com')) {
-    console.log("YouTube URL detected."); // Log that it's a YouTube URL
-    window.open(videoUrl, '_blank', 'width=1000,height=800');
-    return;
-}
+    if (videoUrl.trim().includes('youtube.com')) {
+        console.log("YouTube URL detected."); // Log that it's a YouTube URL
+        window.open(videoUrl, '_blank', 'width=1000,height=800'); // Force open YouTube link in a new window
+    } else {
+        const fileExtension = getFileExtension(videoUrl); // Get the file extension
+        const newWindow = window.open('', '_blank'); // Open a new blank window
 
-    const fileExtension = getFileExtension(videoUrl); // Get the file extension
-    const newWindow = window.open('', '_blank'); // Open a new blank window
-
-    // Ensure the videoUrl is escaped properly for use in the script
-    newWindow.document.write(`
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Lectures' Videos</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #e0ffff;
-                }
-                h3 {
-                    text-align: center;
-                    margin-top: 20px;
-                }
-                video {
-                    display: block;
-                    margin: 20px auto;
-                    width: 840px;
-                    height: 680px;
-                    border: 1px solid #ccc;
-                }
-            </style>
-        </head>
-        <body>
-            <h3>Video Player</h3>
-            <video id="myVideo" controls preload="auto"></video>
-            <script>
-                const videoElement = document.getElementById('myVideo');
-    `);
-
-    // If the file extension is MP4, load the video directly into the HTML5 video player
-    if (fileExtension === 'mp4') {
+        // Ensure the videoUrl is escaped properly for use in the script
         newWindow.document.write(`
-                videoElement.src = '${videoUrl}';
-                videoElement.play();
-        `);
-    } else if (fileExtension === 'webm') {
-        // If the file extension is WebM, use the MediaSource API to stream it
-        newWindow.document.write(`
-            const mediaSource = new MediaSource();
-            videoElement.src = URL.createObjectURL(mediaSource);
-            mediaSource.addEventListener('sourceopen', async function handleSourceOpen() {
-                const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
-
-                const response = await fetch('${videoUrl}');
-                const videoBlob = await response.blob();
-                const videoBuffer = await videoBlob.arrayBuffer();
-
-                sourceBuffer.appendBuffer(videoBuffer);
-
-                sourceBuffer.addEventListener('updateend', () => {
-                    if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
-                        mediaSource.endOfStream();
-                        videoElement.play();
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Lectures' Videos</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #e0ffff;
                     }
-                });
-
-                sourceBuffer.addEventListener('error', (error) => {
-                    console.error('Error in SourceBuffer:', error);
-                    mediaSource.endOfStream();
-                });
-            });
+                    h3 {
+                        text-align: center;
+                        margin-top: 20px;
+                    }
+                    video {
+                        display: block;
+                        margin: 20px auto;
+                        width: 840px;
+                        height: 680px;
+                        border: 1px solid #ccc;
+                    }
+                </style>
+            </head>
+            <body>
+                <h3>Video Player</h3>
+                <video id="myVideo" controls preload="auto"></video>
+                <script>
+                    const videoElement = document.getElementById('myVideo');
         `);
+
+        // If the file extension is MP4, load the video directly into the HTML5 video player
+        if (fileExtension === 'mp4') {
+            newWindow.document.write(`
+                    videoElement.src = '${videoUrl}';
+                    videoElement.play();
+            `);
+        } else if (fileExtension === 'webm') {
+            // If the file extension is WebM, use the MediaSource API to stream it
+            newWindow.document.write(`
+                const mediaSource = new MediaSource();
+                videoElement.src = URL.createObjectURL(mediaSource);
+                mediaSource.addEventListener('sourceopen', async function handleSourceOpen() {
+                    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+
+                    const response = await fetch('${videoUrl}');
+                    const videoBlob = await response.blob();
+                    const videoBuffer = await videoBlob.arrayBuffer();
+
+                    sourceBuffer.appendBuffer(videoBuffer);
+
+                    sourceBuffer.addEventListener('updateend', () => {
+                        if (!sourceBuffer.updating && mediaSource.readyState === 'open') {
+                            mediaSource.endOfStream();
+                            videoElement.play();
+                        }
+                    });
+
+                    sourceBuffer.addEventListener('error', (error) => {
+                        console.error('Error in SourceBuffer:', error);
+                        mediaSource.endOfStream();
+                    });
+                });
+            `);
+        }
+
+        newWindow.document.write(`
+                <\/script> <!-- Escape the closing script tag -->
+            </body>
+            </html>
+        `);
+
+        newWindow.document.close(); // Close the document to ensure it is rendered
     }
-
-    newWindow.document.write(`
-            <\/script> <!-- Escape the closing script tag -->
-        </body>
-        </html>
-    `);
-
-    newWindow.document.close(); // Close the document to ensure it is rendered
 }
-        
+
       function loadLectures(creatorEmail = null, stopRecordingDate = null) {
             let query = db.collection('meetings_his_tbl');
 
