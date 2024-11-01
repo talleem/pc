@@ -204,101 +204,102 @@
     newWindow.document.close(); // Close the document to ensure it is rendered
 }
         
-        function loadLectures(creatorEmail = null, stopRecordingDate = null) {
-            let query = db.collection('meetings_his_tbl');
+       function loadLectures(creatorEmail = null, stopRecordingDate = null) {
+    let query = db.collection('meetings_his_tbl');
 
-            if (creatorEmail && creatorEmail !== 'null') {
-                query = query.where('creatorEmail', '==', creatorEmail);
-            }
+    if (creatorEmail && creatorEmail !== 'null') {
+        query = query.where('creatorEmail', '==', creatorEmail);
+    }
 
-            if (stopRecordingDate && stopRecordingDate !== 'null') {
-                const startDate = new Date(stopRecordingDate);
-                const endDate = new Date(startDate);
-                endDate.setDate(endDate.getDate() + 1);
+    if (stopRecordingDate && stopRecordingDate !== 'null') {
+        const startDate = new Date(stopRecordingDate);
+        const endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 1);
 
-                query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
-                             .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
-            }
+        query = query.where('stopRecordingTime', '>=', firebase.firestore.Timestamp.fromDate(startDate))
+                     .where('stopRecordingTime', '<', firebase.firestore.Timestamp.fromDate(endDate));
+    }
 
-            lecturesTableBody.innerHTML = '';
+    lecturesTableBody.innerHTML = '';
 
-            query.get()
-                .then(querySnapshot => {
-                    querySnapshot.forEach(doc => {
-                        const lecture = doc.data();
-                        const row = document.createElement('tr');
+    query.get()
+        .then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                const lecture = doc.data();
+                const row = document.createElement('tr');
 
-                        const lecturerCell = document.createElement('td');
-                        lecturerCell.textContent = lecture.creatorEmail;
+                const lecturerCell = document.createElement('td');
+                lecturerCell.textContent = lecture.creatorEmail;
 
-                        const updatedCell = document.createElement('td');
-                        updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
+                const updatedCell = document.createElement('td');
+                updatedCell.textContent = new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString();
 
-                        const linkCell = document.createElement('td');
-                        const link = document.createElement('a');
-                        const fileExtension = getFileExtension(lecture.videoURL);
-                        let displayText = '';
-                        let displayURL = lecture.videoURL;
+                const linkCell = document.createElement('td');
+                const link = document.createElement('a');
+                const fileExtension = getFileExtension(lecture.videoURL);
+                let displayText = '';
+                let displayURL = lecture.videoURL;
 
-                        if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
-                            displayText = 'Display the lecture';
-                            link.onclick = function(event) {
-                                event.preventDefault(); // Prevent default link behavior
-                                openVideoInNewWindow(lecture.videoURL); // Open video in new window
-                            };
-                        } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png'].includes(fileExtension)) {
-                            displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
+                // Use createVideoLink function for video files
+                if (['mp4', 'webm', 'wmv', 'mov'].includes(fileExtension)) {
+                    displayText = 'Display the lecture';
+                    link.onclick = function(event) {
+                        event.preventDefault(); // Prevent default link behavior
+                        createVideoLink(lecture.videoURL); // Call the createVideoLink function
+                    };
+                } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png'].includes(fileExtension)) {
+                    displayText = `Display uploaded ${fileExtension.toUpperCase()} file`;
 
-                            if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
-                                displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
-                            }
-                        } else {
-                            displayText = 'Display file';
-                        }
-
-                        link.textContent = displayText;
-                        link.href = displayURL;
-                        linkCell.appendChild(link);
-
-                        // Notes cell as a textarea
-                        const notesCell = document.createElement('td');
-                        const notesTextarea = document.createElement('textarea');
-                        notesTextarea.textContent = lecture.Notes || 'No notes';
-                        notesTextarea.style.width = '300px'; // Inline style for width
-                        notesTextarea.style.height = '50px'; // Inline style for height
-
-                        // Attach document ID to the row
-                        row.setAttribute('data-document-id', doc.id);
-
-                        notesCell.appendChild(notesTextarea);
-
-                        row.appendChild(lecturerCell);
-                        row.appendChild(updatedCell);
-                        row.appendChild(linkCell);
-                        row.appendChild(notesCell);
-
-                        row.addEventListener('click', function() {
-                            const previouslySelected = document.querySelector('.selected-row');
-                            if (previouslySelected) {
-                                previouslySelected.classList.remove('selected-row');
-                                previouslySelected.style.backgroundColor = '';
-                            }
-
-                            row.classList.add('selected-row');
-                            row.style.backgroundColor = 'lightblue';
-                            selectedDocumentId = doc.id;
-                        });
-
-                        lecturesTableBody.appendChild(row);
-                    });
-
-                    // Call translation function after lectures are loaded
-                    if (localStorage.getItem('arpage') === 'ar') {
-                        translatePageToArabic(); // Assuming you already have the translation function
+                    if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
+                        displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
                     }
-                })
-                .catch(error => console.error("Error loading lectures:", error));
-        }
+                } else {
+                    displayText = 'Display file';
+                }
+
+                link.textContent = displayText;
+                link.href = displayURL; // You may want to adjust this depending on how createVideoLink works
+                linkCell.appendChild(link);
+
+                // Notes cell as a textarea
+                const notesCell = document.createElement('td');
+                const notesTextarea = document.createElement('textarea');
+                notesTextarea.textContent = lecture.Notes || 'No notes';
+                notesTextarea.style.width = '300px'; // Inline style for width
+                notesTextarea.style.height = '50px'; // Inline style for height
+
+                // Attach document ID to the row
+                row.setAttribute('data-document-id', doc.id);
+
+                notesCell.appendChild(notesTextarea);
+
+                row.appendChild(lecturerCell);
+                row.appendChild(updatedCell);
+                row.appendChild(linkCell);
+                row.appendChild(notesCell);
+
+                row.addEventListener('click', function() {
+                    const previouslySelected = document.querySelector('.selected-row');
+                    if (previouslySelected) {
+                        previouslySelected.classList.remove('selected-row');
+                        previouslySelected.style.backgroundColor = '';
+                    }
+
+                    row.classList.add('selected-row');
+                    row.style.backgroundColor = 'lightblue';
+                    selectedDocumentId = doc.id;
+                });
+
+                lecturesTableBody.appendChild(row);
+            });
+
+            // Call translation function after lectures are loaded
+            if (localStorage.getItem('arpage') === 'ar') {
+                translatePageToArabic(); // Assuming you already have the translation function
+            }
+        })
+        .catch(error => console.error("Error loading lectures:", error));
+}
 
         function populateComboBoxes() {
             const uniqueEmails = new Set();
