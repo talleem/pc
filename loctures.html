@@ -220,6 +220,8 @@ function openVideoInNewWindow(videoUrl) {
                 .then(querySnapshot => {
                     querySnapshot.forEach(doc => {
                         const lecture = doc.data();
+                        console.log("Lecture data:", lecture); // Log the entire lecture object
+
                         const row = document.createElement('tr');
 
                         const lecturerCell = document.createElement('td');
