@@ -111,6 +111,7 @@
 function openVideoInNewWindow(videoUrl) {
     // Check if the videoUrl contains 'youtube.com'
     if (videoUrl.includes('youtube.com')) {
+        console.log("youtube");
         // Open YouTube video in a new window with specific dimensions
         window.open(videoUrl, '_blank', 'width=1000,height=800');
         return; // Exit the function early since we don't need to process further
