@@ -3,7 +3,6 @@ function listFiles() {
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Ensure Firestore is initialized
     const youtubeChannelId = 'UC4Zfb0BN2v6vmUqLjYyV_jg';
-    //const youtubeChannelId = 'UCJOvVz-e14vUFpSo37O8VPw'; tallem
 
     // Fetch files from Google Drive
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName, emailAddress), createdTime)`, {
@@ -12,8 +11,8 @@ function listFiles() {
     .then(response => response.json())
     .then(data => {
         const table = document.getElementById('fileTable');
-        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th><th>Exists in YouTube Channel</th></tr>'; // Added new header
-        
+        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th><th>Exists in YouTube Channel</th></tr>';
+
         let lastSelectedRow = null; // Keep track of the last selected row
 
         data.files.forEach(file => {
@@ -50,7 +49,7 @@ function listFiles() {
                 <td>${emailAddress}</td>
                 <td>${createdTimeString}</td>
                 <td id="status-${file.name}">Checking...</td>
-                <td id="youtube-status-${file.name}">Checking...</td> <!-- New cell for YouTube status -->
+                <td id="youtube-status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
 
@@ -59,22 +58,18 @@ function listFiles() {
                 const statusCell = document.getElementById(`status-${file.name}`);
                 const youtubeStatusCell = document.getElementById(`youtube-status-${file.name}`);
                 
-                // Delay Firestore check until the row is added to the table
                 setTimeout(() => {
-                    const createdTimeFromTable = new Date(createdTimeString); // Get date from displayed string
-                    const createdTimestamp = firebase.firestore.Timestamp.fromDate(createdTimeFromTable); // Convert to Firestore Timestamp
+                    const createdTimeFromTable = new Date(createdTimeString);
+                    const createdTimestamp = firebase.firestore.Timestamp.fromDate(createdTimeFromTable);
 
-                    console.log(`Checking Firestore for: Email - ${emailAddress}, Time - ${createdTimeFromTable}`);
                     firestore.collection('meetings_his_tbl')
                         .where('creatorEmail', '==', emailAddress)
-                        .where('stopRecordingTime', '==', createdTimestamp) // Use converted Firestore Timestamp
+                        .where('stopRecordingTime', '==', createdTimestamp)
                         .get()
                         .then(querySnapshot => {
-                            console.log(`Query snapshot empty: ${querySnapshot.empty}`);
-
                             if (!querySnapshot.empty) {
                                 statusCell.textContent = 'Yes';
-                                row.style.backgroundColor = 'aqua'; // Exists in Firestore
+                                row.style.backgroundColor = 'aqua';
                                 row.dataset.existsInFirestore = 'true';
                             } else {
                                 statusCell.textContent = 'No';
@@ -85,7 +80,7 @@ function listFiles() {
                             checkYouTubeVideo(youtubeChannelId, emailAddress, createdTimeString, youtubeStatusCell, row);
                         })
                         .catch(error => console.error('Error checking Firestore:', error));
-                }, 0); // Ensures Firestore check happens after table is populated
+                }, 0);
             } else {
                 console.warn(`No email address found for file owner of ${file.name}`);
             }
@@ -97,7 +92,6 @@ function listFiles() {
 // Function to check video existence in YouTube
 function checkYouTubeVideo(channelId, creatorEmail, createdTimeString, youtubeStatusCell, row) {
     const youtubeAccessToken = localStorage.getItem('accessToken');
-    const publishedDate = new Date(createdTimeString).toISOString();
 
     fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=${creatorEmail}&type=video&maxResults=10`, {
         headers: { Authorization: `Bearer ${youtubeAccessToken}` }
@@ -105,9 +99,9 @@ function checkYouTubeVideo(channelId, creatorEmail, createdTimeString, youtubeSt
     .then(response => response.json())
     .then(data => {
         const foundVideo = data.items.some(item => {
-            const videoTitleContainsEmail = item.snippet.title.includes(creatorEmail);
-            const videoPublishedAt = item.snippet.publishedAt;
-            return videoTitleContainsEmail && videoPublishedAt === publishedDate;
+            const videoTitle = item.snippet.title;
+            const expectedTitle = `${creatorEmail} ${createdTimeString}`; // Expecting email + created time in title
+            return videoTitle.includes(expectedTitle);
         });
 
         if (foundVideo) {
