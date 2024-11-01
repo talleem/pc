@@ -90,32 +90,34 @@ function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) 
         console.log("Drive File ID:", driveFileId); // Debugging log
         const uploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status`;
 
+        // Remove this line:
+        // const createdTime = new Date(cells[2].innerText); // This line should not be here
 
-        const createdTime = new Date(cells[2].innerText); // Assuming cells[2] contains the date string
-
-// Convert to local time string (with desired formatting)
-const options = { 
-    year: 'numeric', 
-    month: '2-digit', 
-    day: '2-digit', 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    second: '2-digit', 
-    hour12: false, 
-    timeZone: 'Asia/Baghdad' // Using Baghdad timezone
-};
         // Formatting creation time for readability in the title
-      const formattedCreatedTime = createdTime.toLocaleString('en-US', options).replace(',', ''); // Format it as desired
-     const metadata = {
-    snippet: {
-        title: `${creatorEmail} - ${formattedCreatedTime}`, // Title includes email and creation time
-        description: `Video uploaded on behalf of ${creatorEmail}`,
-        publishedAt: createdTime.toISOString() // Keep publishedAt as UTC
-    },
-    status: {
-        privacyStatus: "public"
-    }
-};
+        const options = { 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false, 
+            timeZone: 'Asia/Baghdad' // Using Baghdad timezone
+        };
+        
+        // Formatting creation time for the title
+        const formattedCreatedTime = createdTime.toLocaleString('en-US', options).replace(',', ''); // Format it as desired
+        
+        const metadata = {
+            snippet: {
+                title: `${creatorEmail} - ${formattedCreatedTime}`, // Title includes email and creation time
+                description: `Video uploaded on behalf of ${creatorEmail}`,
+                publishedAt: createdTime.toISOString() // Keep publishedAt as UTC
+            },
+            status: {
+                privacyStatus: "public"
+            }
+        };
 
         return fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
             headers: { Authorization: `Bearer ${accessToken}` }
