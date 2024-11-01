@@ -1,9 +1,8 @@
-// Function to populate table and compare values with YouTube
+// Function to populate table and check existence in Firestore
 function listFiles() {
     const accessToken = localStorage.getItem('accessToken');
     const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Replace with actual folder ID
     const firestore = firebase.firestore(); // Ensure Firestore is initialized
-    const youtubeChannelId = 'UC4Zfb0BN2v6vmUqLjYyV_jg';
 
     // Fetch files from Google Drive
     fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&fields=files(name, owners(displayName, emailAddress), createdTime)`, {
@@ -12,7 +11,7 @@ function listFiles() {
     .then(response => response.json())
     .then(data => {
         const table = document.getElementById('fileTable');
-        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th><th>Exists in YouTube Channel</th></tr>';
+        table.innerHTML = '<tr><th>File Name</th><th>Owner Email</th><th>Date</th><th>Exists in Firestore</th></tr>';
 
         let lastSelectedRow = null; // Keep track of the last selected row
 
@@ -49,14 +48,12 @@ function listFiles() {
                 <td>${emailAddress}</td>
                 <td>${createdTimeString}</td>
                 <td id="status-${file.name}">Checking...</td>
-                <td id="youtube-status-${file.name}">Checking...</td>
             `;
             table.appendChild(row);
 
             // Firestore check using the email address
             if (emailAddress !== 'N/A') {
                 const statusCell = document.getElementById(`status-${file.name}`);
-                const youtubeStatusCell = document.getElementById(`youtube-status-${file.name}`);
                 
                 setTimeout(() => {
                     const createdTimeFromTable = new Date(createdTimeString);
@@ -74,10 +71,8 @@ function listFiles() {
                             } else {
                                 statusCell.textContent = 'No';
                                 row.dataset.existsInFirestore = 'false';
+                                row.style.backgroundColor = 'yellow';
                             }
-
-                            // YouTube check logic
-                            checkYouTubeVideo(youtubeChannelId, emailAddress, createdTimeString, youtubeStatusCell, row);
                         })
                         .catch(error => console.error('Error checking Firestore:', error));
                 }, 0);
@@ -87,47 +82,6 @@ function listFiles() {
         });
     })
     .catch(error => console.error('Error fetching files:', error));
-}
-
-// Function to check video existence in YouTube
-function checkYouTubeVideo(channelId, tableCreatorEmail, tableCreateTime, youtubeStatusCell, row) {
-    const youtubeAccessToken = localStorage.getItem('accessToken');
-
-    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=${tableCreatorEmail}&type=video&maxResults=10`, {
-        headers: { Authorization: `Bearer ${youtubeAccessToken}` }
-    })
-    .then(response => response.json())
-    .then(data => {
-        let matchFound = false;
-
-        data.items.forEach(item => {
-            // Split YouTube video title into creatorEmail and createTime
-            const [creatorEmail, createTime] = item.snippet.title.split(" / ");
-            
-            // Log the extracted values for debugging
-            console.log("YouTube Creator Email:", creatorEmail);
-            console.log("YouTube Create Time:", createTime);
-
-            // Compare with values from the table
-            if (creatorEmail === tableCreatorEmail && createTime === tableCreateTime) {
-                matchFound = true;
-            }
-        });
-
-        if (matchFound) {
-            youtubeStatusCell.textContent = 'Yes';
-            row.style.backgroundColor = row.dataset.existsInFirestore === 'true' ? 'aqua' : 'yellow';
-        } else {
-            youtubeStatusCell.textContent = 'No';
-            if (row.dataset.existsInFirestore === 'false') {
-                row.style.backgroundColor = 'yellow';
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error checking YouTube:', error);
-        youtubeStatusCell.textContent = 'Error';
-    });
 }
 
 document.addEventListener('DOMContentLoaded', listFiles);
