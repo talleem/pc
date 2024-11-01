@@ -111,12 +111,11 @@
 function openVideoInNewWindow(videoUrl) {
      console.log("Video URL:", videoUrl); // Log the videoUrl to check its value
     // Check if the videoUrl contains 'youtube.com'
-    if (videoUrl.includes('youtube.com')) {
-        console.log("youtube");
-        // Open YouTube video in a new window with specific dimensions
-        window.open(videoUrl, '_blank', 'width=1000,height=800');
-        return; // Exit the function early since we don't need to process further
-    }
+   if (videoUrl.trim().includes('youtube.com')) {
+    console.log("YouTube URL detected."); // Log that it's a YouTube URL
+    window.open(videoUrl, '_blank', 'width=1000,height=800');
+    return;
+}
 
     const fileExtension = getFileExtension(videoUrl); // Get the file extension
     const newWindow = window.open('', '_blank'); // Open a new blank window
