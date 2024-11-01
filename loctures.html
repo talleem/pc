@@ -92,6 +92,23 @@
         </div>
     </div>
 <script>
+
+ // Add this function before your existing script that runs after DOMContentLoaded
+    function createVideoLink(videoURL) {
+        const isYouTubeLink = videoURL.includes("youtube.com") || videoURL.includes("youtu.be");
+        const linkElement = document.createElement('a');
+
+        linkElement.href = videoURL;
+        linkElement.textContent = "Display Lecture";
+
+        // Check if the link is a YouTube link
+        if (isYouTubeLink) {
+            linkElement.target = "_blank"; // Open in new window
+        }
+
+        return linkElement;
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         const db = firebase.firestore();
         const storage = firebase.storage();
