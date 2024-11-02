@@ -403,7 +403,7 @@ function deleteYouTubeVideoByTitle(title, callback) {
             if (videoId) {
                 const xhrDelete = new XMLHttpRequest();
                 xhrDelete.open('DELETE', `https://www.googleapis.com/youtube/v3/videos?id=${videoId}`, true);
-                xhrDelete.setRequestHeader('Authorization', `Bearer YOUR_ACCESS_TOKEN`);
+                xhrDelete.setRequestHeader('Authorization', `Bearer ${accessToken}`);
                 xhrDelete.setRequestHeader('Accept', 'application/json');
 
                 xhrDelete.onload = function () {
