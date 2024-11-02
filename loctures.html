@@ -392,7 +392,7 @@ function openVideoInNewWindow(videoUrl) {
 function deleteYouTubeVideoByTitle(title, callback) {
     const xhrSearch = new XMLHttpRequest();
     xhrSearch.open('GET', `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(title)}&type=video`, true);
-    xhrSearch.setRequestHeader('Authorization', `Bearer accessToken`);
+    xhrSearch.setRequestHeader('Authorization', `Bearer ${accessToken}`);
     xhrSearch.setRequestHeader('Accept', 'application/json');
     console.log(accessToken);
     xhrSearch.onload = function () {
