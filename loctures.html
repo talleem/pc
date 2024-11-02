@@ -353,6 +353,7 @@ function openVideoInNewWindow(videoUrl) {
                     const lecture = doc.data();
                     const videoURL = lecture.videoURL;
                     const titleMatch = `${lecture.creatorEmail} - ${new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString()}`;
+                    console.log(titleMatch);
 
                     if (videoURL.includes('youtube.com')) {
                         // Call function to delete the video from YouTube if it matches the title
