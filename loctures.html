@@ -247,7 +247,15 @@ function openVideoInNewWindow(videoUrl) {
                             if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension)) {
                                 displayURL = `https://docs.google.com/gview?url=${encodeURIComponent(lecture.videoURL)}&embedded=true`;
                             }
-                        } else {
+                        }   else if (displayURL.trim().includes('youtube.com')) {
+        console.log("YouTube URL detected."); // Log that it's a YouTube URL
+        displayText = 'Display the lecture';
+                            link.onclick = function(event) {
+                                event.preventDefault(); // Prevent default link behavior
+                                openVideoInNewWindow(lecture.videoURL); // Open video in new window
+                            };
+    }
+                        else {
                             displayText = 'Display file';
                         }
 
