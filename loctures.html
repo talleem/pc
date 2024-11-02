@@ -352,11 +352,14 @@ function openVideoInNewWindow(videoUrl) {
                 if (doc.exists) {
                     const lecture = doc.data();
                     const videoURL = lecture.videoURL;
-                    const titleMatch = `${lecture.creatorEmail} - ${new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString()}`;
+
+                    const date = new Date(lecture.stopRecordingTime.seconds * 1000);
+                    const formattedDate = date.toLocaleDateString('en-US');
+                    const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
+                    const titleMatch = `${lecture.creatorEmail} - ${formattedDate} ${formattedTime}`;
                     console.log(titleMatch);
 
                     if (videoURL.includes('youtube.com')) {
-                        // Call function to delete the video from YouTube if it matches the title
                         deleteYouTubeVideoByTitle(titleMatch, function () {
                             docRef.delete().then(() => {
                                 console.log('Document deleted successfully from Firestore.');
