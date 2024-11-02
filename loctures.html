@@ -101,6 +101,7 @@
         const lecturerEmailSelect = document.getElementById('lecturer-email');
         const lectureTimeSelect = document.getElementById('lecture-time');
         const deleteButton = document.getElementById('deleteVideo');
+         const accessToken = localStorage.getItem('accessToken');
         let selectedDocumentId = null;
 
         function getFileExtension(url) {
@@ -337,40 +338,106 @@ function openVideoInNewWindow(videoUrl) {
                 .catch(error => console.error("Error populating combo boxes:", error));
         }
 
-        function deleteSelectedLecture() {
-            if (selectedDocumentId) {
-                const selectedRow = document.querySelector('.selected-row');
-                const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
-                const loggedInEmail = localStorage.getItem('loggedInEmail');
+       function deleteSelectedLecture() {
+    if (selectedDocumentId) {
+        const selectedRow = document.querySelector('.selected-row');
+        const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
+        const loggedInEmail = localStorage.getItem('loggedInEmail');
 
-                if (loggedInEmail === selectedLecturerEmail) {
-                    const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+        if (loggedInEmail === selectedLecturerEmail) {
+            const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
 
-                    docRef.get().then(doc => {
-                        if (doc.exists) {
-                            const lecture = doc.data();
-                            const videoURL = lecture.videoURL;
-                            const storageRef = storage.refFromURL(videoURL);
+            docRef.get().then(doc => {
+                if (doc.exists) {
+                    const lecture = doc.data();
+                    const videoURL = lecture.videoURL;
+                    const titleMatch = `${lecture.creatorEmail} - ${new Date(lecture.stopRecordingTime.seconds * 1000).toLocaleString()}`;
 
-                            storageRef.delete().then(() => {
-                                alert('Video deleted successfully from storage.');
-                                docRef.delete().then(() => {
-                                    console.log('Document deleted successfully from Firestore.');
-                                    if (selectedRow) {
-                                        selectedRow.remove();
-                                    }
-                                    selectedDocumentId = null;
-                                }).catch(error => console.error('Error deleting document:', error));
-                            }).catch(error => console.error('Error deleting video from storage:', error));
-                        }
-                    }).catch(error => console.error('Error fetching document:', error));
-                } else {
-                    alert('Only the meeting event creator is authorized to delete the video.');
+                    if (videoURL.includes('youtube.com')) {
+                        // Call function to delete the video from YouTube if it matches the title
+                        deleteYouTubeVideoByTitle(titleMatch, function () {
+                            docRef.delete().then(() => {
+                                console.log('Document deleted successfully from Firestore.');
+                                if (selectedRow) {
+                                    selectedRow.remove();
+                                }
+                                selectedDocumentId = null;
+                            }).catch(error => console.error('Error deleting document:', error));
+                        });
+                    } else {
+                        const storageRef = storage.refFromURL(videoURL);
+
+                        storageRef.delete().then(() => {
+                            alert('Video deleted successfully from storage.');
+                            docRef.delete().then(() => {
+                                console.log('Document deleted successfully from Firestore.');
+                                if (selectedRow) {
+                                    selectedRow.remove();
+                                }
+                                selectedDocumentId = null;
+                            }).catch(error => console.error('Error deleting document:', error));
+                        }).catch(error => console.error('Error deleting video from storage:', error));
+                    }
                 }
-            } else {
-                alert('Please select a lecture to delete.');
-            }
+            }).catch(error => console.error('Error fetching document:', error));
+        } else {
+            alert('Only the meeting event creator is authorized to delete the video.');
         }
+    } else {
+        alert('Please select a lecture to delete.');
+    }
+}
+
+function deleteYouTubeVideoByTitle(title, callback) {
+    const xhrSearch = new XMLHttpRequest();
+    xhrSearch.open('GET', `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(title)}&type=video`, true);
+    xhrSearch.setRequestHeader('Authorization', `Bearer accessToken`);
+    xhrSearch.setRequestHeader('Accept', 'application/json');
+
+    xhrSearch.onload = function () {
+        if (xhrSearch.status === 200) {
+            const response = JSON.parse(xhrSearch.responseText);
+            const videoId = response.items.length > 0 ? response.items[0].id.videoId : null;
+
+            if (videoId) {
+                const xhrDelete = new XMLHttpRequest();
+                xhrDelete.open('DELETE', `https://www.googleapis.com/youtube/v3/videos?id=${videoId}`, true);
+                xhrDelete.setRequestHeader('Authorization', `Bearer YOUR_ACCESS_TOKEN`);
+                xhrDelete.setRequestHeader('Accept', 'application/json');
+
+                xhrDelete.onload = function () {
+                    if (xhrDelete.status === 204) {
+                        console.log('Video deleted successfully from YouTube.');
+                        if (callback) callback();
+                    } else {
+                        console.error('Error deleting video from YouTube:', xhrDelete.responseText);
+                    }
+                };
+
+                xhrDelete.onerror = function () {
+                    console.error('Error deleting video from YouTube:', xhrDelete.responseText);
+                };
+
+                xhrDelete.send();
+            } else {
+                console.log('No matching video found on YouTube.');
+                if (callback) callback();
+            }
+        } else {
+            console.error('Error searching for video on YouTube:', xhrSearch.responseText);
+            if (callback) callback();
+        }
+    };
+
+    xhrSearch.onerror = function () {
+        console.error('Error searching for video on YouTube:', xhrSearch.responseText);
+        if (callback) callback();
+    };
+
+    xhrSearch.send();
+}
+
+// Make sure to replace `YOUR_ACCESS_TOKEN` with a valid token and secure it properly.
 
         lecturerEmailSelect.addEventListener('change', () => {
             const selectedEmail = lecturerEmailSelect.value;
