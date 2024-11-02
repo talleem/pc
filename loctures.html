@@ -102,7 +102,7 @@
         const lectureTimeSelect = document.getElementById('lecture-time');
         const deleteButton = document.getElementById('deleteVideo');
          const accessToken = localStorage.getItem('accessToken');
-        console.log(accessToken);
+       
         let selectedDocumentId = null;
 
         function getFileExtension(url) {
@@ -394,7 +394,7 @@ function deleteYouTubeVideoByTitle(title, callback) {
     xhrSearch.open('GET', `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(title)}&type=video`, true);
     xhrSearch.setRequestHeader('Authorization', `Bearer accessToken`);
     xhrSearch.setRequestHeader('Accept', 'application/json');
-
+    console.log(accessToken);
     xhrSearch.onload = function () {
         if (xhrSearch.status === 200) {
             const response = JSON.parse(xhrSearch.responseText);
