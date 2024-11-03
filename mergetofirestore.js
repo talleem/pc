@@ -75,80 +75,98 @@ function mergeToFirestore() {
 }
 
 // Function to upload video from Google Drive to YouTube without async syntax
-function uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'&fields=files(id)`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-    })
-    .then(response => response.json())
-    .then(driveFile => {
-        if (!driveFile.files || driveFile.files.length === 0) {
-            alert(`Video file not found in Google Drive: ${fileName}`);
-            return null;
-        }
-
-        const driveFileId = driveFile.files[0].id;
-        console.log("Drive File ID:", driveFileId); // Debugging log
-        const uploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status`;
-
-        // Remove this line:
-        // const createdTime = new Date(cells[2].innerText); // This line should not be here
-
-        // Formatting creation time for readability in the title
-        const options = { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit', 
-            hour12: false, 
-            timeZone: 'Asia/Baghdad' // Using Baghdad timezone
-        };
-        
-        // Formatting creation time for the title
-        const formattedCreatedTime = createdTime.toLocaleString('en-US', options).replace(',', ''); // Format it as desired
-        
-        const metadata = {
-            snippet: {
-                title: `${creatorEmail} - ${formattedCreatedTime}`, // Title includes email and creation time
-                description: `Video uploaded on behalf of ${creatorEmail}`,
-                publishedAt: createdTime.toISOString() // Keep publishedAt as UTC
-            },
-            status: {
-                privacyStatus: "public"
-            }
-        };
-
-        return fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
+function uploadVideoToYouTube(accessToken, creatorEmail, fileName, folderIds) {
+    // Function to search within each folder ID
+    const searchPromises = folderIds.map(folderId => 
+        fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and '${folderId}' in parents&fields=files(id, name, owners, modifiedTime)`, {
             headers: { Authorization: `Bearer ${accessToken}` }
         })
-        .then(response => response.blob())
-        .then(fileBlob => {
-            const formData = new FormData();
-            formData.append('data', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            formData.append('file', fileBlob);
+        .then(response => response.json())
+    );
 
-            return fetch(uploadUrl, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${accessToken}` },
-                body: formData
+    // Run all search requests and process results
+    return Promise.all(searchPromises)
+        .then(results => {
+            // Flatten results and filter non-empty file arrays
+            const allFiles = results.flatMap(result => result.files || []);
+            
+            if (allFiles.length === 0) {
+                alert(`Video file not found in any of the specified folders: ${fileName}`);
+                return null;
+            }
+
+            // Find a file that matches the creator's email
+            const fileFound = allFiles.find(file => 
+                file.owners && file.owners.some(owner => owner.emailAddress === creatorEmail)
+            );
+
+            if (!fileFound) {
+                alert(`No matching file found for creatorEmail: ${creatorEmail}`);
+                return null;
+            }
+
+            const driveFileId = fileFound.id;
+            const modifiedTime = new Date(fileFound.modifiedTime);
+            console.log("Drive File ID:", driveFileId); // Debugging log
+
+            const uploadUrl = `https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status`;
+
+            // Formatting modified time for the title
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+                timeZone: 'Asia/Baghdad' // Using Baghdad timezone
+            };
+
+            const formattedModifiedTime = modifiedTime.toLocaleString('en-US', options).replace(',', ''); // Format as desired
+
+            const metadata = {
+                snippet: {
+                    title: `${creatorEmail} - ${formattedModifiedTime}`, // Title includes email and modified time
+                    description: `Video uploaded on behalf of ${creatorEmail}`,
+                    publishedAt: modifiedTime.toISOString() // Keep publishedAt as UTC
+                },
+                status: {
+                    privacyStatus: "public"
+                }
+            };
+
+            // Fetch the video file as a blob
+            return fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            })
+            .then(response => response.blob())
+            .then(fileBlob => {
+                const formData = new FormData();
+                formData.append('data', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                formData.append('file', fileBlob);
+
+                return fetch(uploadUrl, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                    body: formData
+                });
+            })
+            .then(youtubeResponse => youtubeResponse.json())
+            .then(youtubeResponse => {
+                if (youtubeResponse.id) {
+                    console.log("YouTube Video ID:", youtubeResponse.id); // Debugging log
+                    return youtubeResponse.id; // Return YouTube video ID
+                } else {
+                    console.error('YouTube upload failed:', youtubeResponse); // Log entire response
+                    alert('Failed to upload to YouTube. See console for details.');
+                    return null; // Return null to indicate failure
+                }
             });
         })
-        .then(youtubeResponse => youtubeResponse.json())
-        .then(youtubeResponse => {
-            if (youtubeResponse.id) {
-                console.log("YouTube Video ID:", youtubeResponse.id); // Debugging log
-                return youtubeResponse.id; // Return YouTube video ID
-            } else {
-                console.error('YouTube upload failed:', youtubeResponse); // Log entire response
-                alert('Failed to upload to YouTube. See console for details.');
-                return null; // Return null to indicate failure
-            }
+        .catch(error => {
+            console.error('Error during YouTube upload:', error);
+            alert('YouTube upload encountered an error. Check console for details.');
+            return null; // Return null to prevent further errors
         });
-    })
-    .catch(error => {
-        console.error('Error during YouTube upload:', error);
-        alert('YouTube upload encountered an error. Check console for details.');
-        return null; // Return null to prevent further errors
-    });
 }
