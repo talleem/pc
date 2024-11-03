@@ -4,6 +4,12 @@ function mergeToFirestore() {
     const rows = table.getElementsByTagName('tr');
     const accessToken = localStorage.getItem('accessToken'); // Ensure correct access token is used for Google Drive
 
+      const folderIds = [
+        '13Z8vqg6TPeeP4nbvaI1nDUmY8tRfuF6a', // engineerr19832@gmail.com
+        '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer', // engineerr1983@gmail.com
+        '1KpZz9gXTyoNONivjmjdhqpgWhh2WpX2O'  // translatingtobetter@gmail.com
+    ];
+
     let selectedRowsExist = false;
 
     Array.from(rows).forEach((row, index) => {
@@ -35,7 +41,7 @@ function mergeToFirestore() {
                             alert(`Record for ${creatorEmail} added to Firestore.`);
 
                             // Now, upload to YouTube
-                            uploadVideoToYouTube(accessToken, creatorEmail, createdTime, fileName)
+                            uploadVideoToYouTube(accessToken, creatorEmail, fileName, folderIds)
                                 .then(youtubeVideoId => {
                                     if (youtubeVideoId) {
                                         const videoURL = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
