@@ -339,7 +339,7 @@ function openVideoInNewWindow(videoUrl) {
                 .catch(error => console.error("Error populating combo boxes:", error));
         }
 
-       function deleteSelectedLecture() {
+      function deleteSelectedLecture() {
     if (selectedDocumentId) {
         const selectedRow = document.querySelector('.selected-row');
         const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
