@@ -359,16 +359,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
 
-                        newWindow.document.write(`
-                            <li>
-                                <strong>Start Time:</strong> ${startTime}<br>
-                                <strong>End Time:</strong> ${endTime}<br>
-                                <strong>Creator's Email:</strong> ${creatorEmail}<br>
-                                <strong>Description:</strong> ${description}<br>
-                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>
-                                <strong>Meeting Type:</strong> ${recurrenceInfo}
-                            </li>
-                        `);
+                        newWindow.document.write(`  
+                            <li>  
+                                <strong>Start Time:</strong> ${startTime}<br>  
+                                <strong>End Time:</strong> ${endTime}<br>  
+                                <strong>Creator's Email:</strong> ${creatorEmail}<br>  
+                                <strong>Description:</strong> ${description}<br>  
+                                <strong>Meeting Link:</strong> <a href="${hangoutLink}" class="meeting-link" data-creator-email="${creatorEmail}" target="_blank">${hangoutLink}</a><br>  
+                                <strong>Meeting Type:</strong> ${recurrenceInfo}  
+                            </li>  
+                        `);  
                     });
 
                     newWindow.document.write('</ul>');
@@ -455,7 +455,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                         };
 
                                         mediaRecorder.onstop = async function() {
-                                            showWaitingAlert(newWindow);
                                             const blob = new Blob(chunks, { type: 'video/webm' });
 
                                             try {
@@ -476,7 +475,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 });
 
                                                 console.log("Recording saved to Firestore with URL:", downloadURL);
-                                                hideWaitingAlert(newWindow); 
                                                 newWindow.alert("Recording saved to Firestore with URL: " + downloadURL);
                                             } catch (error) {
                                                 console.error("Error saving video to Firebase:", error);
@@ -514,21 +512,79 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.body.appendChild(stopButton);
 
-                    // Call the Arabic translation function after buttons are created
-                    if (arpage === 'ar') {
-                        loadArabicContent(newWindow, filteredEvents); // Use the Arabic content loading function
-                    }
+                    // Add the Save into G Drive button
+                    const saveToGDriveButton = newWindow.document.createElement('button');
+                    saveToGDriveButton.id = 'savetogd';
+                    saveToGDriveButton.textContent = 'Save into G Drive';
+                    saveToGDriveButton.style.backgroundColor = '#4285F4'; // Google Drive color
+                    saveToGDriveButton.style.color = 'white';
+                    saveToGDriveButton.style.position = 'fixed';
+                    saveToGDriveButton.style.top = '90px';
+                    saveToGDriveButton.style.right = '10px';
+                    saveToGDriveButton.style.padding = '10px 20px';
+                    saveToGDriveButton.style.fontWeight = 'bold';
+                    saveToGDriveButton.style.border = 'none';
+                    saveToGDriveButton.style.borderRadius = '5px';
+                    saveToGDriveButton.style.cursor = 'pointer';
+                    saveToGDriveButton.style.boxShadow = '0 4px #999';
+
+                    saveToGDriveButton.addEventListener('click', async function() {
+                        const videoUrl = localStorage.getItem('videoURL'); // Assuming you store the last recorded video URL here
+                        const response = await fetch(videoUrl);
+                        const blob = await response.blob();
+
+                        const folderId = 'YOUR_GOOGLE_DRIVE_FOLDER_ID'; // Replace with your folder ID
+                        const accessToken = localStorage.getItem('accessToken');
+
+                        fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: 'Meeting Recording.webm',
+                                mimeType: 'video/webm',
+                                parents: [folderId],
+                            }),
+                        })
+                        .then(res => res.json())
+                        .then(async (data) => {
+                            const fileId = data.id;
+                            const media = new Blob([blob], { type: 'video/webm' });
+
+                            fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Authorization': `Bearer ${accessToken}`,
+                                    'Content-Type': 'video/webm',
+                                },
+                                body: media,
+                            })
+                            .then(res => res.json())
+                            .then(() => {
+                                newWindow.alert('Video saved to Google Drive successfully!');
+                            })
+                            .catch(err => console.error('Error uploading video:', err));
+                        })
+                        .catch(err => console.error('Error creating file in Google Drive:', err));
+                    });
+
+                    newWindow.document.body.appendChild(saveToGDriveButton);
+                    newWindow.document.close();
                 })
-                .catch(error => console.error("Error loading meetings:", error));
+                .catch(error => console.error('Error fetching calendar events:', error));
             }
 
             loadMeetings();
         } else {
-            alert('Please log in to load invitations.');
+            console.error("Access token or logged-in email not found.");
+            alert("Please log in again.");
         }
     });
 });
 </script>
+
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
