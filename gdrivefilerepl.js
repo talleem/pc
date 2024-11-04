@@ -77,6 +77,11 @@ function listFiles() {
                                     row.dataset.existsInFirestore = 'false';
                                     row.style.backgroundColor = 'yellow';
                                 }
+
+                                // Check and remove rows with 'Yes' status after checking Firestore
+                                if (statusCell.textContent === 'Yes') {
+                                    row.remove();
+                                }
                             })
                             .catch(error => console.error('Error checking Firestore:', error));
                     }, 0);
