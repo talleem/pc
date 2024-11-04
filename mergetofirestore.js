@@ -50,7 +50,9 @@ function mergeToFirestore() {
                                         docRef.update({ videoURL })
                                             .then(() => {
                                                 alert(`Video uploaded to YouTube successfully for ${creatorEmail} and record updated in Firestore.`);
-                                                listFiles();
+                                               setTimeout(() => {
+                                               listFiles();
+                                                }, 2000); // 2000 milliseconds = 2 seconds
                                             })
                                             .catch(error => console.error('Error updating Firestore record:', error));
                                     }
