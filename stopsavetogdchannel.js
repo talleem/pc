@@ -4,8 +4,6 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
         stream.getTracks().forEach(track => track.stop());
         console.log("Recording stopped");
 
-        showWaitingAlert(newWindow);
-
         const chunks = [];
         mediaRecorder.ondataavailable = function(event) {
             if (event.data.size > 0) {
@@ -17,15 +15,14 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             const blob = new Blob(chunks, { type: 'video/webm' });
             const file = new File([blob], `meeting_recording_${new Date().getTime()}.webm`, { type: 'video/webm' });
             const accessToken = localStorage.getItem('accessToken');
+
             if (!accessToken) {
                 console.error("Access token not found.");
                 return;
             }
 
-            // Use the provided folder ID directly
-            const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer';
+            const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Your folder ID
 
-            // Step 3: Upload the file to the folder
             const metadata = {
                 name: file.name,
                 mimeType: 'video/webm',
@@ -36,7 +33,7 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
             formData.append('file', file);
 
-            return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
                 method: 'POST',
                 headers: new Headers({
                     'Authorization': `Bearer ${accessToken}`
@@ -52,7 +49,6 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             })
             .then(result => {
                 console.log("File uploaded successfully to Google Drive:", result);
-                hideWaitingAlert(newWindow);
                 newWindow.alert("Recording saved to Google Drive in the 'meeting_videos' folder.");
             })
             .catch(error => {
