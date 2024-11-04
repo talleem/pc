@@ -1,3 +1,10 @@
+function showCustomAlert() {
+    document.getElementById('customAlert').style.display = 'block';
+}
+
+function hideCustomAlert() {
+    document.getElementById('customAlert').style.display = 'none';
+}
 function mergeToFirestore() {
     const firestore = firebase.firestore(); // Ensure Firestore is initialized
     const table = document.getElementById('fileTable');
@@ -39,10 +46,12 @@ function mergeToFirestore() {
                         .then(docRef => {
                             console.log(`Record added for creatorEmail: ${creatorEmail}`);
                             alert(`Record for ${creatorEmail} added to Firestore.`);
+                             showCustomAlert(); // Show the custom alert before starting the upload
 
                             // Now, upload to YouTube
                             uploadVideoToYouTube(accessToken, creatorEmail, fileName, folderIds)
                                 .then(youtubeVideoId => {
+                                     hideCustomAlert(); // Hide the custom alert when upload finishes (success or failure)
                                     if (youtubeVideoId) {
                                         const videoURL = `https://www.youtube.com/watch?v=${youtubeVideoId}`;
                                         
@@ -54,15 +63,21 @@ function mergeToFirestore() {
                                                listFiles();
                                                 }, 2000); // 2000 milliseconds = 2 seconds
                                             })
-                                            .catch(error => console.error('Error updating Firestore record:', error));
+                                            .catch(error => {
+                                                hideCustomAlert(); // Hide on error
+                                                console.error('Error updating Firestore record:', error);
+                                                alert('Error updating Firestore. See console for details.');
+                                            });
                                     }
                                 })
                                 .catch(error => {
+                                     hideCustomAlert(); // Hide on error
                                     console.error('Error uploading to YouTube:', error);
                                     alert('Error uploading video to YouTube. See console for details.');
                                 });
                         })
                         .catch(error => {
+                             hideCustomAlert(); // Hide on error
                             console.error('Error adding record to Firestore:', error);
                             alert('Error adding record to Firestore. See console for details.');
                         });
