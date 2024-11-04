@@ -512,79 +512,42 @@ document.addEventListener('DOMContentLoaded', function() {
                     newWindow.document.body.appendChild(recordButton);
                     newWindow.document.body.appendChild(stopButton);
 
-                    // Add the Save into G Drive button
-                    const saveToGDriveButton = newWindow.document.createElement('button');
-                    saveToGDriveButton.id = 'savetogd';
-                    saveToGDriveButton.textContent = 'Save into G Drive';
-                    saveToGDriveButton.style.backgroundColor = '#4285F4'; // Google Drive color
-                    saveToGDriveButton.style.color = 'white';
-                    saveToGDriveButton.style.position = 'fixed';
-                    saveToGDriveButton.style.top = '90px';
-                    saveToGDriveButton.style.right = '10px';
-                    saveToGDriveButton.style.padding = '10px 20px';
-                    saveToGDriveButton.style.fontWeight = 'bold';
-                    saveToGDriveButton.style.border = 'none';
-                    saveToGDriveButton.style.borderRadius = '5px';
-                    saveToGDriveButton.style.cursor = 'pointer';
-                    saveToGDriveButton.style.boxShadow = '0 4px #999';
+                    // Add the new button for stopping the save to Google Drive
+                    const stopSaveToGDriveButton = newWindow.document.createElement('button');
+                    stopSaveToGDriveButton.id = 'stopsavetogd';
+                    stopSaveToGDriveButton.textContent = 'Stop Save to G Drive';
+                    stopSaveToGDriveButton.style.backgroundColor = '#f39c12'; // Set a distinct color
+                    stopSaveToGDriveButton.style.color = 'white';
+                    stopSaveToGDriveButton.style.position = 'fixed';
+                    stopSaveToGDriveButton.style.top = '90px'; // Below the Stop Recording button
+                    stopSaveToGDriveButton.style.right = '10px';
+                    stopSaveToGDriveButton.style.padding = '10px 20px';
+                    stopSaveToGDriveButton.style.fontWeight = 'bold';
+                    stopSaveToGDriveButton.style.border = 'none';
+                    stopSaveToGDriveButton.style.borderRadius = '5px';
+                    stopSaveToGDriveButton.style.cursor = 'pointer';
+                    stopSaveToGDriveButton.style.boxShadow = '0 4px #999';
 
-                    saveToGDriveButton.addEventListener('click', async function() {
-                        const videoUrl = localStorage.getItem('videoURL'); // Assuming you store the last recorded video URL here
-                        const response = await fetch(videoUrl);
-                        const blob = await response.blob();
-
-                        const folderId = 'YOUR_GOOGLE_DRIVE_FOLDER_ID'; // Replace with your folder ID
-                        const accessToken = localStorage.getItem('accessToken');
-
-                        fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${accessToken}`,
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                name: 'Meeting Recording.webm',
-                                mimeType: 'video/webm',
-                                parents: [folderId],
-                            }),
-                        })
-                        .then(res => res.json())
-                        .then(async (data) => {
-                            const fileId = data.id;
-                            const media = new Blob([blob], { type: 'video/webm' });
-
-                            fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-                                method: 'PATCH',
-                                headers: {
-                                    'Authorization': `Bearer ${accessToken}`,
-                                    'Content-Type': 'video/webm',
-                                },
-                                body: media,
-                            })
-                            .then(res => res.json())
-                            .then(() => {
-                                newWindow.alert('Video saved to Google Drive successfully!');
-                            })
-                            .catch(err => console.error('Error uploading video:', err));
-                        })
-                        .catch(err => console.error('Error creating file in Google Drive:', err));
+                    stopSaveToGDriveButton.addEventListener('click', function() {
+                        // Call the function from stopsavetogdchannel.js here
+                        stopsavetogdfunction(); // Ensure this function is defined in the loaded script
                     });
 
-                    newWindow.document.body.appendChild(saveToGDriveButton);
+                    newWindow.document.body.appendChild(stopSaveToGDriveButton);
+
+                    newWindow.document.write('</body></html>');
                     newWindow.document.close();
                 })
-                .catch(error => console.error('Error fetching calendar events:', error));
+                .catch(error => console.error('Error fetching meetings:', error));
             }
 
             loadMeetings();
         } else {
-            console.error("Access token or logged-in email not found.");
-            alert("Please log in again.");
+            newWindow.alert("User is not authenticated.");
         }
     });
 });
 </script>
-
 
      <button id="updateinvit" style=" height: 35px; 
                 text-align: center;
