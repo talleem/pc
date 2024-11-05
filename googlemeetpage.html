@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     stopSaveToGDriveButton.addEventListener('click', function() {
                         // Call the function from stopsavetogdchannel.js here
-                        stopsavetogdchannel(); // Ensure this function is defined in the loaded script
+                        stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow); // Ensure this function is defined in the loaded script
                     });
 
                     newWindow.document.body.appendChild(stopSaveToGDriveButton);
