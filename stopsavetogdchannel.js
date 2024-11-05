@@ -50,6 +50,9 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             .then(result => {
                 console.log("File uploaded successfully to Google Drive:", result);
                 newWindow.alert("Recording saved to Google Drive in the 'meeting_videos' folder.");
+                
+                // Additional logic using `loggedInEmail` or `newWindow` could go here
+                // For example, you could notify a user, log the email, or update the UI in newWindow.
             })
             .catch(error => {
                 console.error("Error during file upload:", error);
@@ -57,6 +60,6 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             });
         };
     } else {
-        console.log("No recording is active.");
+        console.log("No recording is active");
     }
 }
