@@ -116,7 +116,9 @@ function openVideoInNewWindow(videoUrl) {
     // Check if the videoUrl contains 'youtube.com'
     if (videoUrl.trim().includes('youtube.com')) {
         console.log("YouTube URL detected."); // Log that it's a YouTube URL
-        window.open(videoUrl, '_blank', 'width=1000,height=800,toolbar=no,location=no,status=no,menubar=no,scrollbars=no'); // Force open YouTube link in a new window
+        const videoId = videoUrl.split("v=")[1].split("&")[0]; // Extract video ID
+        const videoUrl_2 = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&showinfo=0&rel=0`;
+        window.open(videoUrl_2, '_blank', 'width=1000,height=800,toolbar=no,location=no,status=no,menubar=no,scrollbars=no'); // Force open YouTube link in a new window
     } else {
         const fileExtension = getFileExtension(videoUrl); // Get the file extension
         const newWindow = window.open('', '_blank'); // Open a new blank window
