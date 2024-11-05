@@ -21,7 +21,18 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
                 return;
             }
 
-            const folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'; // Your folder ID
+            // Determine folder ID based on loggedInEmail
+            let folderId;
+            if (loggedInEmail === 'engineerr19832@gmail.com') {
+                folderId = '13Z8vqg6TPeeP4nbvaI1nDUmY8tRfuF6a';
+            } else if (loggedInEmail === 'engineerr1983@gmail.com') {
+                folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer';
+            } else if (loggedInEmail === 'translatingtobetter@gmail.com') {
+                folderId = '1KpZz9gXTyoNONivjmjdhqpgWhh2WpX2O';
+            } else {
+                console.error("No matching folder ID found for this email.");
+                return;
+            }
 
             const metadata = {
                 name: file.name,
@@ -49,10 +60,7 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             })
             .then(result => {
                 console.log("File uploaded successfully to Google Drive:", result);
-                newWindow.alert("Recording saved to Google Drive in the 'meeting_videos' folder.");
-                
-                // Additional logic using `loggedInEmail` or `newWindow` could go here
-                // For example, you could notify a user, log the email, or update the UI in newWindow.
+                newWindow.alert("Recording saved to Google Drive in the specified folder.");
             })
             .catch(error => {
                 console.error("Error during file upload:", error);
@@ -60,6 +68,6 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             });
         };
     } else {
-        console.log("No recording is active");
+        console.log("No recording is active.");
     }
 }
