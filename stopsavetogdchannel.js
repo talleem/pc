@@ -23,28 +23,31 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             return;
         }
 
-        let pendingUploads = 0;  // Track number of uploads
-        let completedUploads = 0;  // Track number of completed uploads
+        const metadata = {
+            name: `meeting_recording_${new Date().getTime()}.webm`,
+            mimeType: 'video/webm',
+            parents: [folderId]
+        };
+
+        // Create FormData to upload chunks
+        const formData = new FormData();
+        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+
+        // This will be used for appending chunks in real-time
+        let isUploading = false;
 
         mediaRecorder.ondataavailable = function(event) {
-            if (event.data.size > 0) {
-                const blob = new Blob([event.data], { type: 'video/webm' });
-                const file = new File([blob], `meeting_chunk_${new Date().getTime()}.webm`, { type: 'video/webm' });
+            if (event.data.size > 0 && !isUploading) {
+                const chunkBlob = new Blob([event.data], { type: 'video/webm' });
+                const file = new File([chunkBlob], `meeting_chunk_${new Date().getTime()}.webm`, { type: 'video/webm' });
 
-                const metadata = {
-                    name: file.name,
-                    mimeType: 'video/webm',
-                    parents: [folderId]
-                };
-
-                const formData = new FormData();
-                formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                // Append the current chunk to the formData
                 formData.append('file', file);
+                console.log(`Appending chunk to FormData: ${file.name}`);
 
-                // Increment pending uploads counter
-                pendingUploads++;
+                isUploading = true;  // Block other uploads until the current one finishes
 
-                // Upload the chunk to Google Drive
+                // Upload the current chunk to Google Drive
                 fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
                     method: 'POST',
                     headers: new Headers({
@@ -52,32 +55,22 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
                     }),
                     body: formData
                 })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error("Error uploading file to Google Drive: " + response.statusText);
-                    }
-                })
+                .then(response => response.json())
                 .then(result => {
                     console.log("Chunk uploaded successfully to Google Drive:", result);
-                    
-                    // Increment completed uploads counter
-                    completedUploads++;
-
-                    // Check if all uploads are completed
-                    if (completedUploads === pendingUploads) {
-                        newWindow.alert("All chunks have been successfully uploaded to Google Drive.");
-                    }
+                    isUploading = false; // Allow the next chunk to be uploaded
                 })
                 .catch(error => {
-                    console.error("Error during chunk upload:", error);
+                    console.error("Error uploading chunk:", error);
+                    isUploading = false; // Allow the next chunk to be uploaded even on failure
                 });
             }
         };
 
         mediaRecorder.onstop = function() {
-            console.log("Recording completed. Awaiting chunk uploads...");
+            console.log("Recording completed. All chunks should be uploaded during the recording.");
+            // Optionally, alert that the recording process is complete, but uploads are ongoing.
+            newWindow.alert("Recording completed. Chunks are being uploaded to Google Drive.");
         };
 
         mediaRecorder.start(500);  // Record in 500ms intervals (or adjust as needed)
