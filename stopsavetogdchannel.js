@@ -29,17 +29,46 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
         };
 
         mediaRecorder.onstop = function() {
-            console.log("Recording completed. Processing chunks...");
+            console.log("Recording completed. Splitting and uploading chunks...");
             const fullRecordingBlob = new Blob(chunks, { type: 'video/webm' });
-            const chunkSize = 15 * 1024 * 1024; // Increase chunk size to reduce the total number of chunks
-            const worker = new Worker('chunkWorker.js');
+            const chunkSize = 5 * 1024 * 1024;
+            const numberOfChunks = Math.ceil(fullRecordingBlob.size / chunkSize);
+            const uploadPromises = [];
 
-            worker.onmessage = function(e) {
-                const chunkBlobs = e.data;
-                uploadChunksToDrive(chunkBlobs, accessToken, folderId, newWindow);
-            };
+            for (let i = 0; i < numberOfChunks; i++) {
+                const chunkBlob = fullRecordingBlob.slice(i * chunkSize, (i + 1) * chunkSize);
+                const file = new File([chunkBlob], meeting_chunk_${Date.now()}_${i}.webm, { type: 'video/webm' });
+                const chunkMetadata = { name: file.name, mimeType: 'video/webm', parents: [folderId] };
 
-            worker.postMessage({ fullRecordingBlob, chunkSize });
+                const formData = new FormData();
+                formData.append('metadata', new Blob([JSON.stringify(chunkMetadata)], { type: 'application/json' }));
+                formData.append('file', file);
+
+                uploadPromises.push(
+                    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                        method: 'POST',
+                        headers: { 'Authorization': Bearer ${accessToken} },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log("Chunk uploaded successfully:", result);
+                        return result.id;
+                    })
+                    .catch(error => console.error("Error uploading chunk:", error))
+                );
+            }
+
+            Promise.all(uploadPromises)
+                .then(fileIds => {
+                    console.log("All chunks uploaded successfully.");
+                    newWindow.alert("All chunks uploaded to Google Drive. Starting reassembly...");
+                    reassembleChunks(fileIds, accessToken, folderId, newWindow);
+                })
+                .catch(error => {
+                    console.error("Error during chunk uploads:", error);
+                    newWindow.alert("Error during chunk uploads.");
+                });
         };
 
         mediaRecorder.stop();
@@ -48,44 +77,10 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
     }
 }
 
-function uploadChunksToDrive(chunkBlobs, accessToken, folderId, newWindow) {
-    const uploadPromises = chunkBlobs.map((chunkBlob, index) => {
-        const file = new File([chunkBlob], `meeting_chunk_${Date.now()}_${index}.webm`, { type: 'video/webm' });
-        const chunkMetadata = { name: file.name, mimeType: 'video/webm', parents: [folderId] };
-
-        const formData = new FormData();
-        formData.append('metadata', new Blob([JSON.stringify(chunkMetadata)], { type: 'application/json' }));
-        formData.append('file', file);
-
-        return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${accessToken}` },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log("Chunk uploaded successfully:", result);
-            return result.id;
-        })
-        .catch(error => console.error("Error uploading chunk:", error));
-    });
-
-    Promise.all(uploadPromises)
-        .then(fileIds => {
-            console.log("All chunks uploaded successfully.");
-            newWindow.alert("All chunks uploaded to Google Drive. Starting reassembly...");
-            reassembleChunks(fileIds, accessToken, folderId, newWindow);
-        })
-        .catch(error => {
-            console.error("Error during chunk uploads:", error);
-            newWindow.alert("Error during chunk uploads.");
-        });
-}
-
 function reassembleChunks(fileIds, accessToken, folderId, newWindow) {
     const chunkPromises = fileIds.map(fileId =>
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
+        fetch(https://www.googleapis.com/drive/v3/files/${fileId}?alt=media, {
+            headers: { 'Authorization': Bearer ${accessToken} }
         })
         .then(response => response.blob())
         .catch(error => console.error("Error downloading chunk:", error))
@@ -116,7 +111,7 @@ function uploadMergedFile(mergedBlob, accessToken, folderId, newWindow) {
 
     fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}` },
+        headers: { 'Authorization': Bearer ${accessToken} },
         body: formData
     })
     .then(response => response.json())
