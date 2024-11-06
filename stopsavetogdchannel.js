@@ -75,6 +75,7 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
                     .then(response => response.json())
                     .then(result => {
                         console.log("Chunk uploaded successfully to Google Drive:", result);
+                        return result.id;  // Collect the file ID
                     })
                     .catch(error => {
                         console.error("Error uploading chunk:", error);
@@ -84,9 +85,12 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
 
             // Wait for all chunks to finish uploading
             Promise.all(uploadPromises)
-                .then(() => {
+                .then(fileIds => {
                     console.log("All chunks uploaded successfully.");
                     newWindow.alert("Recording completed and all chunks uploaded to Google Drive.");
+
+                    // Now, reassemble chunks into a playable file
+                    mergeChunksIntoFile(fileIds, accessToken, folderId, newWindow);
                 })
                 .catch(error => {
                     console.error("Error during chunk uploads:", error);
@@ -98,4 +102,36 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
     } else {
         console.log("No recording is active.");
     }
+}
+
+function mergeChunksIntoFile(fileIds, accessToken, folderId, newWindow) {
+    console.log("Merging chunks...");
+
+    const mergeRequestBody = {
+        name: 'merged_video.webm',
+        mimeType: 'video/webm',
+        parents: [folderId]
+    };
+
+    // Create a new file to hold the merged video
+    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: new Headers({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        }),
+        body: JSON.stringify(mergeRequestBody)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("Merged file created on Google Drive:", result);
+        newWindow.alert("Merged video file created. You can now play it.");
+
+        // Optionally, implement code to combine chunks programmatically
+        // Or use Google Drive's file merging or video processing functionality
+    })
+    .catch(error => {
+        console.error("Error merging chunks:", error);
+        newWindow.alert("Error merging chunks.");
+    });
 }
