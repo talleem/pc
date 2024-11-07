@@ -31,58 +31,44 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
         mediaRecorder.onstop = function() {
             console.log("Recording completed. Splitting and uploading chunks...");
             const fullRecordingBlob = new Blob(chunks, { type: 'video/webm' });
-            const chunkSize = 5 * 1024 * 1024; // 5 MB per chunk
+            const chunkSize = 5 * 1024 * 1024;
             const numberOfChunks = Math.ceil(fullRecordingBlob.size / chunkSize);
+            const uploadPromises = [];
 
-            const uploadChunkBatch = (startIndex = 0, batchSize = 5) => {
-                const chunkPromises = [];
+            for (let i = 0; i < numberOfChunks; i++) {
+                const chunkBlob = fullRecordingBlob.slice(i * chunkSize, (i + 1) * chunkSize);
+                const file = new File([chunkBlob], meeting_chunk_${Date.now()}_${i}.webm, { type: 'video/webm' });
+                const chunkMetadata = { name: file.name, mimeType: 'video/webm', parents: [folderId] };
 
-                // Upload a subset of chunks
-                for (let i = startIndex; i < Math.min(startIndex + batchSize, numberOfChunks); i++) {
-                    const chunkBlob = fullRecordingBlob.slice(i * chunkSize, (i + 1) * chunkSize);
-                    const file = new File([chunkBlob], `meeting_chunk_${Date.now()}_${i}.webm`, { type: 'video/webm' });
-                    const chunkMetadata = { name: file.name, mimeType: 'video/webm', parents: [folderId] };
+                const formData = new FormData();
+                formData.append('metadata', new Blob([JSON.stringify(chunkMetadata)], { type: 'application/json' }));
+                formData.append('file', file);
 
-                    const formData = new FormData();
-                    formData.append('metadata', new Blob([JSON.stringify(chunkMetadata)], { type: 'application/json' }));
-                    formData.append('file', file);
-
-                    chunkPromises.push(
-                        fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                            method: 'POST',
-                            headers: { 'Authorization': `Bearer ${accessToken}` },
-                            body: formData
-                        })
-                        .then(response => response.json())
-                        .then(result => {
-                            console.log("Chunk uploaded successfully:", result);
-                            return result.id;
-                        })
-                        .catch(error => console.error("Error uploading chunk:", error))
-                    );
-                }
-
-                // Wait for the batch to finish before uploading the next batch
-                Promise.all(chunkPromises)
-                    .then(fileIds => {
-                        console.log(`Batch uploaded successfully. File IDs: ${fileIds}`);
-                        if (startIndex + batchSize < numberOfChunks) {
-                            // Upload the next batch
-                            uploadChunkBatch(startIndex + batchSize, batchSize);
-                        } else {
-                            console.log("All chunks uploaded successfully.");
-                            newWindow.alert("All chunks uploaded to Google Drive. Starting reassembly...");
-                            reassembleChunks(fileIds, accessToken, folderId, newWindow);
-                        }
+                uploadPromises.push(
+                    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                        method: 'POST',
+                        headers: { 'Authorization': Bearer ${accessToken} },
+                        body: formData
                     })
-                    .catch(error => {
-                        console.error("Error during batch uploads:", error);
-                        newWindow.alert("Error during chunk uploads.");
-                    });
-            };
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log("Chunk uploaded successfully:", result);
+                        return result.id;
+                    })
+                    .catch(error => console.error("Error uploading chunk:", error))
+                );
+            }
 
-            // Start the first batch of uploads
-            uploadChunkBatch();
+            Promise.all(uploadPromises)
+                .then(fileIds => {
+                    console.log("All chunks uploaded successfully.");
+                    newWindow.alert("All chunks uploaded to Google Drive. Starting reassembly...");
+                    reassembleChunks(fileIds, accessToken, folderId, newWindow);
+                })
+                .catch(error => {
+                    console.error("Error during chunk uploads:", error);
+                    newWindow.alert("Error during chunk uploads.");
+                });
         };
 
         mediaRecorder.stop();
@@ -93,8 +79,8 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
 
 function reassembleChunks(fileIds, accessToken, folderId, newWindow) {
     const chunkPromises = fileIds.map(fileId =>
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
+        fetch(https://www.googleapis.com/drive/v3/files/${fileId}?alt=media, {
+            headers: { 'Authorization': Bearer ${accessToken} }
         })
         .then(response => response.blob())
         .catch(error => console.error("Error downloading chunk:", error))
@@ -125,7 +111,7 @@ function uploadMergedFile(mergedBlob, accessToken, folderId, newWindow) {
 
     fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}` },
+        headers: { 'Authorization': Bearer ${accessToken} },
         body: formData
     })
     .then(response => response.json())
