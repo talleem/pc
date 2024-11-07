@@ -79,9 +79,9 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
 
 function reassembleChunks(fileIds, accessToken, folderId, newWindow) {
     const chunkPromises = fileIds.map(fileId =>
-        fetch(https://www.googleapis.com/drive/v3/files/${fileId}?alt=media, {
-            headers: { 'Authorization': Bearer ${accessToken} }
-        })
+       fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    headers: { 'Authorization': `Bearer ${accessToken}` }
+})
         .then(response => response.blob())
         .catch(error => console.error("Error downloading chunk:", error))
     );
