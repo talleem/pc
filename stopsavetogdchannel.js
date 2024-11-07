@@ -37,7 +37,7 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
 
             for (let i = 0; i < numberOfChunks; i++) {
                 const chunkBlob = fullRecordingBlob.slice(i * chunkSize, (i + 1) * chunkSize);
-                const file = new File([chunkBlob], meeting_chunk_${Date.now()}_${i}.webm, { type: 'video/webm' });
+               const file = new File([chunkBlob], `meeting_chunk_${Date.now()}_${i}.webm`, { type: 'video/webm' });
                 const chunkMetadata = { name: file.name, mimeType: 'video/webm', parents: [folderId] };
 
                 const formData = new FormData();
