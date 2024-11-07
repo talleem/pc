@@ -111,7 +111,7 @@ function uploadMergedFile(mergedBlob, accessToken, folderId, newWindow) {
 
     fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}` }
+        headers: { 'Authorization': `Bearer ${accessToken}` },
         body: formData
     })
     .then(response => response.json())
