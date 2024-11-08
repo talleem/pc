@@ -341,13 +341,37 @@ function openVideoInNewWindow(videoUrl) {
                 .catch(error => console.error("Error populating combo boxes:", error));
         }
 
-      function deleteSelectedLecture() {
+    function deleteSelectedLecture() {
     if (selectedDocumentId) {
         const selectedRow = document.querySelector('.selected-row');
         const selectedLecturerEmail = selectedRow ? selectedRow.cells[0].textContent : null;
         const loggedInEmail = localStorage.getItem('loggedInEmail');
 
-        if (loggedInEmail === selectedLecturerEmail) {
+        // Condition 1: loggedInEmail matches selectedLecturerEmail and is not "tallemchannel@gmail.com"
+        if (loggedInEmail === selectedLecturerEmail && loggedInEmail !== 'tallemchannel@gmail.com') {
+            const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+
+            docRef.get().then(doc => {
+                if (doc.exists) {
+                    const lecture = doc.data();
+                    const videoURL = lecture.videoURL;
+
+                    const storageRef = storage.refFromURL(videoURL);
+                    storageRef.delete().then(() => {
+                        alert('Video deleted successfully from storage.');
+                        docRef.delete().then(() => {
+                            console.log('Document deleted successfully from Firestore.');
+                            if (selectedRow) {
+                                selectedRow.remove();
+                            }
+                            selectedDocumentId = null;
+                        }).catch(error => console.error('Error deleting document:', error));
+                    }).catch(error => console.error('Error deleting video from storage:', error));
+                }
+            }).catch(error => console.error('Error fetching document:', error));
+
+        // Condition 2: loggedInEmail matches selectedLecturerEmail and is "tallemchannel@gmail.com"
+        } else if (loggedInEmail === selectedLecturerEmail && loggedInEmail === 'tallemchannel@gmail.com') {
             const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
 
             docRef.get().then(doc => {
@@ -373,7 +397,6 @@ function openVideoInNewWindow(videoUrl) {
                         });
                     } else {
                         const storageRef = storage.refFromURL(videoURL);
-
                         storageRef.delete().then(() => {
                             alert('Video deleted successfully from storage.');
                             docRef.delete().then(() => {
@@ -387,6 +410,8 @@ function openVideoInNewWindow(videoUrl) {
                     }
                 }
             }).catch(error => console.error('Error fetching document:', error));
+
+        // Default case: no permission
         } else {
             alert('Only the meeting event creator is authorized to delete the video.');
         }
