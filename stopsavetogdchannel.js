@@ -22,7 +22,7 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             // Combine all chunks into one Blob
             const fullRecordingBlob = new Blob(chunks, { type: 'video/webm' });
 
-            // Trigger a download of the recording (not saving it permanently, just offering a download)
+            // Trigger a download of the recording (just offering a download)
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(fullRecordingBlob);
             downloadLink.download = `${loggedInEmail}_recording_${Date.now()}.webm`;  // Name file based on timestamp
@@ -39,10 +39,11 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
 }
 
 function uploadFullRecordingToGoogleDrive(fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
-    // Create the metadata for the file upload
+    // Define the metadata for uploading the file to a specific folder
     const fileMetadata = {
-        name: `${loggedInEmail}_recording_${Date.now()}.webm`, // Set file name dynamically
-        mimeType: 'video/webm'
+        name: `${loggedInEmail}_recording_${Date.now()}.webm`, // File name
+        mimeType: 'video/webm',
+        parents: ['1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer'] // Specify the target folder ID
     };
 
     const formData = new FormData();
