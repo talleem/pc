@@ -9,18 +9,6 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             return;
         }
 
-        let folderId;
-        if (loggedInEmail === 'engineerr19832@gmail.com') {
-            folderId = '13Z8vqg6TPeeP4nbvaI1nDUmY8tRfuF6a';
-        } else if (loggedInEmail === 'engineerr1983@gmail.com') {
-            folderId = '1n7F6Dl6tGbw6lunDRDGYBNV-QThgJDer';
-        } else if (loggedInEmail === 'translatingtobetter@gmail.com') {
-            folderId = '1KpZz9gXTyoNONivjmjdhqpgWhh2WpX2O';
-        } else {
-            console.error("No matching folder ID found for this email.");
-            return;
-        }
-
         const chunks = [];
         mediaRecorder.ondataavailable = function(event) {
             if (event.data.size > 0) {
@@ -29,11 +17,11 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
         };
 
         mediaRecorder.onstop = function() {
-            console.log("Recording completed. Uploading the full recording...");
+            console.log("Recording completed. Uploading the full recording to YouTube...");
 
             // Combine all chunks into one Blob and upload the whole file at once
             const fullRecordingBlob = new Blob(chunks, { type: 'video/webm' });
-            uploadFullRecording(fullRecordingBlob, accessToken, folderId, newWindow);
+            uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
         };
 
         mediaRecorder.stop();
@@ -42,29 +30,46 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
     }
 }
 
-function uploadFullRecording(fullRecordingBlob, accessToken, folderId, newWindow) {
+function uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
+    // Format the title with the creator's email and the current date-time
+    const now = new Date();
+    const createTime = now.toLocaleString('en-US', { hour12: false }); // Get date-time without AM/PM
+    const title = `${loggedInEmail} - ${createTime}`;
+
     const fileMetadata = {
-        name: `recording_${Date.now()}.webm`,
-        mimeType: 'video/webm',
-        parents: [folderId]
+        snippet: {
+            title: title,
+            description: 'Recording uploaded from application',
+            tags: ['recording', 'webm', 'upload'],
+            categoryId: '22' // "People & Blogs" category as an example
+        },
+        status: {
+            privacyStatus: 'public' // Set video to public
+        }
     };
 
     const formData = new FormData();
+    formData.append('part', 'snippet,status');
     formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
     formData.append('file', fullRecordingBlob);
 
-    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${accessToken}` },
         body: formData
     })
     .then(response => response.json())
     .then(result => {
-        console.log("Full recording uploaded successfully:", result);
-        newWindow.alert("Recording uploaded to Google Drive.");
+        if (result.id) {
+            console.log("Full recording uploaded successfully to YouTube:", result);
+            newWindow.alert("Recording uploaded to YouTube.");
+        } else {
+            console.error("Error uploading to YouTube:", result);
+            newWindow.alert("Error uploading to YouTube.");
+        }
     })
     .catch(error => {
-        console.error("Error uploading full recording:", error);
-        newWindow.alert("Error uploading recording.");
+        console.error("Error uploading to YouTube:", error);
+        newWindow.alert("Error uploading to YouTube.");
     });
 }
