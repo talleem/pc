@@ -383,7 +383,7 @@ function openVideoInNewWindow(videoUrl) {
                     const formattedDate = date.toLocaleDateString('en-US');
                     const formattedTime = date.toLocaleTimeString('en-US', { hour12: false });
                     const titleMatch = `${lecture.creatorEmail} - ${formattedDate} ${formattedTime}`;
-                    console.log(titleMatch);
+                    console.log("titlematch:",titleMatch);
 
                     if (videoURL.includes('youtube.com')) {
                         deleteYouTubeVideoByTitle(titleMatch, function () {
