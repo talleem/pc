@@ -17,16 +17,40 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
         };
 
         mediaRecorder.onstop = function() {
-            console.log("Recording completed. Uploading the full recording to YouTube...");
+            console.log("Recording completed. Opening Google Picker...");
 
-            // Combine all chunks into one Blob and upload the whole file at once
+            // Combine all chunks into one Blob and open Google Picker for file selection
             const fullRecordingBlob = new Blob(chunks, { type: 'video/webm' });
-            uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
+            openGooglePicker(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
         };
 
         mediaRecorder.stop();
     } else {
         console.log("No recording is active.");
+    }
+}
+
+function openGooglePicker(fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
+    // Load the Google Picker API
+    gapi.load('picker', () => {
+        const picker = new google.picker.PickerBuilder()
+            .addView(google.picker.ViewId.DOCS) // Optionally filter for specific document types
+            .setOAuthToken(accessToken)
+            .setDeveloperKey('AIzaSyB9w-tA4BIQGizvsG2shukDsflojuGvx28') // Replace with your API key
+            .setCallback(data => pickerCallback(data, fullRecordingBlob, accessToken, loggedInEmail, newWindow))
+            .build();
+        
+        picker.setVisible(true);
+    });
+}
+
+function pickerCallback(data, fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
+    if (data.action === google.picker.Action.PICKED) {
+        const fileId = data.docs[0].id;
+        console.log("File selected:", fileId);
+
+        // Once a file is selected in the picker, upload it to YouTube
+        uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
     }
 }
 
