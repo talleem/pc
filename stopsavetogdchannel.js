@@ -28,8 +28,8 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
             downloadLink.download = `${loggedInEmail}_recording_${Date.now()}.webm`;  // Name file based on timestamp
             downloadLink.click();  // Trigger the download
 
-            // Proceed to upload to YouTube
-            uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
+            // Upload to Google Drive instead of YouTube
+            uploadFullRecordingToGoogleDrive(fullRecordingBlob, accessToken, loggedInEmail, newWindow);
         };
 
         mediaRecorder.stop();
@@ -38,46 +38,36 @@ function stopsavetogdchannel(mediaRecorder, stream, loggedInEmail, newWindow) {
     }
 }
 
-function uploadFullRecordingToYouTube(fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
-    // Format the title with the creator's email and the current date-time
-    const now = new Date();
-    const createTime = now.toLocaleString('en-US', { hour12: false }); // Get date-time without AM/PM
-    const title = `${loggedInEmail} - ${createTime}`;
-
+function uploadFullRecordingToGoogleDrive(fullRecordingBlob, accessToken, loggedInEmail, newWindow) {
+    // Create the metadata for the file upload
     const fileMetadata = {
-        snippet: {
-            title: title,
-            description: 'Recording uploaded from application',
-            tags: ['recording', 'webm', 'upload'],
-            categoryId: '22' // "People & Blogs" category as an example
-        },
-        status: {
-            privacyStatus: 'public' // Set video to public
-        }
+        name: `${loggedInEmail}_recording_${Date.now()}.webm`, // Set file name dynamically
+        mimeType: 'video/webm'
     };
 
     const formData = new FormData();
-    formData.append('part', 'snippet,status');
     formData.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
     formData.append('file', fullRecordingBlob);
 
-    fetch('https://www.googleapis.com/upload/youtube/v3/videos?uploadType=multipart', {
+    fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${accessToken}` },
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        },
         body: formData
     })
     .then(response => response.json())
     .then(result => {
         if (result.id) {
-            console.log("Full recording uploaded successfully to YouTube:", result);
-            newWindow.alert("Recording uploaded to YouTube.");
+            console.log("File successfully uploaded to Google Drive:", result);
+            newWindow.alert("Recording uploaded to Google Drive.");
         } else {
-            console.error("Error uploading to YouTube:", result);
-            newWindow.alert("Error uploading to YouTube.");
+            console.error("Error uploading to Google Drive:", result);
+            newWindow.alert("Error uploading to Google Drive.");
         }
     })
     .catch(error => {
-        console.error("Error uploading to YouTube:", error);
-        newWindow.alert("Error uploading to YouTube.");
+        console.error("Error uploading to Google Drive:", error);
+        newWindow.alert("Error uploading to Google Drive.");
     });
 }
