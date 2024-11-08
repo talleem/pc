@@ -405,6 +405,7 @@ function deleteYouTubeVideoByTitle(title, callback) {
         if (xhrSearch.status === 200) {
             const response = JSON.parse(xhrSearch.responseText);
             const videoId = response.items.length > 0 ? response.items[0].id.videoId : null;
+            console.log(videoId);
 
             if (videoId) {
                 const xhrDelete = new XMLHttpRequest();
