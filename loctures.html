@@ -348,28 +348,34 @@ function openVideoInNewWindow(videoUrl) {
         const loggedInEmail = localStorage.getItem('loggedInEmail');
 
         // Condition 1: loggedInEmail matches selectedLecturerEmail and is not "tallemchannel@gmail.com"
-        if (loggedInEmail === selectedLecturerEmail && loggedInEmail !== 'tallemchannel@gmail.com') {
-            const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
+    if (loggedInEmail === selectedLecturerEmail && loggedInEmail !== 'tallemchannel@gmail.com') {
+    const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
 
-            docRef.get().then(doc => {
-                if (doc.exists) {
-                    const lecture = doc.data();
-                    const videoURL = lecture.videoURL;
+    docRef.get().then(doc => {
+        if (doc.exists) {
+            const lecture = doc.data();
+            const videoURL = lecture.videoURL;
 
-                    const storageRef = storage.refFromURL(videoURL);
-                    storageRef.delete().then(() => {
-                        alert('Video deleted successfully from storage.');
-                        docRef.delete().then(() => {
-                            console.log('Document deleted successfully from Firestore.');
-                            if (selectedRow) {
-                                selectedRow.remove();
-                            }
-                            selectedDocumentId = null;
-                        }).catch(error => console.error('Error deleting document:', error));
-                    }).catch(error => console.error('Error deleting video from storage:', error));
-                }
-            }).catch(error => console.error('Error fetching document:', error));
-
+            // Check if the video is hosted on YouTube
+            if (videoURL.includes('youtube.com')) {
+                alert("Only the YouTube channel admin is able to delete videos from the channel.");
+            } else {
+                // Proceed with deleting from Firebase Storage if it's not a YouTube video
+                const storageRef = storage.refFromURL(videoURL);
+                storageRef.delete().then(() => {
+                    alert('Video deleted successfully from storage.');
+                    docRef.delete().then(() => {
+                        console.log('Document deleted successfully from Firestore.');
+                        if (selectedRow) {
+                            selectedRow.remove();
+                        }
+                        selectedDocumentId = null;
+                    }).catch(error => console.error('Error deleting document:', error));
+                }).catch(error => console.error('Error deleting video from storage:', error));
+            }
+        }
+    }).catch(error => console.error('Error fetching document:', error));
+        
         // Condition 2: loggedInEmail matches selectedLecturerEmail and is "tallemchannel@gmail.com"
         } else if (loggedInEmail !== selectedLecturerEmail && loggedInEmail === 'tallemchannel@gmail.com') {
     console.log("2nd condition");
