@@ -372,9 +372,11 @@ function openVideoInNewWindow(videoUrl) {
 
         // Condition 2: loggedInEmail matches selectedLecturerEmail and is "tallemchannel@gmail.com"
         } else if (loggedInEmail !== selectedLecturerEmail && loggedInEmail === 'tallemchannel@gmail.com') {
+            console.log("2nd condition");
             const docRef = db.collection('meetings_his_tbl').doc(selectedDocumentId);
 
             docRef.get().then(doc => {
+                 console.log("doc exist");
                 if (doc.exists) {
                     const lecture = doc.data();
                     const videoURL = lecture.videoURL;
