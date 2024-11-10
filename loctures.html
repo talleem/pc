@@ -85,9 +85,16 @@
              <br>
       <button id="gdrivefilesrepl" style="height:30px;"><h4 style="margin: 0;">G Drive file merge</h4></button>
              <script>
-                document.getElementById('gdrivefilesrepl').addEventListener('click', function() {
-                   window.location.href = 'gdrivefilerepl.html';   
-                });
+               document.getElementById('gdrivefilesrepl').addEventListener('click', function() {
+    // Check if loggedInEmail matches the administrator's email
+    if (loggedInEmail === 'tallemchannel@gmail.com') {
+        // Continue to the specified page
+        window.location.href = 'gdrivefilerepl.html';
+    } else {
+        // Show an alert if the user is not the administrator
+        alert("This window is controlled only by the YouTube channel administrator");
+    }
+});
             </script>
         </div>
     </div>
