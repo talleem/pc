@@ -90,6 +90,12 @@
                 });
             </script>
              <br>
+     <script>       
+// Function to close the custom alert
+function closeCustomAlert() {
+    document.getElementById('customAlert').style.display = 'none';
+}
+     </script>
       <button id="gdrivefilesrepl" style="height:30px;"><h4 style="margin: 0;">G Drive file merge</h4></button>
              <script>
                document.getElementById('gdrivefilesrepl').addEventListener('click', function() {
@@ -99,7 +105,7 @@
         window.location.href = 'gdrivefilerepl.html';
     } else {
         // Show an alert if the user is not the administrator
-        alert("This window is controlled only by the YouTube channel administrator");
+        document.getElementById('customAlert').style.display = 'block';
     }
 });
             </script>
